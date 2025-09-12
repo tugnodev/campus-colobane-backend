@@ -1,0 +1,181 @@
+my-ecommerce-api/
+├── 📁 src/
+│   ├── 📄 index.ts                     # Point d'entrée principal
+│   ├── 📄 auth.ts                      # Configuration Better Auth
+│   ├── 📄 app.ts                       # Configuration de l'app Hono
+│   │
+│   ├── 📁 config/
+│   │   ├── 📄 prisma.ts                # Config base de données
+│   │   ├── 📄 email.ts                 # Config email/SMTP
+│   │   ├── 📄 storage.ts               # Config stockage fichiers
+│   │   └── 📄 payment.ts               # Config paiements (wave/orange money)
+│   │
+│   ├── 📁 db/
+│   │   ├── 📄 connection.ts            # Connexion DB
+│   │   ├── 📄 schema.ts                # Schémas Prisma ORM
+│   │   ├── 📄 migrate.ts               # Script de migration
+│   │   ├── 📁 migrations/              # Fichiers de migration
+│   │   │   ├── 📄 0001_initial.sql
+│   │   │   ├── 📄 0002_add_reviews.sql
+│   │   │   └── 📄 0003_add_coupons.sql
+│   │   └── 📁 seeders/                 # Données de test
+│   │       ├── 📄 categories.ts
+│   │       ├── 📄 products.ts
+│   │       └── 📄 users.ts
+│   │
+│   ├── 📁 middleware/
+│   │   ├── 📄 auth.ts                  # Middleware authentification
+│   │   ├── 📄 admin.ts                 # Middleware admin
+│   │   ├── 📄 cors.ts                  # Configuration CORS
+│   │   ├── 📄 validation.ts            # Middleware validation
+│   │   ├── 📄 rateLimit.ts             # Limitation de taux
+│   │   ├── 📄 upload.ts                # Upload de fichiers
+│   │   └── 📄 errorHandler.ts          # Gestion des erreurs
+│   │
+│   ├── 📁 routes/
+│   │   ├── 📄 auth.ts                  # Routes authentification
+│   │   ├── 📄 users.ts                 # Gestion utilisateurs
+│   │   ├── 📄 products.ts              # Catalogue produits
+│   │   ├── 📄 categories.ts            # Catégories
+│   │   ├── 📄 cart.ts                  # Panier d'achat
+│   │   ├── 📄 orders.ts                # Commandes
+│   │   ├── 📄 payments.ts              # Paiements
+│   │   ├── 📄 reviews.ts               # Avis clients
+│   │   ├── 📄 wishlist.ts              # Liste de souhaits
+│   │   ├── 📄 coupons.ts               # Codes promo
+│   │   ├── 📄 addresses.ts             # Adresses utilisateur
+│   │   │
+│   │   ├── 📁 admin/
+│   │   │   ├── 📄 index.ts             # Routes admin principales
+│   │   │   ├── 📄 products.ts          # Admin produits
+│   │   │   ├── 📄 orders.ts            # Admin commandes
+│   │   │   ├── 📄 users.ts             # Admin utilisateurs
+│   │   │   ├── 📄 categories.ts        # Admin catégories
+│   │   │   ├── 📄 analytics.ts         # Analytics et rapports
+│   │   │   ├── 📄 inventory.ts         # Gestion stock
+│   │   │   ├── 📄 coupons.ts           # Gestion codes promo
+│   │   │   └── 📄 settings.ts          # Paramètres site
+│   │   │
+│   │   └── 📁 public/
+│   │       ├── 📄 catalog.ts           # API publique catalogue
+│   │       ├── 📄 search.ts            # Recherche publique
+│   │       └── 📄 newsletter.ts        # Newsletter
+│   │
+│   ├── 📁 controllers/
+│   │   ├── 📄 authController.ts        # Logique authentification
+│   │   ├── 📄 userController.ts        # Logique utilisateur
+│   │   ├── 📄 productController.ts     # Logique produits
+│   │   ├── 📄 orderController.ts       # Logique commandes
+│   │   ├── 📄 cartController.ts        # Logique panier
+│   │   ├── 📄 paymentController.ts     # Logique paiements
+│   │   └── 📄 adminController.ts       # Logique admin
+│   │
+│   ├── 📁 services/
+│   │   ├── 📄 emailService.ts          # Service email
+│   │   ├── 📄 paymentService.ts        # Service paiement
+│   │   ├── 📄 inventoryService.ts      # Service inventaire
+│   │   ├── 📄 searchService.ts         # Service recherche
+│   │   ├── 📄 uploadService.ts         # Service upload
+│   │   ├── 📄 notificationService.ts   # Service notifications
+│   │   ├── 📄 analyticsService.ts      # Service analytics
+│   │   └── 📄 cacheService.ts          # Service cache (Redis)
+│   │
+│   ├── 📁 models/
+│   │   ├── 📄 User.ts                  # Modèle utilisateur
+│   │   ├── 📄 Product.ts               # Modèle produit
+│   │   ├── 📄 Order.ts                 # Modèle commande
+│   │   ├── 📄 Category.ts              # Modèle catégorie
+│   │   ├── 📄 Cart.ts                  # Modèle panier
+│   │   ├── 📄 Review.ts                # Modèle avis
+│   │   └── 📄 Coupon.ts                # Modèle code promo
+│   │
+│   ├── 📁 utils/
+│   │   ├── 📄 validation.ts            # Schémas de validation
+│   │   ├── 📄 pagination.ts            # Utilitaires pagination
+│   │   ├── 📄 responses.ts             # Formatage réponses
+│   │   ├── 📄 encryption.ts            # Chiffrement/hash
+│   │   ├── 📄 dateUtils.ts             # Utilitaires dates
+│   │   ├── 📄 slugify.ts               # Génération de slugs
+│   │   ├── 📄 imageResize.ts           # Redimensionnement images
+│   │   └── 📄 logger.ts                # Logger personnalisé
+│   │
+│   ├── 📁 jobs/
+│   │   ├── 📄 emailQueue.ts            # Queue emails
+│   │   ├── 📄 imageProcessing.ts       # Traitement images
+│   │   ├── 📄 inventorySync.ts         # Sync inventaire
+│   │   ├── 📄 reportGeneration.ts      # Génération rapports
+│   │   └── 📄 cleanup.ts               # Nettoyage données
+│   │
+│   └── 📁 types/
+│       ├── 📄 auth.types.ts            # Types authentification
+│       ├── 📄 product.types.ts         # Types produits
+│       ├── 📄 order.types.ts           # Types commandes
+│       └── 📄 common.types.ts          # Types communs
+│
+├── 📁 public/
+│   ├── 📁 uploads/
+│   │   ├── 📁 products/                # Images produits
+│   │   ├── 📁 categories/              # Images catégories
+│   │   └── 📁 avatars/                 # Avatars utilisateurs
+│   │
+│   ├── 📁 static/
+│   │   ├── 📄 favicon.ico
+│   │   └── 📄 robots.txt
+│   │
+│   └── 📁 templates/
+│       ├── 📄 welcome-email.html       # Template email bienvenue
+│       ├── 📄 order-confirmation.html  # Template confirmation commande
+│       └── 📄 password-reset.html      # Template reset password
+│
+├── 📁 tests/
+│   ├── 📁 integration/
+│   │   ├── 📄 auth.test.ts             # Tests auth
+│   │   ├── 📄 products.test.ts         # Tests produits
+│   │   ├── 📄 orders.test.ts           # Tests commandes
+│   │   └── 📄 admin.test.ts            # Tests admin
+│   │
+│   ├── 📁 unit/
+│   │   ├── 📄 services.test.ts         # Tests services
+│   │   ├── 📄 utils.test.ts            # Tests utilitaires
+│   │   └── 📄 validation.test.ts       # Tests validation
+│   │
+│   ├── 📁 fixtures/
+│   │   ├── 📄 users.json               # Données de test
+│   │   ├── 📄 products.json
+│   │   └── 📄 orders.json
+│   │
+│   └── 📄 setup.ts                     # Configuration tests
+│
+├── 📁 docs/
+│   ├── 📄 README.md                    # Documentation projet
+│   ├── 📄 API.md                       # Documentation API
+│   ├── 📄 DEPLOYMENT.md                # Guide déploiement
+│   ├── 📄 CONTRIBUTING.md              # Guide contribution
+│   └── 📁 postman/                     # Collection Postman
+│       └── 📄 ecommerce-api.json
+│
+├── 📁 scripts/
+│   ├── 📄 dev.ts                       # Script développement
+│   ├── 📄 build.ts                     # Script build production
+│   ├── 📄 migrate.ts                   # Script migration DB
+│   ├── 📄 seed.ts                      # Script seed données
+│   └── 📄 backup.ts                    # Script backup DB
+│
+├── 📁 docker/
+│   ├── 📄 Dockerfile                   # Image Docker app
+│   ├── 📄 docker-compose.yml           # Services Docker
+│   ├── 📄 docker-compose.dev.yml       # Services développement
+│   └── 📄 nginx.conf                   # Config Nginx
+│
+├── 📄 .env                             # Variables environnement
+├── 📄 .env.example                     # Exemple variables env
+├── 📄 .gitignore                       # Fichiers ignorés Git
+├── 📄 .dockerignore                    # Fichiers ignorés Docker
+├── 📄 package.json                     # Dépendances Node.js
+├── 📄 package-lock.json               # Lock dépendances
+├── 📄 drizzle.config.ts               # Config Drizzle ORM
+├── 📄 tsconfig.json                   # Config TypeScript (optionnel)
+├── 📄 jest.config.ts                  # Config Jest (tests)
+├── 📄 eslint.config.ts                # Config ESLint
+├── 📄 prettier.config.ts              # Config Prettier
+└── 📄 vercel.json                     # Config Vercel (déploiement)
