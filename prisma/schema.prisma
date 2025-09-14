@@ -20,31 +20,25 @@ model User {
   email             String     @unique
   emailVerified     Boolean    @default(false)
   vendeur           Boolean    @default(false)
+  code              Int?
+  address           String?
   image             String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
   Articles          Articles[]
   Comments          Comments[]
   MessagesSent      Messages[] @relation("Sender")
   MessagesReceived  Messages[] @relation("Receiver")
   OrdersBuyer       Orders[]   @relation("Buyer")
   OrdersSeller      Orders[]   @relation("Seller")
-  Cards             Cards[]
+  Carts             Carts[]
   Account           Account[]
   Session           Session[]
   Numbers           Numbers[]
-  ChatBox           ChatBox[]   @relation("UserChatBox")
 
   @@map("user")
 }
 
-model ChatBox {
-  id         String   @id @default(uuid())
-  shop_id    String
-  buyer_id   String
-  article_id String?
-  User       User     @relation("UserChatBox", fields: [buyer_id], references: [id])
-  Articles   Articles? @relation(fields: [article_id], references: [id])
-  Messages   Messages[]
-}
 
 model Categories {
   name        String   @id
@@ -61,9 +55,10 @@ model Articles {
   description String
   price       Int
   stock       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   User        User     @relation(fields: [user_id], references: [id])
   Comments    Comments[]
-  ChatBox     ChatBox[]
   Messages    Messages[]
 }
 
@@ -72,7 +67,8 @@ model Comments {
   comment    String
   article_id String
   buyer_id   String
-  date       DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   Articles   Articles @relation(fields: [article_id], references: [id])
   User       User     @relation(fields: [buyer_id], references: [id])
 }
@@ -82,12 +78,11 @@ model Messages {
   message     String
   sender_id   String
   receiver_id String
-  chat_id     String
   article_id  String?
-  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   Sender      User     @relation("Sender", fields: [sender_id], references: [id])
   Receiver    User     @relation("Receiver", fields: [receiver_id], references: [id])
-  ChatBox     ChatBox  @relation(fields: [chat_id], references: [id])
   Articles    Articles? @relation(fields: [article_id], references: [id])
 }
 
@@ -103,15 +98,16 @@ model Orders {
   article_details Json
   buyer_id       String
   seller_id      String
-  order_date     String?
   order_status   String   @default("accepted")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   Buyer          User     @relation("Buyer", fields: [buyer_id], references: [id])
   Seller         User     @relation("Seller", fields: [seller_id], references: [id])
 }
 
-model Cards {
+model Carts {
   id          String   @id @default(uuid())
-  card_details Json?
+  cart        Json
   user_id     String
   User        User   @relation(fields: [user_id], references: [id])
 }
