@@ -1,9 +1,9 @@
-import type { createCardDto, updateCardDto, cardDto } from "../../../Application/dtos/cart.js";
+import type { createCartDto, updateCartDto, cartDto } from "../../../Application/dtos/cart.js";
 
-export interface OCardRepo {
-    createCart(card: createCardDto): Promise<cardDto | string>;
-    updateCart(card: updateCardDto): Promise<cardDto | string>;
+export interface OCartRepo {
+    createCart(cart: createCartDto): Promise<cartDto | string>;
+    updateCart(cart: updateCartDto): Promise<cartDto | string>;
     deleteCart(id: string): Promise<string>;
-    getAllCarts(): Promise<cardDto[] | string>;
-    getByUserId(userId: string): Promise<cardDto[] | string>;
+    getAllCarts(): Promise<cartDto[] | string>;
+    getByUserId(userId: string): Promise<cartDto[] | string>;
 }

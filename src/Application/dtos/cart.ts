@@ -3,18 +3,18 @@ type item = {
     quantity: number;
 }
 
-export interface createCardDto {
+export interface createCartDto {
     card_details: item[];
     userId: string;
 }
 
-export interface updateCardDto {
+export interface updateCartDto {
     id: string;
     card_details?: item[];
     user_id?: string;
 }
 
-export interface cardDto {
+export interface cartDto {
     id: string;
     card_details: item[];
     user_id: string;

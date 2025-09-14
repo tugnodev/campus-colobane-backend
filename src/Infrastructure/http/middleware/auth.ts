@@ -1,5 +1,5 @@
 import type { Context, Next } from "hono";
-import { auth } from "../Infrastructure/config/auth.js";
+import { auth } from "../../config/auth.js";
 
 
 
