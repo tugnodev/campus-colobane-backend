@@ -10,7 +10,15 @@ export class UserService implements IUserService {
     }
 
     async createUser(user: createUserDto): Promise<userDto | string> {
-        return this.userRepo.saveUser(user);
+        return this.userRepo.createUser(user);
+    }
+
+    async getUserByEmail(email: string): Promise<userDto | string> {
+        return this.userRepo.getUserByEmail(email);
+    }
+
+    async userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }> {
+        return this.userRepo.userLogout({ headers });
     }
 
     async updateUser(user: updateUserDto): Promise<userDto | string> {

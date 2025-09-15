@@ -6,5 +6,4 @@ export interface OArticleRepo {
     deleteArticle(id: string): Promise<string>
     getArticleById(id: string): Promise<articleDto | string>
     getAllArticles(): Promise<articleDto[] | string>
-    
 }

@@ -6,4 +6,6 @@ export interface OUserRepo {
     deleteUser(id: string): Promise<string>;
     getUserById(id: string): Promise<userDto | string>;
     getAllUsers(): Promise<userDto[] | string>;
+    getUserByEmail(email: string): Promise<userDto | string>;
+    userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }>;
 }

@@ -1,4 +1,4 @@
-import { Articles } from "./articles.js"
+import type { Articles } from "./articles.js"
 
 type item = {
     article: Articles

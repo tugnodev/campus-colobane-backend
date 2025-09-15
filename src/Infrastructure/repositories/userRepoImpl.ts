@@ -57,4 +57,8 @@ export class UserRepoImpl implements OUserRepo {
         if (!users) return "Users Not Found";
         return users as userDto[];
     }
+
+    async userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }> {
+        return auth.api.signOut({ headers });
+    }
 }

@@ -11,9 +11,9 @@ export interface createUserDto {
     name: string;
     email: string;
     password: string;
+    address: address;
     vendeur?: boolean;
     code?: number;
-    address?: address;
 }
 
 export interface updateUserDto {
@@ -22,7 +22,7 @@ export interface updateUserDto {
     email?: string;
     vendeur?: boolean;
     code?: number;
-    address?: address;
+    address: address;
     image?: string;
 }
 
