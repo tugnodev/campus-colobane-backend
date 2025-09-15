@@ -1,27 +1,27 @@
-import type { IMessageService } from '../../Domaine/ports/inputs/messageService.js';
+import type { OMessageRepo } from '../../Domaine/ports/outputs/messageRepo.js';
 import type { createMessageDto, updateMessageDto, messageDto } from '../dtos/messages.js';
 
 export class MessageUseCase {
-    private messageService: IMessageService;
+    private messageRepo: OMessageRepo;
 
-    constructor(messageService: IMessageService) {
-        this.messageService = messageService;
+    constructor(messageRepo: OMessageRepo) {
+        this.messageRepo = messageRepo;
     }
 
     async create(messageData: createMessageDto): Promise<messageDto | string> {
-        return this.messageService.createMessage(messageData);
+        return this.messageRepo.saveMessage(messageData);
     }
 
     async update(messageData: updateMessageDto): Promise<messageDto | string> {
-        return this.messageService.updateMessage(messageData);
+        return this.messageRepo.updateMessage(messageData);
     }
 
     async delete(messageId: string): Promise<string> {
-        await this.messageService.deleteMessage(messageId);
+        await this.messageRepo.deleteMessage(messageId);
         return `Message with ID ${messageId} has been deleted successfully.`;
     }
 
     async getByUserId(userId: string): Promise<messageDto[] | string> {
-        return this.messageService.getMessagesByUserId(userId);
+        return this.messageRepo.getMessagesByUserId(userId);
     }
 }

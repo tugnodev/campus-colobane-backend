@@ -1,31 +1,31 @@
-import type { ICommentService } from '../../Domaine/ports/inputs/commentService.js';
+import type { OCommentRepo } from '../../Domaine/ports/outputs/commentRepo.js';
 import type { createCommentDto, updateCommentDto, commentDto } from '../dtos/comment.js';
 
 export class CommentUseCase {
-    private commentService: ICommentService;
+    private commentRepo: OCommentRepo;
 
-    constructor(commentService: ICommentService) {
-        this.commentService = commentService;
+    constructor(commentRepo: OCommentRepo) {
+        this.commentRepo = commentRepo;
     }
 
     async create(commentData: createCommentDto): Promise<commentDto | string> {
-        return this.commentService.createComment(commentData);
+        return this.commentRepo.saveComment(commentData);
     }
 
     async update(commentData: updateCommentDto): Promise<commentDto | string> {
-        return this.commentService.updateComment(commentData);
+        return this.commentRepo.updateComment(commentData);
     }
 
     async delete(commentId: string): Promise<string> {
-        await this.commentService.deleteComment(commentId);
+        await this.commentRepo.deleteComment(commentId);
         return `Comment with ID ${commentId} has been deleted successfully.`;
     }
 
     async getByArticleId(articleId: string): Promise<commentDto[] | string> {
-        return this.commentService.getCommentsByArticleId(articleId);
+        return this.commentRepo.getCommentsByArticleId(articleId);
     }
 
     async getByBuyerId(buyerId: string): Promise<commentDto[] | string> {
-        return this.commentService.getCommentsByBuyerId(buyerId);
+        return this.commentRepo.getCommentsByBuyerId(buyerId);
     }
 }

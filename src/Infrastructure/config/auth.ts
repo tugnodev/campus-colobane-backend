@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma/client.js";
+import { openAPI } from "better-auth/plugins";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 export const auth = betterAuth({
     appName: "Campus Colobane",
     secret: process.env.BETTER_AUTH_SECRET!,
@@ -21,13 +22,10 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
-        disableSignUp: false,
-        autoSignIn: true,
-        requireEmailVerification: true,
         maxPasswordLength: 32,
         minPasswordLength: 8,
     },
-    plugins: [],
+    plugins: [openAPI()],
     advanced: {
         cookiePrefix : "campus-colobane",
         cookieSecure : process.env.NODE_ENV === "production",

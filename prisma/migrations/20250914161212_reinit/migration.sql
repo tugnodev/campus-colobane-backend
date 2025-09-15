@@ -8,18 +8,10 @@ CREATE TABLE "public"."user" (
     "code" INTEGER,
     "address" TEXT,
     "image" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."ChatBox" (
-    "id" TEXT NOT NULL,
-    "shop_id" TEXT NOT NULL,
-    "buyer_id" TEXT NOT NULL,
-    "article_id" TEXT,
-
-    CONSTRAINT "ChatBox_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -41,6 +33,8 @@ CREATE TABLE "public"."Articles" (
     "description" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "stock" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Articles_pkey" PRIMARY KEY ("id")
 );
@@ -51,7 +45,8 @@ CREATE TABLE "public"."Comments" (
     "comment" TEXT NOT NULL,
     "article_id" TEXT NOT NULL,
     "buyer_id" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Comments_pkey" PRIMARY KEY ("id")
 );
@@ -62,9 +57,9 @@ CREATE TABLE "public"."Messages" (
     "message" TEXT NOT NULL,
     "sender_id" TEXT NOT NULL,
     "receiver_id" TEXT NOT NULL,
-    "chat_id" TEXT NOT NULL,
     "article_id" TEXT,
-    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Messages_pkey" PRIMARY KEY ("id")
 );
@@ -84,8 +79,9 @@ CREATE TABLE "public"."Orders" (
     "article_details" JSONB NOT NULL,
     "buyer_id" TEXT NOT NULL,
     "seller_id" TEXT NOT NULL,
-    "order_date" TEXT,
     "order_status" TEXT NOT NULL DEFAULT 'accepted',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Orders_pkey" PRIMARY KEY ("id")
 );
@@ -93,7 +89,7 @@ CREATE TABLE "public"."Orders" (
 -- CreateTable
 CREATE TABLE "public"."Carts" (
     "id" TEXT NOT NULL,
-    "card_details" JSONB,
+    "cart" JSONB NOT NULL,
     "user_id" TEXT NOT NULL,
 
     CONSTRAINT "Carts_pkey" PRIMARY KEY ("id")
@@ -154,12 +150,6 @@ CREATE UNIQUE INDEX "Numbers_number_key" ON "public"."Numbers"("number");
 CREATE UNIQUE INDEX "session_token_key" ON "public"."session"("token");
 
 -- AddForeignKey
-ALTER TABLE "public"."ChatBox" ADD CONSTRAINT "ChatBox_buyer_id_fkey" FOREIGN KEY ("buyer_id") REFERENCES "public"."user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."ChatBox" ADD CONSTRAINT "ChatBox_article_id_fkey" FOREIGN KEY ("article_id") REFERENCES "public"."Articles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "public"."Articles" ADD CONSTRAINT "Articles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -173,9 +163,6 @@ ALTER TABLE "public"."Messages" ADD CONSTRAINT "Messages_sender_id_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "public"."Messages" ADD CONSTRAINT "Messages_receiver_id_fkey" FOREIGN KEY ("receiver_id") REFERENCES "public"."user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."Messages" ADD CONSTRAINT "Messages_chat_id_fkey" FOREIGN KEY ("chat_id") REFERENCES "public"."ChatBox"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Messages" ADD CONSTRAINT "Messages_article_id_fkey" FOREIGN KEY ("article_id") REFERENCES "public"."Articles"("id") ON DELETE SET NULL ON UPDATE CASCADE;

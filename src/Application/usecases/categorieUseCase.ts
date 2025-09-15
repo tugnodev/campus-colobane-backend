@@ -1,27 +1,27 @@
-import type { ICategorieService } from '../../Domaine/ports/inputs/categorieService.js';
+import type { OCategorieRepo } from '../../Domaine/ports/outputs/categorieRepo.js';
 import type { categorieDto } from '../dtos/categorie.js';
 
 export class CategorieUseCase {
-    private categorieService: ICategorieService;
+    private categorieRepo: OCategorieRepo;
 
-    constructor(categorieService: ICategorieService) {
-        this.categorieService = categorieService;
+    constructor(categorieRepo: OCategorieRepo) {
+        this.categorieRepo = categorieRepo;
     }
 
     async create(categorieData: categorieDto): Promise<categorieDto | string> {
-        return this.categorieService.createCategorie(categorieData);
+        return this.categorieRepo.createCategorie(categorieData);
     }
 
     async update(categorieData: categorieDto): Promise<categorieDto | string> {
-        return this.categorieService.updateCategorie(categorieData);
+        return this.categorieRepo.updateCategorie(categorieData);
     }
 
     async delete(name: string): Promise<string> {
-        await this.categorieService.deleteCategorie(name);
+        await this.categorieRepo.deleteCategorie(name);
         return `Categorie with name ${name} has been deleted successfully.`;
     }
 
     async getAll(): Promise<categorieDto[] | string> {
-        return this.categorieService.getAllCategories();
+        return this.categorieRepo.getAllCategories();
     }
 }

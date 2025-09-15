@@ -1,28 +1,28 @@
-import type { ICartService } from '../../Domaine/ports/inputs/cartService.js';
-import type { createCardDto, updateCardDto, cardDto } from '../dtos/cart.js';
+import type { OCartRepo } from '../../Domaine/ports/outputs/cartRepo.js';
+import type { createCartDto, updateCartDto, cartDto } from '../dtos/cart.js';
 
 export class CartUseCase {
-    private cartService: ICartService;
+    private cartRepo: OCartRepo;
 
-    constructor(cartService: ICartService) {
-        this.cartService = cartService;
+    constructor(cartRepo: OCartRepo) {
+        this.cartRepo = cartRepo;
     }
 
-    async create(cardData: createCardDto): Promise<cardDto | string> {
-        return this.cartService.createCart(cardData);
+    async create(cardData: createCartDto): Promise<cartDto | string> {
+        return this.cartRepo.createCart(cardData);
     }
 
-    async update(cardData: updateCardDto): Promise<cardDto | string> {
+    async update(cardData: updateCartDto): Promise<cartDto | string> {
         // Pas de méthode getCardById, donc on ne vérifie pas l'existence ici
-        return this.cartService.updateCart(cardData);
+        return this.cartRepo.updateCart(cardData);
     }
 
     async delete(cardId: string): Promise<string> {
-        await this.cartService.deleteCart(cardId);
+        await this.cartRepo.deleteCart(cardId);
         return `Cart with ID ${cardId} has been deleted successfully.`;
     }
     
-    async getByUserId(userId: string): Promise<cardDto[] | string> {
-        return this.cartService.getByUserId(userId);
+    async getByUserId(userId: string): Promise<cartDto[] | string> {
+        return this.cartRepo.getByUserId(userId);
     }
 }

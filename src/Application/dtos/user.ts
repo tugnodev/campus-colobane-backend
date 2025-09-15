@@ -11,9 +11,9 @@ export interface createUserDto {
     name: string;
     email: string;
     password: string;
-    vendeur: boolean;
-    code: number;
-    address: address;
+    vendeur?: boolean;
+    code?: number;
+    address?: address;
 }
 
 export interface updateUserDto {
@@ -30,8 +30,10 @@ export interface userDto {
     id: string;
     name: string;
     email: string;
-    vendeur: boolean;
-    code: number;
-    address: address;
-    image?: string;
+    vendeur?: boolean;
+    code?: number | null;
+    address?: string | null;
+    image?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
 }

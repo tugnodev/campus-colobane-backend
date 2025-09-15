@@ -1,30 +1,30 @@
-import type { IUserService } from '../../Domaine/ports/inputs/userService.js';
+import type { OUserRepo } from '../../Domaine/ports/outputs/userRepo.js';
 import type { createUserDto, updateUserDto, userDto } from '../dtos/user.js';
 
 export class UserUseCase {
-    private userService: IUserService;
+    private userRepo: OUserRepo;
 
-    constructor(userService: IUserService) {
-        this.userService = userService;
+    constructor(userRepo: OUserRepo) {
+        this.userRepo = userRepo;
     }
 
-    async create(userData: createUserDto): Promise<userDto | string> {
-        return this.userService.createUser(userData);
+    async createUser(userData: createUserDto): Promise<userDto | string> {
+        return this.userRepo.createUser(userData);
+    }   
+
+    async updateUser(userData: updateUserDto): Promise<userDto | string> {
+        return this.userRepo.updateUser(userData);
     }
 
-    async update(userData: updateUserDto): Promise<userDto | string> {
-        return this.userService.updateUser(userData);
+    async deleteUser(userId: string): Promise<string> {
+        return this.userRepo.deleteUser(userId);
     }
 
-    async delete(userId: string): Promise<string> {
-        return this.userService.deleteUser(userId);
+    async getUserById(userId: string): Promise<userDto | string> {
+        return this.userRepo.getUserById(userId);
     }
 
-    async getById(userId: string): Promise<userDto | string> {
-        return this.userService.getUserById(userId);
-    }
-
-    async getAll(): Promise<userDto[] | string> {
-        return this.userService.getAllUsers();
+    async getAllUsers(): Promise<userDto[] | string> {
+        return this.userRepo.getAllUsers();
     }
 }
