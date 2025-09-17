@@ -3,6 +3,6 @@
 //import type { createArticleDto, updateAticleDto } from "../../../Application/dtos/article.js";
 //import type { Context } from "hono";
 //
-//export class ArticleController implements ArticleUseCase {
+//export class ArticleController {
 //    
 //}

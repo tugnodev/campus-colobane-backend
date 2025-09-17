@@ -16,6 +16,13 @@ export interface createUserDto {
     code?: number;
 }
 
+export interface turnToAdminDto {
+    id: string;
+    address: address;
+    vendeur: boolean;
+    code: number;
+}
+
 export interface updateUserDto {
     id: string;
     name?: string;

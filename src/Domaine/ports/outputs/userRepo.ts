@@ -1,4 +1,4 @@
-import type { createUserDto, updateUserDto, userDto } from "../../../Application/dtos/user.js";
+import type { createUserDto, turnToAdminDto, updateUserDto, userDto } from "../../../Application/dtos/user.js";
 
 export interface OUserRepo {
     createUser(user: createUserDto): Promise<userDto | string>;
@@ -6,6 +6,5 @@ export interface OUserRepo {
     deleteUser(id: string): Promise<string>;
     getUserById(id: string): Promise<userDto | string>;
     getAllUsers(): Promise<userDto[] | string>;
-    getUserByEmail(email: string): Promise<userDto | string>;
-    userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }>;
+    turnToAdmin(user: turnToAdminDto): Promise<userDto | string>;
 }

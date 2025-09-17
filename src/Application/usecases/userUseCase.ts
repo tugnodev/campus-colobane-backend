@@ -1,5 +1,5 @@
 import type { OUserRepo } from '../../Domaine/ports/outputs/userRepo.js';
-import type { createUserDto, updateUserDto, userDto } from '../dtos/user.js';
+import type { createUserDto, turnToAdminDto, updateUserDto, userDto } from '../dtos/user.js';
 
 export class UserUseCase {
     private userRepo: OUserRepo;
@@ -26,5 +26,9 @@ export class UserUseCase {
 
     async getAllUsers(): Promise<userDto[] | string> {
         return this.userRepo.getAllUsers();
+    }
+
+    async turnToAdmin(user: turnToAdminDto): Promise<userDto | string> {
+        return this.userRepo.turnToAdmin(user);
     }
 }

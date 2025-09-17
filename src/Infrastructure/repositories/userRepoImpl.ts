@@ -1,11 +1,10 @@
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
-import type { createUserDto, updateUserDto, userDto } from "../../Application/dtos/user.js";
+import type { createUserDto, updateUserDto, userDto, turnToAdminDto } from "../../Application/dtos/user.js";
 import { auth, prisma } from "../config/auth.js";
 
 export class UserRepoImpl implements OUserRepo {
 
     async createUser(user: createUserDto): Promise<userDto | string> {;
-                // Then create the application user
                 const newUser = await auth.api.signUpEmail({
                     body: {
                         email: user.email,
@@ -29,19 +28,9 @@ export class UserRepoImpl implements OUserRepo {
         return updated;
     }
 
-    async getUserByEmail(email: string): Promise<userDto | string> {
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return "User Not Found";
-        }
-        return user;
-    }
-
     async deleteUser(id: string): Promise<string> {
-        //verify existencies
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) return "User Not Found";
-        //delete user
         await prisma.user.delete({where: {id}})
         return "User Deleted"
     }
@@ -58,7 +47,12 @@ export class UserRepoImpl implements OUserRepo {
         return users as userDto[];
     }
 
-    async userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }> {
-        return auth.api.signOut({ headers });
+    async turnToAdmin(user: turnToAdminDto): Promise<userDto | string> {
+        const fetchedUser = await prisma.user.findUnique({ where: { id: user.id } });
+        if (!fetchedUser) {
+            return "Error while patching";
+        }
+        const updated = await prisma.user.update({ where: { id: user.id }, data: user });
+        return updated;
     }
 }
