@@ -7,5 +7,5 @@ export interface OMessageRepo {
     deleteMessage(id: string): Promise<string>;
     getMessageById(id: string): Promise<messageDto | null>;
     getMessagesByUserId(id: string): Promise<messageDto[] | string>;
-    getAllMessages(shop_id: string): Promise<messageDto[] | string>;
+    getAllMessages(): Promise<messageDto[] | string>;
 }
