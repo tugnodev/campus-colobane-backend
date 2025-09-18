@@ -23,10 +23,6 @@ chatRoutes.delete('/delete', async (c) => {
 chatRoutes.get('/all', async (c) => {
     return c.json({ message: "Hello World" });
 });
-// Optionally support receiver_id as a second path param as well
-chatRoutes.get('/:id', async (c) => {
-    return messageController.getByUserId(c);
-});
 chatRoutes.get('/:id/:receiver_id', async (c) => {
     return messageController.getByUserId(c);
 });
