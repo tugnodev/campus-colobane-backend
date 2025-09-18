@@ -44,3 +44,8 @@ export interface userDto {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface userLoginDto {
+    email: string;
+    password: string;
+}

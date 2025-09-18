@@ -30,11 +30,18 @@ export class MessageUseCase {
     }
 
     async delete(messageId: string): Promise<string> {
-        await this.messageRepo.deleteMessage(messageId);
-        return `Message with ID ${messageId} has been deleted successfully.`;
+        const deletedMessage = await this.messageRepo.deleteMessage(messageId);
+        if (!deletedMessage) {
+            return "No message found";
+        }
+        return deletedMessage;
     }
 
-    async getByUserId(userId: string): Promise<messageDto[] | string> {
-        return this.messageRepo.getMessagesByUserId(userId);
+    async getByUserId(userId: string, receiver_id: string): Promise<messageDto[] | string> {
+        const messages = await this.messageRepo.getMessagesByUserId(userId, receiver_id);
+        if (!messages) {
+            return "No messages found";
+        }
+        return messages;
     }
 }
