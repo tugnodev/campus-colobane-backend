@@ -8,21 +8,24 @@ export class CartUseCase {
         this.cartRepo = cartRepo;
     }
 
-    async create(cardData: createCartDto): Promise<cartDto | string> {
+    async createCart(cardData: createCartDto): Promise<cartDto | string> {
         return this.cartRepo.createCart(cardData);
     }
 
-    async update(cardData: updateCartDto): Promise<cartDto | string> {
+    async updateCart(cardData: updateCartDto): Promise<cartDto | string> {
         // Pas de méthode getCardById, donc on ne vérifie pas l'existence ici
         return this.cartRepo.updateCart(cardData);
     }
 
-    async delete(cardId: string): Promise<string> {
+    async deleteCart(cardId: string): Promise<string> {
         await this.cartRepo.deleteCart(cardId);
         return `Cart with ID ${cardId} has been deleted successfully.`;
     }
-    
-    async getByUserId(userId: string): Promise<cartDto[] | string> {
-        return this.cartRepo.getByUserId(userId);
+
+    async getByCartId(cartId: string): Promise<cartDto | string> {
+        return this.cartRepo.getCartById(cartId);
     }
+     async getAllCarts(): Promise<cartDto[] | string> {
+            return this.cartRepo.getAllCarts();
+        }
 }
