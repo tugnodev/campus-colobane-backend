@@ -1,20 +1,23 @@
 import type { ICartService } from "../ports/inputs/cartService.js";
-import type { createCardDto, updateCardDto, cardDto } from "../../Application/dtos/cart.js";
-import type { OCardRepo } from "../ports/outputs/cartRepo.js";
+import type { createCartDto, updateCartDto, cartDto } from "../../Application/dtos/cart.js";
+import type { OCartRepo } from "../ports/outputs/cartRepo.js";
 
 
 export class CardService implements ICartService {
-    private cartRepo: OCardRepo;
+    private cartRepo: OCartRepo;
 
-    constructor(cartRepo: OCardRepo) {
+    constructor(cartRepo: OCartRepo) {
         this.cartRepo = cartRepo;
     }
+    getByUserId(userId: string): Promise<cartDto[] | string> {
+        throw new Error("Method not implemented.");
+    }
 
-    async createCart(newCard: createCardDto): Promise<cardDto | string> {
+    async createCart(newCard: createCartDto): Promise<cartDto | string> {
         return this.cartRepo.createCart(newCard);
     }
 
-    async updateCart(card: updateCardDto): Promise<cardDto | string> {
+    async updateCart(card: updateCartDto): Promise<cartDto | string> {
         return this.cartRepo.updateCart(card);
     }
 
@@ -22,11 +25,11 @@ export class CardService implements ICartService {
         return this.cartRepo.deleteCart(id);
     }
 
-    async getByUserId(userId: string): Promise<cardDto[] | string> {
-        return this.cartRepo.getByUserId(userId);
+    async getByCartId(cartId: string): Promise<cartDto[] | string> {
+        return this.cartRepo.getByUserId(cartId);
     }
 
-    async getAllCarts(): Promise<cardDto[] | string> {
+    async getAllCarts(): Promise<cartDto[] | string> {
         return this.cartRepo.getAllCarts();
     }
 }

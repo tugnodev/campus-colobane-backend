@@ -13,7 +13,6 @@ export class CartUseCase {
     }
 
     async updateCart(cardData: updateCartDto): Promise<cartDto | string> {
-        // Pas de méthode getCardById, donc on ne vérifie pas l'existence ici
         return this.cartRepo.updateCart(cardData);
     }
 
@@ -23,7 +22,7 @@ export class CartUseCase {
     }
 
     async getByCartId(cartId: string): Promise<cartDto | string> {
-        return this.cartRepo.getCartById(cartId);
+        return this.cartRepo.getByCartId(cartId);
     }
      async getAllCarts(): Promise<cartDto[] | string> {
             return this.cartRepo.getAllCarts();
