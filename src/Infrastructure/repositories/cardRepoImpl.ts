@@ -3,8 +3,11 @@ import type { createCartDto, updateCartDto, cartDto } from "../../Application/dt
 import { prisma } from "../config/auth.js";
 
 export class CartRepoImpl implements OCartRepo {
-    getByUserId(userId: string): Promise<cartDto[] | string> {
-        throw new Error("Method not implemented.");
+
+    async getByUserId(userId: string): Promise<cartDto[] | string> {
+        const items = await prisma.cart.findMany({ where: { userId } });
+        if (!items || items.length === 0) return "No Items Found";
+        return items as cartDto[];
     }
 
     async createCart(item: createCartDto): Promise<cartDto | string> {
@@ -13,7 +16,6 @@ export class CartRepoImpl implements OCartRepo {
         return newItem;
     }
 
-
     async updateCart(item: updateCartDto): Promise<cartDto | string> {
         const existingItem = await prisma.cart.findUnique({ where: { id: item.id } });
         if (!existingItem) return "Item Not Found";
@@ -21,14 +23,12 @@ export class CartRepoImpl implements OCartRepo {
         return updatedItem;
     }
 
-   
     async deleteCart(id: string): Promise<string> {
         const existingItem = await prisma.cart.findUnique({ where: { id } });
         if (!existingItem) return "Item Not Found";
         await prisma.cart.delete({ where: { id } });
         return "Item Deleted";
     }
-
 
     async getByCartId(id: string): Promise<cartDto | string> {
         const item = await prisma.cart.findUnique({ where: { id } });
