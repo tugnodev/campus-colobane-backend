@@ -1,7 +1,11 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "../../generated/prisma/client.js";
+import { Resend } from "resend";
 import { openAPI } from "better-auth/plugins";
+import { emailTemplate } from "../services/emailTemplate.js";
+
+const resend = new Resend(process.env.RESEND_KEY!);
 
 export const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -20,10 +24,23 @@ export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql"
     }),
+    emailVerification: {
+        sendOnSignUp: true,
+        sendVerificationEmail: async ({ user, url}) => {
+            const html = 
+            await resend.emails.send({
+                to: user.email!,
+                from: "Campus Colobane <onboarding@campus-colobane.com>",
+                subject: "Verify your email address",
+                html: emailTemplate(user.name,user.email,url)
+            });
+        },
+        autoSignInAfterVerification: true,
+    },
     emailAndPassword: {
         enabled: true,
         maxPasswordLength: 32,
-        minPasswordLength: 8,
+        minPasswordLength: 8
     },
     plugins: [openAPI()],
     advanced: {
