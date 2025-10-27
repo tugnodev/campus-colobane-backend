@@ -28,7 +28,7 @@ export interface orderDto {
     id: string;
     article_details: article_details[];
     buyer_id: string;
-    order_status: OrderStatus;
+    order_status: OrderStatus | string;
     createdAt: Date;
     updatedAt: Date;
 }

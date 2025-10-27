@@ -13,6 +13,9 @@ export const chatRoutes = new Hono();
 chatRoutes.post('/create', async (c) => {
     return messageController.create(c);
 });
+chatRoutes.get('/', async (c) => {
+    return c.json({ message: "Hello World" });
+});
 chatRoutes.patch('/update', async (c) => {
     return messageController.update(c);
 });

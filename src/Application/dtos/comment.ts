@@ -17,4 +17,6 @@ export interface commentDto {
     userId: string;
     comment: string;
     date: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

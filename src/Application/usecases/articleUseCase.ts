@@ -10,7 +10,7 @@ export class ArticleUseCase {
     }
 
     async create(articleData: createArticleDto): Promise<articleDto | string> {
-        return this.articleRepo.saveArticle(articleData);
+        return await this.articleRepo.saveArticle(articleData);
     }
 
     async update(articleData: updateAticleDto): Promise<articleDto | string> {

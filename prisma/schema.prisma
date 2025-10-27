@@ -18,6 +18,7 @@ model User {
   code              Int?
   address           String?
   image             String?
+  certified         Boolean    @default(false)
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
   Articles          Articles[]
@@ -30,10 +31,18 @@ model User {
   Account           Account[]
   Session           Session[]
   Numbers           Numbers[]
+  Appreciations     ArticleNotes[]
 
   @@map("user")
 }
 
+model ArticleNotes {
+  number    Int    @unique
+  seller_id String
+  article_id String
+  User      User   @relation(fields: [seller_id], references: [id])
+  Articles  Articles @relation(fields: [article_id], references: [id])
+}
 
 model Categories {
   name        String   @id
@@ -50,11 +59,13 @@ model Articles {
   description String
   price       Int
   stock       Int
+  views       Int @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   User        User     @relation(fields: [user_id], references: [id])
   Comments    Comments[]
   Messages    Messages[]
+  Appreciations    ArticleNotes[]
 }
 
 model Comments {
