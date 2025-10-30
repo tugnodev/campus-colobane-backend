@@ -1,5 +1,9 @@
 import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
-import type { createOrderDto, updateOrderDto, orderDto } from "../../Application/dtos/order.js";
+import type {
+  createOrderDto,
+  updateOrderDto,
+  orderDto,
+} from "../../Application/dtos/order.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -9,9 +13,12 @@ export class OrderRepoImpl implements OOrderRepo {
     try {
       // Infer seller_id from the first article detail's articleId if it contains user_id
       const firstDetail = order.article_details?.[0];
-      const sellerId = (firstDetail && (firstDetail as any).articleId && (firstDetail as any).articleId.user_id)
-        ? (firstDetail as any).articleId.user_id
-        : undefined;
+      const sellerId =
+        firstDetail &&
+        (firstDetail as any).articleId &&
+        (firstDetail as any).articleId.user_id
+          ? (firstDetail as any).articleId.user_id
+          : undefined;
 
       if (!sellerId) {
         return "Unable to determine seller_id from article_details";
@@ -40,7 +47,9 @@ export class OrderRepoImpl implements OOrderRepo {
       const updated = await prisma.orders.update({
         where: { id: order.id },
         data: {
-          article_details: order.article_details as unknown as object | undefined,
+          article_details: order.article_details as unknown as
+            | object
+            | undefined,
           buyer_id: order.buyer_id,
           order_status: (order as any).order_status as string | undefined,
         },
@@ -66,8 +75,11 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersByBuyerId(buyerId: string): Promise<orderDto[] | string> {
     try {
-      const orders = await prisma.orders.findMany({ where: { buyer_id: buyerId } });
-      if (!orders || orders.length === 0) return "No orders found for this buyer";
+      const orders = await prisma.orders.findMany({
+        where: { buyer_id: buyerId },
+      });
+      if (!orders || orders.length === 0)
+        return "No orders found for this buyer";
       return orders as unknown as orderDto[];
     } catch (e) {
       return "Error while fetching orders for buyer";
@@ -76,8 +88,11 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersBySellerId(sellerId: string): Promise<orderDto[] | string> {
     try {
-      const orders = await prisma.orders.findMany({ where: { seller_id: sellerId } });
-      if (!orders || orders.length === 0) return "No orders found for this seller";
+      const orders = await prisma.orders.findMany({
+        where: { seller_id: sellerId },
+      });
+      if (!orders || orders.length === 0)
+        return "No orders found for this seller";
       return orders as unknown as orderDto[];
     } catch (e) {
       return "Error while fetching orders for seller";
