@@ -4,7 +4,7 @@ import type {
   updateOrderDto,
   orderDto,
 } from "../../Application/dtos/order.js";
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "@prisma/client/extension";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 const prisma = new PrismaClient();
@@ -89,7 +89,6 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersBySellerId(sellerId: string): Promise<orderDto[] | string> {
     try {
-      
       const orders = await prisma.orders.findMany({
         where: { seller_id: sellerId },
       });
