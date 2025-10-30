@@ -1,9 +1,20 @@
-//import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
-//import type { createOrderDto, updateOrderDto, orderDto } from "../../Application/dtos/order.js";
-//import { PrismaClient } from "@prisma/client/extension";
+import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
+import type {
+  createOrderDto,
+  updateOrderDto,
+  orderDto,
+} from "../../Application/dtos/order.js";
 
-//const prisma = new PrismaClient();
+import { PrismaClient } from "@prisma/client/extension";
 
-//export class OrderRepoImpl implements OOrderRepo {
+const prisma = new PrismaClient();
 
-//}
+export class OrderRepoImpl implements OOrderRepo {
+  async saveOrder( data : createOrderDto ): Promise<orderDto | string> {
+    try{
+      const newOrder = await prisma.order.create
+    } catch(error){
+      
+    }
+  }
+}
