@@ -1,5 +1,6 @@
 import { CategorieUseCase } from "../../../Application/usecases/categorieUseCase.js";
 import type { categorieDto } from "../../../Application/dtos/categorie.js";
+<<<<<<< HEAD
 import type { Context } from "hono";
 
 export class CategorieController  {
@@ -46,3 +47,11 @@ export class CategorieController  {
 }
 
 
+=======
+//import type { Context } from "hono";
+//
+//export class CategorieController implements CategorieUseCase {
+//    
+//} drf
+//
+>>>>>>> panier

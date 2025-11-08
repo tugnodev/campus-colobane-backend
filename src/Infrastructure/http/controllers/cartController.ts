@@ -1,34 +1,60 @@
 import { CartUseCase } from "../../../Application/usecases/cartUseCase.js";
-import type {
-  createCartDto,
-  updateCartDto,
-} from "../../../Application/dtos/cart.js";
+import type { createCartDto, updateCartDto } from "../../../Application/dtos/cart.ts";
 import type { Context } from "hono";
 
 export class CartController {
-  constructor(private cartUseCase: CartUseCase) {}
+    private cartUseCase: CartUseCase;
 
-  async createCart(ctx: Context) {
-    const cartData: createCartDto = await ctx.req.json();
-    const result = await this.cartUseCase.create(cartData);
-    return ctx.json(result);
-  }
+    constructor(cartUseCase: CartUseCase) {
+        this.cartUseCase = cartUseCase;
+    }
 
-  async updateCart(ctx: Context) {
-    const cartData: updateCartDto = await ctx.req.json();
-    const result = await this.cartUseCase.update(cartData);
-    return ctx.json(result);
-  }
+   
+    async createCart(ctx: Context) {
+        const cartData: createCartDto = await ctx.req.json();
+        const result = await this.cartUseCase.createCart(cartData);
+        if (typeof result === "string") {
+            return ctx.json({ message: result });
+        }
+        return ctx.json(result);
+    }
 
-  async deleteCart(ctx: Context) {
-    const cardId = await ctx.req.json();
-    const result = await this.cartUseCase.delete(cardId);
-    return ctx.json(result);
-  }
+    
+    async deleteCart(ctx: Context) {
+        const { id } = await ctx.req.json();
+        const result = await this.cartUseCase.deleteCart(id);
+        if (typeof result === "string") {
+            return ctx.json({ message: result });
+        }
+        return ctx.json(result);
+    }
 
-  async getByUserID(ctx: Context) {
-    const id = ctx.req.param("cardId");
-    const result = await this.cartUseCase.getByUserId(id);
-    return ctx.json(result);
-  }
+    
+    async updateCart(ctx: Context) {
+        const cartData: updateCartDto = await ctx.req.json();
+        const result = await this.cartUseCase.updateCart(cartData);
+        if (typeof result === "string") {
+            return ctx.json({ message: result });
+        }
+        return ctx.json(result);
+    }
+
+
+    async getByCartId(ctx: Context) {
+        const id = ctx.req.param("id");
+        const result = await this.cartUseCase.getByCartId(id);
+        if (typeof result === "string") {
+            return ctx.json({ message: result });
+        }
+        return ctx.json(result);
+    }
+
+    
+    async getAllCarts(ctx: Context) {
+        const result = await this.cartUseCase.getAllCarts();
+        if (typeof result === "string") {
+            return ctx.json({ message: result });
+        }
+        return ctx.json(result); 
+    }
 }

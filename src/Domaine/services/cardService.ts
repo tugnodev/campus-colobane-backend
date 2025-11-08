@@ -1,32 +1,35 @@
 import type { ICartService } from "../ports/inputs/cartService.js";
-import type { createCardDto, updateCardDto, cardDto } from "../../Application/dtos/cart.js";
-import type { OCardRepo } from "../ports/outputs/cartRepo.js";
+import type { createCartDto, updateCartDto, cartDto } from "../../Application/dtos/cart.js";
+import type { OCartRepo } from "../ports/outputs/cartRepo.js";
 
+export class CartService implements ICartService {
+    private cartRepo: OCartRepo;
 
-export class CardService implements ICartService {
-    private cartRepo: OCardRepo;
-
-    constructor(cartRepo: OCardRepo) {
+    constructor(cartRepo: OCartRepo) {
         this.cartRepo = cartRepo;
     }
 
-    async createCart(newCard: createCardDto): Promise<cardDto | string> {
-        return this.cartRepo.createCart(newCard);
+    async getByUserId(userId: string): Promise<cartDto[] | string> {
+        return this.cartRepo.getByUserId(userId);
     }
 
-    async updateCart(card: updateCardDto): Promise<cardDto | string> {
-        return this.cartRepo.updateCart(card);
+    async createCart(newCart: createCartDto): Promise<cartDto | string> {
+        return this.cartRepo.createCart(newCart);
+    }
+
+    async updateCart(cart: updateCartDto): Promise<cartDto | string> {
+        return this.cartRepo.updateCart(cart);
     }
 
     async deleteCart(id: string): Promise<string> {
         return this.cartRepo.deleteCart(id);
     }
 
-    async getByUserId(userId: string): Promise<cardDto[] | string> {
-        return this.cartRepo.getByUserId(userId);
+    async getByCartId(cartId: string): Promise<cartDto | string> {
+        return this.cartRepo.getByCartId(cartId);
     }
 
-    async getAllCarts(): Promise<cardDto[] | string> {
+    async getAllCarts(): Promise<cartDto[] | string> {
         return this.cartRepo.getAllCarts();
     }
 }
