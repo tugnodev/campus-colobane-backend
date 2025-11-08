@@ -26,7 +26,7 @@ export class CartController {
     return ctx.json(result);
   }
 
-  async getUserID(ctx: Context) {
+  async getByUserID(ctx: Context) {
     const id = ctx.req.param("cardId");
     const result = await this.cartUseCase.getByUserId(id);
     return ctx.json(result);
