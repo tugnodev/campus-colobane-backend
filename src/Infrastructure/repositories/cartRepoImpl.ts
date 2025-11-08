@@ -11,40 +11,57 @@ const prisma = new PrismaClient();
 export class CartRepoImpl implements OCartRepo {
   async createCart(data: createCartDto): Promise<cartDto | string> {
     try {
-      const created: cartDto = await prisma.cart.create({ data });
-      if (!created) return "error";
-      return created;
-    } catch (error) {
+      const created = await prisma.cart.create({ data });
+      return created ?? "error";
+    } catch {
       return "error";
     }
   }
+
   async updateCart(data: updateCartDto): Promise<cartDto | string> {
     try {
-      const updated: cartDto = await prisma.cart.update({
+      const updated = await prisma.cart.update({
         where: { id: data.id },
         data,
       });
-      if (!updated) return "error";
-      return updated;
-    } catch (error) {
+      return updated ?? "error";
+    } catch {
       return "error";
     }
   }
+
   async deleteCart(id: string): Promise<string> {
     try {
       const deleted = await prisma.cart.delete({ where: { id } });
-      if (!deleted) return "error";
-      return "success";
-    } catch (error) {
+      return deleted ? "success" : "error";
+    } catch {
       return "error";
     }
   }
-  async getByUserId(id: string): Promise<cartDto | string> {
+
+  async getByUserId(userId: string): Promise<cartDto[] | string> {
     try {
-      const cart = await prisma.cart.findUnique({ where: { userId: id } });
-      if (!cart) return "error";
-      return cart;
-    } catch (error) {
+      const carts = await prisma.cart.findMany({ where: { userId } });
+      return carts.length > 0 ? carts : "error";
+    } catch {
+      return "error";
+    }
+  }
+
+  async getByCartId(cartId: string): Promise<cartDto | string> {
+    try {
+      const cart = await prisma.cart.findUnique({ where: { id: cartId } });
+      return cart ?? "error";
+    } catch {
+      return "error";
+    }
+  }
+
+  async getAllCarts(): Promise<cartDto[] | string> {
+    try {
+      const carts = await prisma.cart.findMany();
+      return carts.length > 0 ? carts : "error";
+    } catch {
       return "error";
     }
   }
