@@ -22,7 +22,7 @@ export class CartUseCase {
         return `Cart with ID ${cardId} has been deleted successfully.`;
     }
     
-    async getByUserId(userId: string): Promise<cartDto[] | string> {
+    async getByUserId(userId: string): Promise<cartDto | string> {
         return this.cartRepo.getByUserId(userId);
     }
 }
