@@ -6,26 +6,28 @@ import { WebSocketHandler } from "../../../../Infrastructure/websocket/websocket
 
 const messageRepository = new MessageRepoImpl();
 const notificationService = new WebSocketHandler();
-const messageUseCase = new MessageUseCase(messageRepository, notificationService);
+const messageUseCase = new MessageUseCase(
+  messageRepository,
+  notificationService,
+);
 const messageController = new MessageController(messageUseCase);
 
 export const chatRoutes = new Hono();
-chatRoutes.post('/create', async (c) => {
-    return messageController.create(c);
+chatRoutes.post("/create", async (c) => {
+  return await messageController.create(c);
 });
-chatRoutes.get('/', async (c) => {
-    return c.json({ message: "Hello World" });
+chatRoutes.get("/", async (c) => {
+  return c.json({ message: "Hello World" });
 });
-chatRoutes.patch('/update', async (c) => {
-    return messageController.update(c);
+chatRoutes.patch("/update", async (c) => {
+  return await messageController.update(c);
 });
-chatRoutes.delete('/delete', async (c) => {
-    return messageController.delete(c);
+chatRoutes.delete("/delete", async (c) => {
+  return await messageController.delete(c);
 });
-// Register specific routes BEFORE dynamic ones to avoid collisions
-chatRoutes.get('/all', async (c) => {
-    return c.json({ message: "Hello World" });
+chatRoutes.get("/all", async (c) => {
+  return c.json({ message: "Hello World" });
 });
-chatRoutes.get('/:id/:receiver_id', async (c) => {
-    return messageController.getByUserId(c);
+chatRoutes.get("/:id/:receiver_id", async (c) => {
+  return await messageController.getByUserId(c);
 });
