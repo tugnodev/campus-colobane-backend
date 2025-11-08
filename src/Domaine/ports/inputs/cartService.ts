@@ -7,4 +7,8 @@ export interface ICartService {
     deleteCart(id: string): Promise<string>;
     getAllCarts(): Promise<cartDto[] | string>;
     getByUserId(userId: string): Promise<cartDto[] | string>;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> panier
