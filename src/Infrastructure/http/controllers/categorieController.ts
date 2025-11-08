@@ -45,9 +45,4 @@ export class CategorieController  {
        
 }
 
-//import type { Context } from "hono";
-//
-//export class CategorieController implements CategorieUseCase {
-//
-//}
-//
+
