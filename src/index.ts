@@ -22,7 +22,7 @@ app.route("/categories", categorieRoutes);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-serve(
+serve({
   fetch: app.fetch,
   port: port,
 }, () => {

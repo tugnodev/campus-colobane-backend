@@ -6,8 +6,8 @@ type item = {
 }
 
 
-export type Cart = {
+export type Card = {
     id : Promise<string>
-    cart_details : item[]
+    card_details : item[]
     user_id : string
 }
