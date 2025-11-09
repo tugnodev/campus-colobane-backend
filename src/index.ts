@@ -7,6 +7,8 @@ import { userRoutes } from './Infrastructure/repositories/market/user.js';
 import { chatRoutes } from './Infrastructure/repositories/market/chat.js';
 import { cartRoutes } from './Infrastructure/http/routes/market/cart.js';
 import { categorieRoutes } from './Infrastructure/http/routes/market/categories.js';
+import { articleRoutes } from './Infrastructure/http/routes/market/articles.js';
+
 const app = new Hono()
 
 app.use("*", corsMiddleware)
@@ -19,6 +21,7 @@ app.route("/user", userRoutes);
 app.route("/chat", chatRoutes);
 app.route("/cart", cartRoutes);
 app.route("/categories", categorieRoutes);
+app.route("/articles", articleRoutes);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
