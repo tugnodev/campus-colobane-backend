@@ -1,6 +1,6 @@
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { categorieDto } from "../../Application/dtos/categorie.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma/index.js";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 const prisma = new PrismaClient()
@@ -22,7 +22,7 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async updateCategorie(data: categorieDto): Promise<categorieDto | string> {
     try{
-      const categorie = await prisma.categorie.update({ where: { id: data.name }, data });
+      const categorie = await prisma.categories.update({ where: { name: data.name }, data });
       if(!categorie) return "Error updating categorie";
       return categorie;
     }catch(error){

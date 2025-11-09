@@ -4,68 +4,68 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id                String     @id @default(uuid())
-  name              String
-  email             String     @unique
-  emailVerified     Boolean    @default(false)
-  vendeur           Boolean    @default(false)
-  code              Int?
-  address           String?
-  image             String?
-  certified         Boolean    @default(false)
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  Articles          Articles[]
-  Comments          Comments[]
-  MessagesSent      Messages[] @relation("Sender")
-  MessagesReceived  Messages[] @relation("Receiver")
-  OrdersBuyer       Orders[]   @relation("Buyer")
-  OrdersSeller      Orders[]   @relation("Seller")
-  Carts             Carts[]
-  Account           Account[]
-  Session           Session[]
-  Numbers           Numbers[]
-  Appreciations     ArticleNotes[]
+  id               String         @id @default(uuid())
+  name             String
+  email            String         @unique
+  emailVerified    Boolean        @default(false)
+  vendeur          Boolean        @default(false)
+  code             Int?
+  address          String?
+  image            String?
+  certified        Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  Articles         Articles[]
+  Comments         Comments[]
+  MessagesSent     Messages[]     @relation("Sender")
+  MessagesReceived Messages[]     @relation("Receiver")
+  OrdersBuyer      Orders[]       @relation("Buyer")
+  OrdersSeller     Orders[]       @relation("Seller")
+  Carts            Carts[]
+  Account          Account[]
+  Session          Session[]
+  Numbers          Numbers[]
+  Appreciations    ArticleNotes[]
 
   @@map("user")
 }
 
 model ArticleNotes {
-  number    Int    @unique
-  seller_id String
+  number     Int      @unique
+  seller_id  String
   article_id String
-  User      User   @relation(fields: [seller_id], references: [id])
-  Articles  Articles @relation(fields: [article_id], references: [id])
+  User       User     @relation(fields: [seller_id], references: [id])
+  Articles   Articles @relation(fields: [article_id], references: [id])
 }
 
 model Categories {
-  name        String   @id
+  name        String  @id
   description String?
   image       String?
 }
 
 model Articles {
-  id          String   @id @default(uuid())
-  user_id     String
-  title       String
-  images      String[]
-  category    String[]
-  description String
-  price       Int
-  stock       Int
-  views       Int @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  User        User     @relation(fields: [user_id], references: [id])
-  Comments    Comments[]
-  Messages    Messages[]
-  Appreciations    ArticleNotes[]
+  id            String         @id @default(uuid())
+  user_id       String
+  title         String
+  images        String[]
+  category      String[]
+  description   String
+  price         Int
+  stock         Int
+  views         Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  User          User           @relation(fields: [user_id], references: [id])
+  Comments      Comments[]
+  Messages      Messages[]
+  Appreciations ArticleNotes[]
 }
 
 model Comments {
@@ -80,15 +80,15 @@ model Comments {
 }
 
 model Messages {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   message     String
   sender_id   String
   receiver_id String
   article_id  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Sender      User     @relation("Sender", fields: [sender_id], references: [id])
-  Receiver    User     @relation("Receiver", fields: [receiver_id], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Sender      User      @relation("Sender", fields: [sender_id], references: [id])
+  Receiver    User      @relation("Receiver", fields: [receiver_id], references: [id])
   Articles    Articles? @relation(fields: [article_id], references: [id])
 }
 
@@ -100,22 +100,22 @@ model Numbers {
 }
 
 model Orders {
-  id             String   @id @default(uuid())
+  id              String   @id @default(uuid())
   article_details Json
-  buyer_id       String
-  seller_id      String
-  order_status   String   @default("accepted")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  Buyer          User     @relation("Buyer", fields: [buyer_id], references: [id])
-  Seller         User     @relation("Seller", fields: [seller_id], references: [id])
+  buyer_id        String
+  seller_id       String
+  order_status    String   @default("accepted")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  Buyer           User     @relation("Buyer", fields: [buyer_id], references: [id])
+  Seller          User     @relation("Seller", fields: [seller_id], references: [id])
 }
 
 model Carts {
-  id          String   @id @default(uuid())
-  cart        Json
-  user_id     String
-  User        User   @relation(fields: [user_id], references: [id])
+  id      String @id @default(uuid())
+  cart    Json
+  user_id String
+  User    User   @relation(fields: [user_id], references: [id])
 }
 
 model Session {

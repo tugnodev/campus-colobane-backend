@@ -4,14 +4,14 @@ import type {
   updateCartDto,
   cartDto,
 } from "../../Application/dtos/cart.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma/index.js";
 
 const prisma = new PrismaClient();
 
 export class CartRepoImpl implements OCartRepo {
   async createCart(data: createCartDto): Promise<cartDto | string> {
     try {
-      const created = await prisma.cart.create({ data });
+      const created = await prisma.carts.create({ data });
       return created ?? "error";
     } catch {
       return "error";
@@ -20,7 +20,7 @@ export class CartRepoImpl implements OCartRepo {
 
   async updateCart(data: updateCartDto): Promise<cartDto | string> {
     try {
-      const updated = await prisma.cart.update({
+      const updated = await prisma.carts.update({
         where: { id: data.id },
         data,
       });
@@ -32,7 +32,7 @@ export class CartRepoImpl implements OCartRepo {
 
   async deleteCart(id: string): Promise<string> {
     try {
-      const deleted = await prisma.cart.delete({ where: { id } });
+      const deleted = await prisma.carts.delete({ where: { id } });
       return deleted ? "success" : "error";
     } catch {
       return "error";
@@ -50,7 +50,7 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByCartId(cartId: string): Promise<cartDto | string> {
     try {
-      const cart = await prisma.cart.findUnique({ where: { id: cartId } });
+      const cart = await prisma.carts.findUnique({ where: { id: cartId } });
       return cart ?? "error";
     } catch {
       return "error";
@@ -59,7 +59,7 @@ export class CartRepoImpl implements OCartRepo {
 
   async getAllCarts(): Promise<cartDto[] | string> {
     try {
-      const carts = await prisma.cart.findMany();
+      const carts = await prisma.carts.findMany();
       return carts.length > 0 ? carts : "error";
     } catch {
       return "error";

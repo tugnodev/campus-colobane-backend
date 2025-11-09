@@ -4,7 +4,7 @@ import type {
   updateOrderDto,
   orderDto,
 } from "../../Application/dtos/order.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma/index.js";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 const prisma = new PrismaClient();
