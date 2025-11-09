@@ -4,23 +4,23 @@ import { OrderRepoImpl } from "../../../repositories/orderRepoImpl.js";
 import { OrderUseCase } from "../../../../Application/usecases/orderUseCase.js";
 
 const OrderRepo = new OrderRepoImpl();
-const CommandeUseCase = new OrderUseCase(OrderRepo);
-const CommandeController = new OrderController(CommandeUseCase);
+const commandeUseCase = new OrderUseCase(OrderRepo);
+const commandeController = new OrderController(commandeUseCase);
 
-export const CommandeRoutes = new Hono();
-CommandeRoutes.post("/commandes", async (c) => {
-  await CommandeController.create(c);
+export const commandeRoutes = new Hono();
+commandeRoutes.post("/commandes", async (c) => {
+  await commandeController.create(c);
 });
-CommandeRoutes.put("/commandes/:id", async (c) => {
-  await CommandeController.update(c);
+commandeRoutes.put("/commandes/:id", async (c) => {
+  await commandeController.update(c);
 });
-CommandeRoutes.delete("/commandes/:id", async (c) => {
-  await CommandeController.delete(c);
+commandeRoutes.delete("/commandes/:id", async (c) => {
+  await commandeController.delete(c);
 });
 
-CommandeRoutes.get("/commandes/:SellerId", async (c) => {
-  await CommandeController.getBySellerId(c);
+commandeRoutes.get("/commandes/:SellerId", async (c) => {
+  await commandeController.getBySellerId(c);
 });
-CommandeRoutes.get("/commandes/:BuyerId", async (c) => {
-  await CommandeController.getByBuyerId(c);
+commandeRoutes.get("/commandes/:BuyerId", async (c) => {
+  await commandeController.getByBuyerId(c);
 });
