@@ -4,13 +4,13 @@ import type {
   updateAticleDto,
   articleDto,
 } from "../../Application/dtos/article.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../generated/prisma/index.js";
 
 const prisma = new PrismaClient();
 export class ArticleRepoImpl implements OArticleRepo {
   async saveArticle(data: createArticleDto): Promise<articleDto | string> {
     try {
-      const created = await prisma.article.create({ data });
+      const created = await prisma.articles.create({ data });
       if (!created) return "Error creating article";
       return created;
     } catch (e) {
