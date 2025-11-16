@@ -8,22 +8,22 @@ const categorieUseCase = new CategorieUseCase(categorieRepository);
 const categorieController = new CategorieController(categorieUseCase);
 
 export const categorieRoutes = new Hono();
-categorieRoutes.post("/create", async (c) => {
+categorieRoutes.post("/categories/create", async (c) => {
   return categorieController.create(c);
 });
-categorieRoutes.get("/", async (c) => {
+categorieRoutes.get("/categories", async (c) => {
   return c.json({ message: "Route Categorie" });
 });
-categorieRoutes.patch("/update", async (c) => {
+categorieRoutes.patch("/categories/update", async (c) => {
   return categorieController.update(c);
 });
-categorieRoutes.delete("/delete", async (c) => {
+categorieRoutes.delete("/categories/delete", async (c) => {
   return categorieController.delete(c);
 });
 // Register specific routes BEFORE dynamic ones to avoid collisions
-categorieRoutes.get("/all", async (c) => {
+categorieRoutes.get("/categories/all", async (c) => {
   return c.json({ message: "Route Categorie" });
 });
-categorieRoutes.get("/:name", async (c) => {
+categorieRoutes.get("/categories/:name", async (c) => {
   return categorieController.getAll(c);
 });

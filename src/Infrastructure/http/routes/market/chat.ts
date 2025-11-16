@@ -13,21 +13,21 @@ const messageUseCase = new MessageUseCase(
 const messageController = new MessageController(messageUseCase);
 
 export const chatRoutes = new Hono();
-chatRoutes.post("/create", async (c) => {
+chatRoutes.post("/chat/create", async (c) => {
   return await messageController.create(c);
 });
-chatRoutes.get("/", async (c) => {
-  return c.json({ message: "Hello World" });
-});
-chatRoutes.patch("/update", async (c) => {
+// chatRoutes.get("/", async (c) => {
+//   return c.json({ message: "Hello World" });
+// });
+chatRoutes.patch("/chat/update", async (c) => {
   return await messageController.update(c);
 });
-chatRoutes.delete("/delete", async (c) => {
+chatRoutes.delete("/chat/delete", async (c) => {
   return await messageController.delete(c);
 });
-chatRoutes.get("/all", async (c) => {
+chatRoutes.get("/chat/all", async (c) => {
   return c.json({ message: "Hello World" });
 });
-chatRoutes.get("/:id/:receiver_id", async (c) => {
+chatRoutes.get("/chat/:id/:receiver_id", async (c) => {
   return await messageController.getByUserId(c);
 });

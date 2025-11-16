@@ -18,12 +18,12 @@ app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello Hono!" }));
 
-app.route("/user", userRoutes);
-app.route("/chat", chatRoutes);
-app.route("/cart", cartRoutes);
-app.route("/categories", categorieRoutes);
-app.route("/articles", articleRoutes);
-app.route("/commandes", commandeRoutes);
+app.route("/", userRoutes);
+app.route("/", chatRoutes);
+app.route("/", cartRoutes);
+app.route("/", categorieRoutes);
+app.route("/", articleRoutes);
+app.route("/", commandeRoutes);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
