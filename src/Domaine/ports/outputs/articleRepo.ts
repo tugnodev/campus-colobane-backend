@@ -1,4 +1,4 @@
-import type { createArticleDto, updateAticleDto, articleDto } from "../../../Application/dtos/article.js"
+²import type { createArticleDto, updateAticleDto, articleDto } from "../../../Application/dtos/article.js"
 
 export interface OArticleRepo {
     saveArticle(article: createArticleDto): Promise<articleDto | string>
