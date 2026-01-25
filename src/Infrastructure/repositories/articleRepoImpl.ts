@@ -5,10 +5,11 @@ import type {
   articleDto,
 } from "../../Application/dtos/article.js";
 import { PrismaClient } from "../../generated/prisma/index.js";
+import type { Articles } from "../../Domaine/entities/articles.js";
 
 const prisma = new PrismaClient();
 export class ArticleRepoImpl implements OArticleRepo {
-  async saveArticle(data: createArticleDto): Promise<articleDto | string> {
+  async saveArticle(data: createArticleDto): Promise<Articles | string> {
     try {
       const created = await prisma.articles.create({ data });
       if (!created) return "Error creating article";
@@ -18,9 +19,9 @@ export class ArticleRepoImpl implements OArticleRepo {
     }
   }
 
-  async updateArticle(data: updateAticleDto): Promise<articleDto | string> {
+  async updateArticle(data: updateAticleDto): Promise<Articles | string> {
     try {
-      const updated = await prisma.article.update({
+      const updated = await prisma.articles.update({
         where: { id: data.id },
         data,
       });
@@ -33,7 +34,7 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async deleteArticle(id: string): Promise<string> {
     try {
-      const deleted = await prisma.article.delete({
+      const deleted = await prisma.articles.delete({
         where: {
           id,
         },
@@ -46,9 +47,9 @@ export class ArticleRepoImpl implements OArticleRepo {
     }
   }
 
-  async getArticleById(id: string): Promise<articleDto | string> {
+  async getArticleById(id: string): Promise<Articles | string> {
     try {
-      const article: articleDto = await prisma.article.findUnique({
+      const article: Articles = await prisma.articles.findUnique({
         where: { id },
       });
       if (!article) return "Article not found";
@@ -58,9 +59,9 @@ export class ArticleRepoImpl implements OArticleRepo {
     }
   }
 
-  async getAllArticles(): Promise<articleDto[] | string> {
+  async getAllArticles(): Promise<Articles[] | string> {
     try {
-      const articles = await prisma.article.findMany();
+      const articles = await prisma.articles.findMany();
       if (!articles) return "No articles found";
       return articles;
     } catch (e) {
