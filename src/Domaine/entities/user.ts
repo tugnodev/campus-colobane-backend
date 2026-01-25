@@ -1,13 +1,13 @@
 export type User = {
-  id: Promise<string>;
-  name: string;
   email: string;
+  code: number | null;
+  id: string;
+  name: string;
   emailVerified: boolean;
   vendeur: boolean;
-  codePermanent: string;
-  address: string;
-  imgage: string;
-  certifiied: boolean;
+  address: string | null;
+  image: string | null | undefined;
+  certified: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
