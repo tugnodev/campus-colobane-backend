@@ -4,22 +4,32 @@ import type {
   updateUserDto,
   userDto,
   turnToAdminDto,
+  authPack,
 } from "../../Application/dtos/user.js";
 import { auth, prisma } from "../config/auth.js";
 
 export class UserRepoImpl implements OUserRepo {
-  async createUser(user: createUserDto): Promise<userDto | string> {
-    const newUser = await auth.api.signUpEmail({
-      body: {
-        email: user.email,
-        password: user.password,
-        name: user.name,
-      },
-    });
-    if (!newUser.user) {
-      return "User already exists";
+  async createUser(user: createUserDto): Promise<authPack | string> {
+    try {
+      const created = await auth.api.signUpEmail({
+        body: {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+        },
+      });
+
+      const createdUser = await prisma.user.update({
+        where: { id: created.user.id },
+        data: user,
+      });
+
+      created.user = createdUser;
+
+      return created;
+    } catch (error) {
+      return "Error while creating";
     }
-    return newUser.user;
   }
 
   async updateUser(user: updateUserDto): Promise<userDto | string> {

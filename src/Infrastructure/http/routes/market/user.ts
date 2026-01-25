@@ -32,10 +32,10 @@ userRoutes.get("/:id", async (c) => {
   return userController.getUserById(c);
 });
 
-userRoutes.patch("/update", async (c) => {
+userRoutes.patch("/user/update", async (c) => {
   return userController.updateUser(c);
 });
-userRoutes.delete("/delete", async (c) => {
+userRoutes.delete("/user/delete", async (c) => {
   return userController.deleteUser(c);
 });
 

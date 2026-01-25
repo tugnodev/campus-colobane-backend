@@ -1,22 +1,24 @@
 export interface createCommentDto {
-    articleId: string;
-    userId: string;
-    comment: string;
+  articleId: string;
+  userId: string;
+  rates: number;
+  comment: string;
 }
 
 export interface updateCommentDto {
-    id: string;
-    articleId?: string;
-    userId?: string;
-    comment?: string;
+  id: string;
+  articleId: string;
+  userId: string;
+  comment?: string;
+  rates?: string;
 }
 
 export interface commentDto {
-    id: string;
-    articleId: string;
-    userId: string;
-    comment: string;
-    date: string;
-    createdAt: Date;
-    updatedAt: Date;
+  id: number;
+  articleId: string;
+  author: string;
+  comment: string;
+  rates: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
