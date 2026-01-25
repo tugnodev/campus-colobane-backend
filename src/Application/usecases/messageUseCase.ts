@@ -1,8 +1,10 @@
 import type { OMessageRepo } from '../../Domaine/ports/outputs/messageRepo.js';
 import type { createMessageDto, updateMessageDto, messageDto } from '../dtos/messages.js';
 import { WebSocketHandler } from '../../Infrastructure/websocket/websocketService.js';
+import { type Message } from '../../Domaine/entities/message.js';
+import { type IMessageService } from '../../Domaine/ports/inputs/messageService.js'
 
-export class MessageUseCase {
+export class MessageUseCase implements IMessageService {
     private messageRepo: OMessageRepo;
     private notificationService: WebSocketHandler;
 
@@ -11,7 +13,7 @@ export class MessageUseCase {
         this.notificationService = notificationService;
     }
 
-    async create(messageData: createMessageDto): Promise<messageDto | string> {
+    async createMessage(messageData: createMessageDto): Promise<Message | string> {
         const newMessage = await this.messageRepo.saveMessage(messageData);
         const receiverSocket = this.notificationService.getAllClients().get(messageData.receiver_id);
         if (receiverSocket) {
@@ -20,7 +22,7 @@ export class MessageUseCase {
         return newMessage;
     }
 
-    async update(messageData: updateMessageDto): Promise<messageDto | string> {
+    async updateMessage(messageData: updateMessageDto): Promise<Message | string> {
         const updatedMessage = await this.messageRepo.updateMessage(messageData);
         const receiverSocket = this.notificationService.getAllClients().get(messageData.receiver_id!);
         if (receiverSocket) {
@@ -29,7 +31,7 @@ export class MessageUseCase {
         return updatedMessage;
     }
 
-    async delete(messageId: string): Promise<string> {
+    async deleteMessage(messageId: string): Promise<string> {
         const deletedMessage = await this.messageRepo.deleteMessage(messageId);
         if (!deletedMessage) {
             return "No message found";
@@ -37,7 +39,7 @@ export class MessageUseCase {
         return deletedMessage;
     }
 
-    async getByUserId(userId: string, receiver_id: string): Promise<messageDto[] | string> {
+    async getMessagesByUserId(userId: string, receiver_id: string): Promise<Message[] | string> {
         const messages = await this.messageRepo.getMessagesByUserId(userId, receiver_id);
         if (!messages) {
             return "No messages found";

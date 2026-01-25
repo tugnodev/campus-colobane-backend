@@ -1,15 +1,16 @@
 import type { OMessageRepo } from "../../Domaine/ports/outputs/messageRepo.js";
-import type { createMessageDto, updateMessageDto, messageDto } from "../../Application/dtos/messages.js";
+import type { createMessageDto, updateMessageDto } from "../../Application/dtos/messages.js";
 import { prisma } from "../config/auth.js";
+import { type Message } from "../../Domaine/entities/message.js";
 
 export class MessageRepoImpl implements OMessageRepo {
-    async saveMessage(message: createMessageDto): Promise<messageDto | string> {
+    async saveMessage(message: createMessageDto): Promise<Message | string> {
         return prisma.messages.create({
             data: message
         })
     }
     
-    async updateMessage(message: updateMessageDto): Promise<messageDto | string> {
+    async updateMessage(message: updateMessageDto): Promise<Message | string> {
         return prisma.messages.update({
             where: {
                 id: message.id
@@ -31,7 +32,7 @@ export class MessageRepoImpl implements OMessageRepo {
         }
     }
     
-    async getMessageById(id: string): Promise<messageDto | null> {
+    async getMessageById(id: string): Promise<Message | null> {
         return prisma.messages.findUnique({
             where: {
                 id: id,
@@ -39,7 +40,7 @@ export class MessageRepoImpl implements OMessageRepo {
         })
     }
     
-    async getMessagesByUserId(id: string, receiver_id: string): Promise<messageDto[] | string> {
+    async getMessagesByUserId(id: string, receiver_id: string): Promise<Message[] | string> {
         return await prisma.messages.findMany({
             where: {
                 sender_id: id,
@@ -55,7 +56,7 @@ export class MessageRepoImpl implements OMessageRepo {
         })
     }
     
-    async getAllMessages(): Promise<messageDto[] | string> {
+    async getAllMessages(): Promise<Message[] | string> {
         return await prisma.messages.findMany()
     }
 }

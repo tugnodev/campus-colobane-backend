@@ -1,6 +1,7 @@
 import type { createMessageDto, updateMessageDto, messageDto } from "../../Application/dtos/messages.js";
 import type { OMessageRepo } from "../ports/outputs/messageRepo.js";
 import type { IMessageService } from "../ports/inputs/messageService.js";
+import { type Message } from "../../Domaine/entities/message.js";
 
 export class MessageService implements IMessageService {
     private messageRepo: OMessageRepo;
@@ -9,11 +10,11 @@ export class MessageService implements IMessageService {
         this.messageRepo = messageRepo;
     }
 
-    async createMessage(message: createMessageDto): Promise<messageDto | string> {
+    async createMessage(message: createMessageDto): Promise<Message | string> {
         return this.messageRepo.saveMessage(message);
     }
 
-    async updateMessage(message: updateMessageDto): Promise<messageDto | string> {
+    async updateMessage(message: updateMessageDto): Promise<Message | string> {
         return this.messageRepo.updateMessage(message);
     }
 
@@ -21,7 +22,7 @@ export class MessageService implements IMessageService {
         return this.messageRepo.deleteMessage(id);
     }
 
-    async getMessagesByUserId(userId: string): Promise<messageDto[] | string> {
+    async getMessagesByUserId(userId: string): Promise<Message[] | string> {
         return this.messageRepo.getMessagesByUserId(userId);
     }
 }
