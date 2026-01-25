@@ -1,5 +1,6 @@
 export type Articles = {
   id: string;
+  userId: string;
   title: string;
   images: string[];
   category: string[];
@@ -8,6 +9,4 @@ export type Articles = {
   stock: number;
   createdAt: Date;
   updatedAt: Date;
-  views: number;
-  user_id: string;
 };

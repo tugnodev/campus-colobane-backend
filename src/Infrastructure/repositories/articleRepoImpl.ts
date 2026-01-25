@@ -2,7 +2,6 @@ import type { OArticleRepo } from "../../Domaine/ports/outputs/articleRepo.js";
 import type {
   createArticleDto,
   updateAticleDto,
-  articleDto,
 } from "../../Application/dtos/article.js";
 import { PrismaClient } from "../../generated/prisma/index.js";
 import type { Articles } from "../../Domaine/entities/articles.js";
@@ -49,11 +48,11 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getArticleById(id: string): Promise<Articles | string> {
     try {
-      const article: Articles = await prisma.articles.findUnique({
+      const article = await prisma.articles.findUnique({
         where: { id },
       });
       if (!article) return "Article not found";
-      return article;
+      return article as Articles;
     } catch (e) {
       return "Error fetching article";
     }

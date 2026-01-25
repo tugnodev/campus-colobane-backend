@@ -1,7 +1,6 @@
 import type {
   createArticleDto,
   updateAticleDto,
-  articleDto,
 } from "../../../Application/dtos/article.js";
 import { type Articles } from "../../entities/articles.js";
 
