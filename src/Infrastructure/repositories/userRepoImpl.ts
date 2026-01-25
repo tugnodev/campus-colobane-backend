@@ -3,10 +3,12 @@ import type {
   createUserDto,
   updateUserDto,
   userDto,
-  turnToAdminDto,
+  turnToVendorDto,
   authPack,
 } from "../../Application/dtos/user.js";
 import { auth, prisma } from "../config/auth.js";
+import type { Articles } from "../../Domaine/entities/articles.js";
+import type { User } from "../../Domaine/entities/user.js";
 
 export class UserRepoImpl implements OUserRepo {
   async createUser(user: createUserDto): Promise<authPack | string> {
@@ -26,13 +28,13 @@ export class UserRepoImpl implements OUserRepo {
 
       created.user = createdUser;
 
-      return created;
+      return created as authPack;
     } catch (error) {
       return "Error while creating";
     }
   }
 
-  async updateUser(user: updateUserDto): Promise<userDto | string> {
+  async updateUser(user: updateUserDto): Promise<User | string> {
     //check user existence
     const fetchedUser = await prisma.user.findUnique({
       where: { id: user.id },
@@ -54,19 +56,19 @@ export class UserRepoImpl implements OUserRepo {
     return "User Deleted";
   }
 
-  async getUserById(id: string): Promise<userDto | string> {
+  async getUserById(id: string): Promise<User | string> {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return "User Not Found";
     return user;
   }
 
-  async getAllUsers(): Promise<userDto[] | string> {
+  async getAllUsers(): Promise<User[] | string> {
     const users = await prisma.user.findMany();
     if (!users) return "Users Not Found";
-    return users as userDto[];
+    return users as User[];
   }
 
-  async turnToAdmin(user: turnToAdminDto): Promise<userDto | string> {
+  async turnToVendor(user: turnToVendorDto): Promise<User | string> {
     const fetchedUser = await prisma.user.findUnique({
       where: { id: user.id },
     });

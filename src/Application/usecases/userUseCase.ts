@@ -1,13 +1,14 @@
+import type { User } from "../../Domaine/entities/user.js";
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
 import type {
   createUserDto,
-  turnToAdminDto,
   updateUserDto,
-  userDto,
   authPack,
+  turnToVendorDto,
 } from "../dtos/user.js";
+import { type IUserService } from "../../Domaine/ports/inputs/userService.js";
 
-export class UserUseCase {
+export class UserUseCase implements IUserService {
   private userRepo: OUserRepo;
 
   constructor(userRepo: OUserRepo) {
@@ -18,7 +19,7 @@ export class UserUseCase {
     return this.userRepo.createUser(userData);
   }
 
-  async updateUser(userData: updateUserDto): Promise<userDto | string> {
+  async updateUser(userData: updateUserDto): Promise<User | string> {
     return this.userRepo.updateUser(userData);
   }
 
@@ -26,15 +27,15 @@ export class UserUseCase {
     return this.userRepo.deleteUser(userId);
   }
 
-  async getUserById(userId: string): Promise<userDto | string> {
+  async getUserById(userId: string): Promise<User | string> {
     return this.userRepo.getUserById(userId);
   }
 
-  async getAllUsers(): Promise<userDto[] | string> {
+  async getAllUsers(): Promise<User[] | string> {
     return this.userRepo.getAllUsers();
   }
 
-  async turnToAdmin(user: turnToAdminDto): Promise<userDto | string> {
-    return this.userRepo.turnToAdmin(user);
+  async turnToVendor(user: turnToVendorDto): Promise<User | string> {
+    return this.userRepo.turnToVendor(user);
   }
 }

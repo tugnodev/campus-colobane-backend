@@ -5,10 +5,11 @@ import type {
   articleDto,
 } from "../../Application/dtos/article.js";
 import { PrismaClient } from "../../generated/prisma/index.js";
+import type { Articles } from "../../Domaine/entities/articles.js";
 
 const prisma = new PrismaClient();
 export class ArticleRepoImpl implements OArticleRepo {
-  async saveArticle(data: createArticleDto): Promise<articleDto | string> {
+  async saveArticle(data: createArticleDto): Promise<Articles | string> {
     try {
       const created = await prisma.articles.create({ data });
       if (!created) return "Error creating article";
@@ -58,9 +59,9 @@ export class ArticleRepoImpl implements OArticleRepo {
     }
   }
 
-  async getAllArticles(): Promise<articleDto[] | string> {
+  async getAllArticles(): Promise<Articles[] | string> {
     try {
-      const articles = await prisma.article.findMany();
+      const articles = await prisma.articles.findMany();
       if (!articles) return "No articles found";
       return articles;
     } catch (e) {
