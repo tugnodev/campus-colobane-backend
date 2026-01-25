@@ -1,9 +1,11 @@
 import type { OArticleRepo } from '../../Domaine/ports/outputs/articleRepo.js';
 import type { createArticleDto, updateAticleDto, articleDto } from '../dtos/article.js';
+import { ArticleService } from '../../Domaine/services/articleService.js';
 
 
-export class ArticleUseCase {
+export class ArticleUseCase implements ArticleService {
     private articleRepo: OArticleRepo;
+
 
     constructor(articleRepo: OArticleRepo) {
         this.articleRepo = articleRepo;
