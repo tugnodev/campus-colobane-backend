@@ -23,6 +23,14 @@ export class UserUseCase implements IUserService {
     return this.userRepo.updateUser(userData);
   }
 
+  async userLogout({
+    headers,
+  }: {
+    headers: Headers;
+  }): Promise<{ success: boolean }> {
+    return this.userRepo.userLogout({ headers });
+  }
+
   async deleteUser(userId: string): Promise<string> {
     return this.userRepo.deleteUser(userId);
   }
