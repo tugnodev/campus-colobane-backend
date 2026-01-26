@@ -1,1 +1,167 @@
-../../../../Domaine/ports/outputs/userRepo.js../../../../Application/dtos/user.js../../../config/auth.js../../../../Domaine/entities/articles.js../../../../Domaine/entities/user.js
+import type { User } from "../../Domaine/entities/user.js";
+import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
+import type {
+  authPack,
+  createUserDto,
+  turnToVendorDto,
+  updateUserDto,
+  userLoginDto,
+} from "../../Application/dtos/user.js";
+import { PrismaClient } from "@prisma/client/extension";
+import { auth } from "../config/auth.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { BetterAuthError } from "better-auth";
+
+const prisma = new PrismaClient();
+
+export class UserRepoImpl implements OUserRepo {
+  async createUser(data: createUserDto): Promise<authPack | string> {
+    try {
+      const newUser = await auth.api.signUpEmail({
+        //@ts-ignore
+        body: {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          image: data.image,
+          rememberMe: data.rememberMe,
+        },
+      });
+
+      const user: User = await prisma.user.update({
+        where: { id: newUser.user.id },
+        data,
+      });
+
+      newUser.user = user;
+
+      return newUser as authPack;
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof BetterAuthError:
+          return "User already exists";
+        case e instanceof Error:
+          return "Error creating user";
+        default:
+          return "Error creating user";
+      }
+    }
+  }
+
+  async updateUser(data: updateUserDto): Promise<User | string> {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id: data.id },
+        data,
+      });
+
+      return updatedUser;
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof Error:
+          return "Error updating user";
+        default:
+          return "Error updating user";
+      }
+    }
+  }
+
+  async deleteUser(id: string): Promise<string> {
+    try {
+      await prisma.user.delete({
+        where: { id },
+      });
+
+      return "User deleted";
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof Error:
+          return "Error deleting user";
+        default:
+          return "Error deleting user";
+      }
+    }
+  }
+
+  async getUserById(id: string): Promise<User | string> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id },
+      });
+
+      if (!user) {
+        return "User not found";
+      }
+
+      return user;
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof Error:
+          return "Error getting user";
+        default:
+          return "Error getting user";
+      }
+    }
+  }
+
+  async turnToVendor(user: turnToVendorDto): Promise<User | string> {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { vendeur: true },
+      });
+
+      return updatedUser;
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof Error:
+          return "Error turning user to vendor";
+        default:
+          return "Error turning user to vendor";
+      }
+    }
+  }
+
+  async userLogout({
+    headers,
+  }: {
+    headers: Headers;
+  }): Promise<{ success: boolean }> {
+    try {
+      const logout = await auth.api.signOut({ headers });
+      if (logout) {
+        return { success: true };
+      } else {
+        return { success: false };
+      }
+    } catch (e) {
+      return { success: false };
+    }
+  }
+
+  async getAllUsers(): Promise<User[] | string> {
+    try {
+      const users = await prisma.users.findMany();
+      return users;
+    } catch (e) {
+      switch (e) {
+        case e instanceof PrismaClientKnownRequestError:
+          return "Unvalid data";
+        case e instanceof Error:
+          return "Error getting users";
+        default:
+          return "Error getting users";
+      }
+    }
+  }
+}
