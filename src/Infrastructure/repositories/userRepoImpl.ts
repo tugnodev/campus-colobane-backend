@@ -5,7 +5,6 @@ import type {
   createUserDto,
   turnToVendorDto,
   updateUserDto,
-  userLoginDto,
 } from "../../Application/dtos/user.js";
 import { PrismaClient } from "@prisma/client/extension";
 import { auth } from "../config/auth.js";
