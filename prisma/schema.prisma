@@ -1,5 +1,6 @@
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -96,23 +97,24 @@ model Numbers {
   User      User   @relation(fields: [seller_id], references: [id])
 }
 
+model Carts {
+  id      String @id @default(uuid())
+  cart    Json
+  user_id String
+  User    User   @relation(fields: [user_id], references: [id])
+}
+
 model Orders {
   id              String   @id @default(uuid())
   article_details Json
   buyer_id        String
   seller_id       String
   order_status    String   @default("accepted")
+  order_date      DateTime @default(now()) // champ ajouté
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   Buyer           User     @relation("Buyer", fields: [buyer_id], references: [id])
   Seller          User     @relation("Seller", fields: [seller_id], references: [id])
-}
-
-model Carts {
-  id      String @id @default(uuid())
-  cart    Json
-  user_id String
-  User    User   @relation(fields: [user_id], references: [id])
 }
 
 model Session {
