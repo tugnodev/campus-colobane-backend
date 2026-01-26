@@ -4,17 +4,12 @@ import type {
   createOrderDto,
   updateOrderDto,
 } from "../../Application/dtos/order.js";
-import type { Order as OrderEntity } from "../../Domaine/entities/orders.js";
+import type { Order } from "../../Domaine/entities/orders.js";
 
 const prisma = new PrismaClient();
 
 export class OrderRepoImpl implements OOrderRepo {
-  // Petit helper pour éviter la répétition du mapping
-  private mapToEntity(dbOrder: any): OrderEntity {
-    return  dbOrder;
-  }
-
-  async saveOrder(order: createOrderDto): Promise<OrderEntity | string> {
+  async saveOrder(order: createOrderDto): Promise<Order | string> {
     try {
       const created = await prisma.orders.create({
         data: {
@@ -24,21 +19,21 @@ export class OrderRepoImpl implements OOrderRepo {
           order_status: "accepted",
         },
       });
-      return this.mapToEntity(created);
+      return created;
     } catch (error) {
       console.error(error);
       return "Error creating order";
     }
   }
 
-  async updateOrder(order: updateOrderDto): Promise<OrderEntity | string> {
+  async updateOrder(order: updateOrderDto): Promise<Order | string> {
     try {
       const { id, ...data } = order;
       const updated = await prisma.orders.update({
         where: { id },
         data,
       });
-      return this.mapToEntity(updated);
+      return updated;
     } catch (error) {
       console.error(error);
       return "Error updating order";
@@ -56,26 +51,26 @@ export class OrderRepoImpl implements OOrderRepo {
     }
   }
 
-  async getOrdersByBuyerId(buyerId: string): Promise<OrderEntity[] | string> {
+  async getOrdersByBuyerId(buyerId: string): Promise<Order[] | string> {
     try {
       const orders = await prisma.orders.findMany({
         where: { buyer_id: buyerId },
         orderBy: { createdAt: "desc" },
       });
-      return orders.map(this.mapToEntity);
+      return orders;
     } catch (error) {
       console.error(error);
       return "Error fetching orders by buyer";
     }
   }
 
-  async getOrdersBySellerId(sellerId: string): Promise<OrderEntity[] | string> {
+  async getOrdersBySellerId(sellerId: string): Promise<Order[] | string> {
     try {
       const orders = await prisma.orders.findMany({
         where: { seller_id: sellerId },
         orderBy: { createdAt: "desc" },
       });
-      return orders.map(this.mapToEntity);
+      return orders;
     } catch (error) {
       console.error(error);
       return "Error fetching orders by seller";

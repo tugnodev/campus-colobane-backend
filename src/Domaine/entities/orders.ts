@@ -1,3 +1,5 @@
+import type { JsonValue } from "../../generated/prisma/runtime/client.js";
+
 enum OrderStatus {
   ACCEPTED = "accepted",
   SHIPPED = "shipped",
@@ -5,13 +7,17 @@ enum OrderStatus {
   CANCELLED = "cancelled",
 }
 
+type ADetails = {
+  article_id: string;
+  quantity: number;
+};
+
 export type Order = {
-  id: Promise<string>;
-  article_details: {};
+  id: string;
+  article_details: JsonValue;
+  order_status: string;
   buyer_id: string;
   seller_id: string;
-  order_date: string;
-  order_status: OrderStatus;
   createdAt: Date;
   updatedAt: Date;
 };
