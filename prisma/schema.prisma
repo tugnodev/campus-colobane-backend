@@ -69,11 +69,10 @@ model Articles {
 }
 
 model Comments {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   article_id String
   buyer_id   String
   comment    String
-  rate       Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   Articles   Articles @relation(fields: [article_id], references: [id])
