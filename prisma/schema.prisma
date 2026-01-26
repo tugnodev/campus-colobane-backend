@@ -1,10 +1,12 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -29,13 +31,13 @@ model User {
   Account          Account[]
   Session          Session[]
   Numbers          Numbers[]
-  Appreciations    ArticleRates[]
+  Appreciations    ArticleNotes[]
 
   @@map("user")
 }
 
-model ArticleRates {
-  rate       Float    @unique
+model ArticleNotes {
+  number     Int      @unique
   seller_id  String
   article_id String
   User       User     @relation(fields: [seller_id], references: [id])
@@ -57,12 +59,13 @@ model Articles {
   description   String
   price         Int
   stock         Int
+  rates         Float[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   User          User           @relation(fields: [userId], references: [id])
   Comments      Comments[]
   Messages      Messages[]
-  Appreciations ArticleRates[]
+  Appreciations ArticleNotes[]
 }
 
 model Comments {
