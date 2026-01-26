@@ -1,6 +1,8 @@
 import type {
   createCommentDto,
+  createRateDto,
   updateCommentDto,
+  updateRateDto,
 } from "../../../Application/dtos/comment.js";
 import type { Comment, Rate } from "../../entities/comment.js";
 

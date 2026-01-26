@@ -10,5 +10,4 @@ export interface OMessageRepo {
   deleteMessage(id: string): Promise<string>;
   getMessageById(id: string): Promise<Message | null>;
   getMessagesByUserId(receiver_id: string): Promise<Message[] | string>;
-  getAllMessages(): Promise<Message[] | string>;
 }

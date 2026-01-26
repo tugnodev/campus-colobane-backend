@@ -8,5 +8,8 @@ export interface IMessageService {
   createMessage(newMessage: createMessageDto): Promise<Message | string>;
   updateMessage(message: updateMessageDto): Promise<Message | string>;
   deleteMessage(id: string): Promise<string>;
-  getMessagesByUserId(receiverId: string): Promise<Message[] | string>;
+  getConversation(
+    receiverId: string,
+    senderId: string,
+  ): Promise<Message[] | string>;
 }

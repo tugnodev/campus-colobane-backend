@@ -1,7 +1,7 @@
 import type { IOrderService } from "../ports/inputs/orderService.js";
 import type {
   createOrderDto,
-  updateOrderDto,,
+  updateOrderDto,
 } from "../../Application/dtos/order.js";
 import type { OOrderRepo } from "../ports/outputs/orderRepo.js";
 import type { Order } from "../entities/orders.js";

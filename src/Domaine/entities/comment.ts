@@ -15,21 +15,3 @@ export type Rate = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-import { PrismaClient } from "../../../prisma/generated/index.js";
-
-const prisma = new PrismaClient();
-
-export const createComment = async (comment: Comment) => {
-  const newComment = await prisma.articleRates.create({
-    data: comment,
-  });
-  return newComment;
-};
-
-export const createRate = async (rate: Rate) => {
-  const newRate = await prisma.rate.create({
-    data: rate,
-  });
-  return newRate;
-};
