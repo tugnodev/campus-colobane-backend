@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { UserController } from "../../controllers/userController.js";
 import { UserUseCase } from "../../../../Application/usecases/userUseCase.js";
-import { UserRepoImpl } from "../../../repositories/userRepoImpl.js";
+import { UserRepoImpl } from "../repositories/userRepoImpl.js";
 import { auth } from "../../../config/auth.js";
 
 const userRepository = new UserRepoImpl();
@@ -16,7 +16,7 @@ userRoutes.get("/greeting", async (c) => {
   return c.json({ message: `Hello ${name}`, id: session?.user?.id });
 });
 
-userRoutes.post("/user/register", async (c) => {
+userRoutes.post("/register", async (c) => {
   return userController.createUser(c);
 });
 
@@ -32,7 +32,7 @@ userRoutes.get("/:id", async (c) => {
   return userController.getUserById(c);
 });
 
-userRoutes.patch("/user/update", async (c) => {
+userRoutes.patch("/update", async (c) => {
   return userController.updateUser(c);
 });
 userRoutes.delete("/user/delete", async (c) => {

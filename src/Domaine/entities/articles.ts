@@ -1,5 +1,5 @@
 export type Articles = {
-  id: Promise<string>;
+  id: string;
   userId: string;
   title: string;
   images: string[];
@@ -7,7 +7,6 @@ export type Articles = {
   description: string;
   price: number;
   stock: number;
-  rates: number;
   createdAt: Date;
   updatedAt: Date;
 };

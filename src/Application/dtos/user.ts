@@ -1,3 +1,5 @@
+import type { User } from "../../Domaine/entities/user.js";
+
 enum address {
   UADB = "Université Alioune-Diop",
   UGB = "Université Gaston-Berger",
@@ -16,7 +18,7 @@ export interface createUserDto {
   code?: number;
 }
 
-export interface turnToAdminDto {
+export interface turnToVendorDto {
   id: string;
   address: address;
   vendeur: boolean;
@@ -52,5 +54,5 @@ export interface userLoginDto {
 
 export interface authPack {
   token: string | null;
-  user: userDto;
+  user: User | undefined | null;
 }

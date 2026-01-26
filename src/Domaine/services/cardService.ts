@@ -1,7 +1,8 @@
 import type { ICartService } from "../ports/inputs/cartService.js";
-import type { createCartDto, updateCartDto, cartDto } from "../../Application/dtos/cart.js";
+import type { createCartDto, updateCartDto } from "../../Application/dtos/cart.js";
 import type { OCartRepo } from "../ports/outputs/cartRepo.js";
-
+import type { Cards } from ""
+  
 export class CartService implements ICartService {
     private cartRepo: OCartRepo;
 
@@ -9,15 +10,15 @@ export class CartService implements ICartService {
         this.cartRepo = cartRepo;
     }
 
-    async getByUserId(userId: string): Promise<cartDto[] | string> {
+    async getByUserId(userId: string): Promise<Cards[] | string> {
         return this.cartRepo.getByUserId(userId);
     }
 
-    async createCart(newCart: createCartDto): Promise<cartDto | string> {
+    async createCart(newCart: createCartDto): Promise<Cards | string> {
         return this.cartRepo.createCart(newCart);
     }
 
-    async updateCart(cart: updateCartDto): Promise<cartDto | string> {
+    async updateCart(cart: updateCartDto): Promise<Cards | string> {
         return this.cartRepo.updateCart(cart);
     }
 
@@ -25,11 +26,11 @@ export class CartService implements ICartService {
         return this.cartRepo.deleteCart(id);
     }
 
-    async getByCartId(cartId: string): Promise<cartDto | string> {
+    async getByCartId(cartId: string): Promise<Cards | string> {
         return this.cartRepo.getByCartId(cartId);
     }
 
-    async getAllCarts(): Promise<cartDto[] | string> {
+    async getAllCarts(): Promise<Cards[] | string> {
         return this.cartRepo.getAllCarts();
     }
 }
