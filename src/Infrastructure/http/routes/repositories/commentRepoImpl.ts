@@ -1,9 +1,9 @@
-import type { OCommentRepo } from "../../Domaine/ports/outputs/commentRepo.js";
+import type { OCommentRepo } from "../../../../Domaine/ports/outputs/commentRepo.js";
 import type {
   createCommentDto,
   updateCommentDto,
   commentDto,
-} from "../../Application/dtos/comment.js";
+} from "../../../../Application/dtos/comment.js";
 import { PrismaClient } from "@prisma/client/extension";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
@@ -60,7 +60,9 @@ export class CommentRepoImpl implements OCommentRepo {
       return "error";
     }
   }
-  async getCommentsByArticleId(articleId: string): Promise<commentDto[] | string> {
+  async getCommentsByArticleId(
+    articleId: string,
+  ): Promise<commentDto[] | string> {
     try {
       const comments = await prisma.comment.findMany({
         where: { articleId },

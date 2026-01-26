@@ -1,9 +1,13 @@
-import type { createOrderDto, updateOrderDto, orderDto } from "../../../Application/dtos/order.js";
+import type {
+  createOrderDto,
+  updateOrderDto,
+} from "../../../Application/dtos/order.js";
+import type { Order } from "../../entities/orders.js";
 
 export interface IOrderService {
-    createOrder(newOrder: createOrderDto): Promise<orderDto | string>;
-    updateOrder(order: updateOrderDto): Promise<orderDto | string>;
-    deleteOrder(id: string): Promise<string>;
-    getOrdersByBuyerId(buyerId: string): Promise<orderDto[] | string>;
-    getOrdersBySellerId(sellerId: string): Promise<orderDto[] | string>;
+  createOrder(newOrder: createOrderDto): Promise<Order | string>;
+  updateOrder(order: updateOrderDto): Promise<Order | string>;
+  deleteOrder(id: string): Promise<string>;
+  getOrdersByBuyerId(buyerId: string): Promise<Order[] | string>;
+  getOrdersBySellerId(sellerId: string): Promise<Order[] | string>;
 }

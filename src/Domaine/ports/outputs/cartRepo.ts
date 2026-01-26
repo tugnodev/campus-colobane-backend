@@ -3,12 +3,13 @@ import type {
   updateCartDto,
   cartDto,
 } from "../../../Application/dtos/cart.js";
+import type { Carts } from "../../entities/carts.js";
 
 export interface OCartRepo {
-  createCart(cart: createCartDto): Promise<cartDto | string>;
-  updateCart(cart: updateCartDto): Promise<cartDto | string>;
+  createCart(cart: createCartDto): Promise<Carts | string>;
+  updateCart(cart: updateCartDto): Promise<Carts | string>;
   deleteCart(id: string): Promise<string>;
-  getAllCarts(): Promise<cartDto[] | string>;
-  getByUserId(userId: string): Promise<string | cartDto[]>;
-  getByCartId(cartId: string): Promise<cartDto | string>;
+  getAllCarts(): Promise<Carts[] | string>;
+  getByUserId(userId: string): Promise<string | Carts[]>;
+  getByCartId(cartId: string): Promise<Carts | string>;
 }

@@ -1,9 +1,13 @@
-import type { createCommentDto, updateCommentDto, commentDto } from '../../../Application/dtos/comment.js';
+import type {
+  createCommentDto,
+  updateCommentDto,
+} from "../../../Application/dtos/comment.js";
+import { type Comment } from "../../entities/comment.js";
 
 export interface OCommentRepo {
-    saveComment(comment: createCommentDto): Promise<commentDto | string>;
-    updateComment(comment: updateCommentDto): Promise<commentDto | string>;
-    deleteComment(id: string): Promise<string>;
-    getCommentsByArticleId(articleId: string): Promise<commentDto[] | string>;
-    getCommentsByBuyerId(buyerId: string): Promise<commentDto[] | string>;
+  saveComment(comment: createCommentDto): Promise<Comment | string>;
+  updateComment(comment: updateCommentDto): Promise<Comment | string>;
+  deleteComment(id: string): Promise<string>;
+  getCommentsByArticleId(articleId: string): Promise<Comment[] | string>;
+  getCommentsByBuyerId(buyerId: string): Promise<Comment[] | string>;
 }

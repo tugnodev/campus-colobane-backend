@@ -1,11 +1,14 @@
-import type { createMessageDto, updateMessageDto, messageDto } from "../../../Application/dtos/messages.js"
-
+import type {
+  createMessageDto,
+  updateMessageDto,
+} from "../../../Application/dtos/messages.js";
+import { type Message } from "../../entities/message.js";
 
 export interface OMessageRepo {
-    saveMessage(message: createMessageDto): Promise<messageDto | string>;
-    updateMessage(message: updateMessageDto): Promise<messageDto | string>;
-    deleteMessage(id: string): Promise<string>;
-    getMessageById(id: string): Promise<messageDto | null>;
-    getMessagesByUserId(id: string, receiver_id: string): Promise<messageDto[] | string>;
-    getAllMessages(): Promise<messageDto[] | string>;
+  saveMessage(message: createMessageDto): Promise<Message | string>;
+  updateMessage(message: updateMessageDto): Promise<Message | string>;
+  deleteMessage(id: string): Promise<string>;
+  getMessageById(id: string): Promise<Message | null>;
+  getMessagesByUserId(receiver_id: string): Promise<Message[] | string>;
+  getAllMessages(): Promise<Message[] | string>;
 }

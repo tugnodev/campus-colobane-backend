@@ -1,0 +1,1 @@
+../../../../Domaine/ports/outputs/categorieRepo.js../../../../Application/dtos/categorie.js../../../../generated/prisma/index.js
