@@ -11,12 +11,7 @@ const prisma = new PrismaClient();
 export class OrderRepoImpl implements OOrderRepo {
   // Petit helper pour éviter la répétition du mapping
   private mapToEntity(dbOrder: any): OrderEntity {
-    return {
-      ...dbOrder,
-      order_date: dbOrder.createdAt,
-      createdAt: dbOrder.createdAt,
-      updatedAt: dbOrder.updatedAt,
-    };
+    return  dbOrder;
   }
 
   async saveOrder(order: createOrderDto): Promise<OrderEntity | string> {
