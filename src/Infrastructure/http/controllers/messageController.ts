@@ -7,7 +7,7 @@ export class MessageController {
 
     async create(ctx: Context) {
         const body: createMessageDto = await ctx.req.json();
-        const message = await this.messageUseCase.create(body);
+        const message = await this.messageUseCase.createMessage(body);
         if (typeof message === "string") {
             return ctx.json({ message: "Error while creating message" });
         }
@@ -16,7 +16,7 @@ export class MessageController {
 
     async update(ctx: Context) {
         const body: updateMessageDto = await ctx.req.json();
-        const message = await this.messageUseCase.update(body);
+        const message = await this.messageUseCase.updateMessage(body);
         if (typeof message === "string") {
             return ctx.json({ message: "Error while updating message" });
         }
@@ -25,14 +25,14 @@ export class MessageController {
 
     async delete(ctx: Context) {
         const id = ctx.req.param("id");
-        const message = await this.messageUseCase.delete(id);
+        const message = await this.messageUseCase.deleteMessage(id);
         if (typeof message === "string") {
             return ctx.json({ message: "Error while deleting message" });
         }
         return ctx.json(message);
     }
 
-    async getByUserId(ctx: Context) {
+    async getMessagesByUserId(ctx: Context) {
         const id = ctx.req.param("id");
         const receiverFromParam = ctx.req.param("receiver_id");
         const receiverFromQuery = new URL(ctx.req.url).searchParams.get("receiver_id");
@@ -42,7 +42,7 @@ export class MessageController {
             return ctx.json({ message: "Missing required parameters: id and receiver_id" }, 400);
         }
 
-        const message = await this.messageUseCase.getByUserId(id, receiver_id);
+        const message = await this.messageUseCase.getConversation(id, receiver_id);
         if (typeof message === "string") {
             return ctx.json({ message: "Error while getting message" });
         }

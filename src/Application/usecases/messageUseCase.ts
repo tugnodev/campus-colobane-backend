@@ -39,7 +39,7 @@ export class MessageUseCase implements IMessageService {
         return deletedMessage;
     }
 
-    async getMessagesByUserId(userId: string, receiver_id: string): Promise<Message[] | string> {
+    async getConversation(userId: string, receiver_id: string): Promise<Message[] | string> {
         const messages = await this.messageRepo.getMessagesByUserId(userId, receiver_id);
         if (!messages) {
             return "No messages found";
