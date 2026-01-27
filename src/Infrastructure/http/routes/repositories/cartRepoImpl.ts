@@ -1,30 +1,41 @@
-import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
+import type { OCartRepo } from "../../../../Domaine/ports/outputs/cartRepo.js";
 import type {
   createCartDto,
   updateCartDto,
   cartDto,
-} from "../../Application/dtos/cart.js";
-import { PrismaClient } from "../../generated/prisma/index.js";
+} from "../../../../Application/dtos/cart.js";
+import { Prisma, PrismaClient } from "../../../../generated/prisma/index.js";
+import type { Carts } from "../../../../Domaine/entities/carts.js";
 
 const prisma = new PrismaClient();
 
 export class CartRepoImpl implements OCartRepo {
-  async createCart(data: createCartDto): Promise<cartDto | string> {
+  private mapToCarts(data: any): Carts {
+    return {
+      id: Promise.resolve(data.id),
+      card_details: data.card_details || [],
+      user_id: data.user_id,
+    };
+  }
+
+  async createCart(data: createCartDto): Promise<Carts | string> {
     try {
-      const created = await prisma.carts.create({ data });
-      return created ?? "error";
+      const created = await prisma.carts.create({ 
+        data: data as unknown as Prisma.CartsCreateInput 
+      });
+      return this.mapToCarts(created);
     } catch {
       return "error";
     }
   }
 
-  async updateCart(data: updateCartDto): Promise<cartDto | string> {
+  async updateCart(data: updateCartDto): Promise<Carts | string> {
     try {
       const updated = await prisma.carts.update({
         where: { id: data.id },
-        data,
+        data: data as unknown as Prisma.CartsUpdateInput,
       });
-      return updated ?? "error";
+      return this.mapToCarts(updated);
     } catch {
       return "error";
     }
@@ -39,28 +50,28 @@ export class CartRepoImpl implements OCartRepo {
     }
   }
 
-  async getByUserId(userId: string): Promise<cartDto[] | string> {
+  async getByUserId(user_id: string): Promise<Carts[] | string> {
     try {
-      const carts = await prisma.cart.findMany({ where: { userId } });
-      return carts.length > 0 ? carts : "error";
+      const carts = await prisma.carts.findMany({ where: { user_id } });
+      return carts.length > 0 ? carts.map(c => this.mapToCarts(c)) : "error";
     } catch {
       return "error";
     }
   }
 
-  async getByCartId(cartId: string): Promise<cartDto | string> {
+  async getByCartId(cartId: string): Promise<Carts | string> {
     try {
       const cart = await prisma.carts.findUnique({ where: { id: cartId } });
-      return cart ?? "error";
+      return cart ? this.mapToCarts(cart) : "error";
     } catch {
       return "error";
     }
   }
 
-  async getAllCarts(): Promise<cartDto[] | string> {
+  async getAllCarts(): Promise<Carts[] | string> {
     try {
       const carts = await prisma.carts.findMany();
-      return carts.length > 0 ? carts : "error";
+      return carts.length > 0 ? carts.map(c => this.mapToCarts(c)) : "error";
     } catch {
       return "error";
     }
