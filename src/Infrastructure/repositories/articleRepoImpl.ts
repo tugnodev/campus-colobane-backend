@@ -30,7 +30,7 @@ export class ArticleRepoImpl implements OArticleRepo {
         }
     }
 
-    async updateAticle(article: updateAticleDto): Promise<Articles | string> {
+    async updateArticle(article: updateAticleDto): Promise<Articles | string> {
         try {
             const { id, ...data } = article;
             const update = await prisma.articles.update({
