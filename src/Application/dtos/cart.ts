@@ -4,18 +4,18 @@ type item = {
 }
 
 export interface createCartDto {
-    card_details: item[];
+    cart: item[];
     userId: string;
 }
 
 export interface updateCartDto {
     id: string;
-    card_details?: item[];
-    user_id?: string;
+    cart: item[];
+    userId: string;
 }
 
 export interface cartDto {
     id: string;
-    card_details: item[];
-    user_id: string;
+    cart: item[];
+    userId: string;
 }

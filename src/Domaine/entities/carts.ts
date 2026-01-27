@@ -1,3 +1,4 @@
+import type { JSONValue } from "hono/utils/types";
 import type { Articles } from "./articles.js";
 
 type item = {
@@ -6,7 +7,7 @@ type item = {
 };
 
 export type Carts = {
-  id: Promise<string>;
-  card_details: item[];
+  id: string;
+  cart: item[] | JSONValue;
   user_id: string;
 };
