@@ -1,4 +1,4 @@
-import type { JSONValue } from "hono/utils/types";
+import type { Prisma } from "../../generated/prisma/index.js";
 import type { Articles } from "./articles.js";
 
 type item = {
@@ -8,6 +8,6 @@ type item = {
 
 export type Carts = {
   id: string;
-  cart: item[] | JSONValue;
+  cart: item[] | Prisma.JsonValue;
   user_id: string;
 };
