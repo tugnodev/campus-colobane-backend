@@ -15,7 +15,7 @@ export class CartRepoImpl implements OCartRepo {
       const created = await prisma.carts.create({
         data: {
           cart: cart.cart || [],
-          user_id: cart.userId,
+          user_id: cart.user_id,
         },
       });
       return created;
