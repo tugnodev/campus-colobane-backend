@@ -29,18 +29,17 @@ export class ArticleRepoImpl implements OArticleRepo {
     }
   }
 
-    async updateArticle(article: updateAticleDto): Promise<Articles | string> {
-        try {
-            const { id, ...data } = article;
-            const update = await prisma.articles.update({
-                where: { id: id },
-                data,
-            });
-            return update;
-        } catch (error) {
-            console.error(error);
-            return "Error update article";
-        }
+  async updateArticle(article: updateAticleDto): Promise<Articles | string> {
+    try {
+      const { id, ...data } = article;
+      const update = await prisma.articles.update({
+        where: { id: id },
+        data,
+      });
+      return update;
+    } catch (error) {
+      console.error(error);
+      return "Error update article";
     }
   }
 

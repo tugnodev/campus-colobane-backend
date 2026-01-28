@@ -56,7 +56,7 @@ export class CommentRepoImpl implements OCommentRepo, ORateRepo {
   async getCommentsByArticleId(articleId: string): Promise<Comment[] | string> {
     try {
       const comments = await prisma.comments.findMany({
-        where: { articleId },
+        where: { article_id: articleId },
       });
       return comments;
     } catch (error) {
@@ -78,10 +78,10 @@ export class CommentRepoImpl implements OCommentRepo, ORateRepo {
 
   async createRate(newRate: createRateDto): Promise<Rate | string> {
     try {
-      return await prisma.rates.create({
+      return await prisma.articleRates.create({
         data: {
-          articleId: newRate.articleId,
-          buyerId: newRate.buyerId,
+          article_id: newRate.articleId,
+          seller_id: newRate.buyerId,
           rate: newRate.rate,
         },
       });
@@ -94,7 +94,7 @@ export class CommentRepoImpl implements OCommentRepo, ORateRepo {
   async updateRate(rate: updateRateDto): Promise<Rate | string> {
     try {
       const { id, ...data } = rate;
-      return await prisma.rates.update({
+      return await prisma.articleRates.update({
         where: { id },
         data,
       });
