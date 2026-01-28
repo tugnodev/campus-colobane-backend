@@ -1,5 +1,8 @@
 import { PrismaClient } from "../../../prisma/generated/index.js";
-import type { OCommentRepo, ORateRepo } from "../../Domaine/ports/outputs/commentRepo.js";
+import type {
+  OCommentRepo,
+  ORateRepo,
+} from "../../Domaine/ports/outputs/commentRepo.js";
 import type {
   createCommentDto,
   updateCommentDto,
@@ -11,13 +14,12 @@ import { type Comment, type Rate } from "../../Domaine/entities/comment.js";
 const prisma = new PrismaClient();
 
 export class CommentRepoImpl implements OCommentRepo, ORateRepo {
-  
   async saveComment(comment: createCommentDto): Promise<Comment | string> {
     try {
-      const newcomment= await prisma.comments.create({
+      const newcomment = await prisma.comments.create({
         data: {
-          articleId: comment.articleId,
-          userId: comment.userId,
+          article_id: comment.articleId,
+          buyer_id: comment.userId,
           comment: comment.comment,
         },
       });
