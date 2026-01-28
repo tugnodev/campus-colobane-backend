@@ -1,3 +1,4 @@
+import type { Prisma } from "../../generated/prisma/index.js";
 import type { Articles } from "./articles.js";
 
 type item = {
@@ -6,7 +7,7 @@ type item = {
 };
 
 export type Carts = {
-  id: Promise<string>;
-  card_details: item[];
+  id: string;
+  cart: item[] | Prisma.JsonValue;
   user_id: string;
 };
