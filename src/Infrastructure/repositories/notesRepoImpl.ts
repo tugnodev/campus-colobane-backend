@@ -1,5 +1,5 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
-import { PrismaClientKnownRequestError } from "../../generated/prisma/runtime/client.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/runtime/library.js";
 import { type Notes } from "../../Domaine/entities/notes.js";
 import type { ONotesRepo } from "../../Domaine/ports/outputs/notesRepo.js";
 import type {

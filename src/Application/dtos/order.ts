@@ -1,5 +1,5 @@
 import type { Articles } from "../../Domaine/entities/articles.js";
-import type { JsonValue } from "../../generated/prisma/runtime/client.js";
+import type { JsonValue } from "../../../prisma/generated/prisma/runtime/library.js";
 
 enum OrderStatus {
   ACCEPTED = "accepted",

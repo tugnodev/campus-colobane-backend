@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  output   = "./generated/prisma"
 }
 
 datasource db {
@@ -42,8 +42,8 @@ model User {
 model Notes {
   id        String @id @default(uuid())
   number    Int // La note (ex: 1 à 5)
-  userId    String @map("user_id")
-  articleId String @map("article_id")
+  userId    String
+  articleId String
 
   user    User     @relation(fields: [userId], references: [id])
   article Articles @relation(fields: [articleId], references: [id])
@@ -63,8 +63,8 @@ model Categories {
 }
 
 model CateByArticle {
-  articleId  String @map("article_id")
-  categoryId String @map("category_id")
+  articleId  String
+  categoryId String
 
   article  Articles   @relation(fields: [articleId], references: [id])
   category Categories @relation(fields: [categoryId], references: [name])
@@ -97,8 +97,8 @@ model Articles {
 
 model Comments {
   id        String   @id @default(uuid())
-  articleId String   @map("article_id")
-  userId    String   @map("buyer_id")
+  articleId String
+  userId    String
   comment   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -109,8 +109,8 @@ model Comments {
 
 model Room {
   id        String   @id @default(uuid())
-  buyerId   String   @map("buyer_id")
-  sellerId  String   @map("seller_id")
+  buyerId   String
+  sellerId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -121,10 +121,10 @@ model Room {
 
 model Messages {
   id        String   @id @default(uuid())
-  roomId    String   @map("room_id")
-  userId    String   @map("user_id")
+  roomId    String
+  userId    String
   message   String
-  articleId String?  @map("article_id")
+  articleId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -135,12 +135,12 @@ model Messages {
 
 model Numbers {
   number   Int    @id @unique
-  sellerId String @map("seller_id")
+  sellerId String
   user     User   @relation(fields: [sellerId], references: [id])
 }
 
 model Carts {
-  userId String @id @map("user_id")
+  userId String @id
   cart   Json // Contenu du panier
   user   User   @relation(fields: [userId], references: [id])
 }
@@ -149,8 +149,8 @@ model Orders {
   id             String   @id @default(uuid())
   articleDetails Json
   status         String   @default("accepted")
-  buyerId        String   @map("buyer_id")
-  sellerId       String   @map("seller_id")
+  buyerId        String
+  sellerId       String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

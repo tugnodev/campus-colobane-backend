@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "../../../prisma/generated/index.js";
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { categorieDto } from "../../Application/dtos/categorie.js";
 import type { Categorie } from "../../Domaine/entities/categorie.js";
@@ -6,9 +6,7 @@ import type { Categorie } from "../../Domaine/entities/categorie.js";
 const prisma = new PrismaClient();
 
 export class CategorieRepoImpl implements OCategorieRepo {
-  async createCategorie(
-    categorie: categorieDto
-  ): Promise<Categorie | string> {
+  async createCategorie(categorie: categorieDto): Promise<Categorie | string> {
     try {
       const created = await prisma.categories.create({
         data: {
@@ -23,7 +21,6 @@ export class CategorieRepoImpl implements OCategorieRepo {
         image: created.image ?? "",
       };
 
-
       return result;
     } catch (error) {
       console.error(error);
@@ -31,9 +28,7 @@ export class CategorieRepoImpl implements OCategorieRepo {
     }
   }
 
-  async updateCategorie(
-    categorie: categorieDto
-  ): Promise<Categorie | string> {
+  async updateCategorie(categorie: categorieDto): Promise<Categorie | string> {
     try {
       const updated = await prisma.categories.update({
         where: { name: categorie.name },
@@ -47,8 +42,6 @@ export class CategorieRepoImpl implements OCategorieRepo {
         description: updated.description ?? "",
         image: updated.image ?? "",
       };
-
-
 
       return result;
     } catch (error) {
@@ -72,7 +65,7 @@ export class CategorieRepoImpl implements OCategorieRepo {
   async getAllCategories(): Promise<Categorie[] | string> {
     try {
       const categories = await prisma.categories.findMany();
-  
+
       return categories.map((c) => ({
         name: c.name,
         description: c.description ?? "",
@@ -83,5 +76,4 @@ export class CategorieRepoImpl implements OCategorieRepo {
       return "Error fetching categories";
     }
   }
-
 }

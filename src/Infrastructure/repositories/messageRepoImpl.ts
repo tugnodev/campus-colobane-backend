@@ -1,4 +1,5 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/runtime/library.js";
 import type { OMessageRepo } from "../../Domaine/ports/outputs/messageRepo.js";
 import type {
   createMessageDto,
@@ -7,7 +8,6 @@ import type {
 } from "../../Application/dtos/messages.js";
 
 import { type Message } from "../../Domaine/entities/message.js";
-import { PrismaClientKnownRequestError } from "../../generated/prisma/runtime/client.js";
 const prisma = new PrismaClient();
 
 export class MessageRepoImpl implements OMessageRepo {

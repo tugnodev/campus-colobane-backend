@@ -135,16 +135,22 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ArticleRatesScalarFieldEnum = {
-  rate: 'rate',
-  seller_id: 'seller_id',
-  article_id: 'article_id'
+exports.Prisma.NotesScalarFieldEnum = {
+  id: 'id',
+  number: 'number',
+  userId: 'userId',
+  articleId: 'articleId'
 };
 
 exports.Prisma.CategoriesScalarFieldEnum = {
   name: 'name',
   description: 'description',
   image: 'image'
+};
+
+exports.Prisma.CateByArticleScalarFieldEnum = {
+  articleId: 'articleId',
+  categoryId: 'categoryId'
 };
 
 exports.Prisma.ArticlesScalarFieldEnum = {
@@ -156,48 +162,55 @@ exports.Prisma.ArticlesScalarFieldEnum = {
   description: 'description',
   price: 'price',
   stock: 'stock',
+  rates: 'rates',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  categoriesName: 'categoriesName'
 };
 
 exports.Prisma.CommentsScalarFieldEnum = {
   id: 'id',
-  article_id: 'article_id',
-  buyer_id: 'buyer_id',
+  articleId: 'articleId',
+  userId: 'userId',
   comment: 'comment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RoomScalarFieldEnum = {
+  id: 'id',
+  buyerId: 'buyerId',
+  sellerId: 'sellerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.MessagesScalarFieldEnum = {
   id: 'id',
+  roomId: 'roomId',
+  userId: 'userId',
   message: 'message',
-  sender_id: 'sender_id',
-  receiver_id: 'receiver_id',
-  article_id: 'article_id',
+  articleId: 'articleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.NumbersScalarFieldEnum = {
-  id: 'id',
   number: 'number',
-  seller_id: 'seller_id'
+  sellerId: 'sellerId'
 };
 
 exports.Prisma.CartsScalarFieldEnum = {
-  id: 'id',
-  cart: 'cart',
-  user_id: 'user_id'
+  userId: 'userId',
+  cart: 'cart'
 };
 
 exports.Prisma.OrdersScalarFieldEnum = {
   id: 'id',
-  article_details: 'article_details',
-  buyer_id: 'buyer_id',
-  seller_id: 'seller_id',
-  order_status: 'order_status',
-  order_date: 'order_date',
+  articleDetails: 'articleDetails',
+  status: 'status',
+  buyerId: 'buyerId',
+  sellerId: 'sellerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -266,10 +279,12 @@ exports.Prisma.JsonNullValueFilter = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  ArticleRates: 'ArticleRates',
+  Notes: 'Notes',
   Categories: 'Categories',
+  CateByArticle: 'CateByArticle',
   Articles: 'Articles',
   Comments: 'Comments',
+  Room: 'Room',
   Messages: 'Messages',
   Numbers: 'Numbers',
   Carts: 'Carts',

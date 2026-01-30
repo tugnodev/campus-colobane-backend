@@ -1,4 +1,4 @@
-import type { JsonValue } from "../../generated/prisma/runtime/client.js";
+import type { JsonValue } from "../../../prisma/generated/prisma/runtime/library.js";
 
 export enum OrderStatus {
   ACCEPTED = "accepted",

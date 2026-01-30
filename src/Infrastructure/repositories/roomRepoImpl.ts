@@ -1,5 +1,5 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
-import { PrismaClientKnownRequestError } from "../../generated/prisma/runtime/client.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/runtime/library.js";
 import type { Room } from "../../Domaine/entities/room.js";
 import type { ORoomRepo } from "../../Domaine/ports/outputs/roomRepo.js";
 import type {

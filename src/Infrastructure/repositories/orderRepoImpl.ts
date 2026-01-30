@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
 import type {
   createOrderDto,

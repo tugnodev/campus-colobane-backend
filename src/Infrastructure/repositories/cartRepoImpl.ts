@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/index.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import type { Carts } from "../../Domaine/entities/carts.js";
 import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
 import type {
