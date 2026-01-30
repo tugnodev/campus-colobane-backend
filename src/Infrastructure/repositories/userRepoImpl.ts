@@ -1,15 +1,15 @@
 import type { User } from "../../Domaine/entities/user.js";
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
+import { PrismaClient } from "@prisma/client/extension";
+import { auth } from "../config/auth.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { BetterAuthError } from "better-auth";
 import type {
   authPack,
   createUserDto,
   turnToVendorDto,
   updateUserDto,
 } from "../../Application/dtos/user.js";
-import { PrismaClient } from "@prisma/client/extension";
-import { auth } from "../config/auth.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { BetterAuthError } from "better-auth";
 
 const prisma = new PrismaClient();
 

@@ -37,7 +37,7 @@ importers:
         specifier: ^20.11.17
         version: 20.19.13
       prisma:
-        specifier: ^6.19.2
+        specifier: 6.19.2
         version: 6.19.2(typescript@5.9.2)
       tsx:
         specifier: ^4.7.1

@@ -1,7 +1,8 @@
-import { PrismaClient } from "../../../prisma/generated/index.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { categorieDto } from "../../Application/dtos/categorie.js";
 import type { Categorie } from "../../Domaine/entities/categorie.js";
+import type { linkToArticleDto } from "../../Application/dtos/cart.js";
 
 const prisma = new PrismaClient();
 
@@ -74,6 +75,44 @@ export class CategorieRepoImpl implements OCategorieRepo {
     } catch (error) {
       console.error(error);
       return "Error fetching categories";
+    }
+  }
+
+  async linkToArticle(data: linkToArticleDto): Promise<string> {
+    try {
+      const link = await prisma.cateByArticle.create({
+        data: {
+          articleId: data.articleId,
+          categoryId: data.name,
+        },
+      });
+      if (!link) {
+        return "Error linking categorie to article";
+      }
+      return "done!";
+    } catch (error) {
+      console.error(error);
+      return "Error linking categorie to article";
+    }
+  }
+
+  async unLinkToArticle(data: linkToArticleDto): Promise<string> {
+    try {
+      const unlink = await prisma.cateByArticle.delete({
+        where: {
+          articleId_categoryId: {
+            articleId: data.articleId,
+            categoryId: data.name,
+          },
+        },
+      });
+      if (!unlink) {
+        return "Error unlinking categorie from article";
+      }
+      return "done!";
+    } catch (error) {
+      console.error(error);
+      return "Error unlinking categorie from article";
     }
   }
 }

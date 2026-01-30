@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../prisma/generated/index.js";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import type { OCommentRepo } from "../../Domaine/ports/outputs/commentRepo.js";
 import type {
   createCommentDto,
@@ -13,8 +13,8 @@ export class CommentRepoImpl implements OCommentRepo {
     try {
       const newcomment = await prisma.comments.create({
         data: {
-          article_id: comment.articleId,
-          buyer_id: comment.userId,
+          articleId: comment.articleId,
+          userId: comment.userId,
           comment: comment.comment,
         },
       });
@@ -51,7 +51,7 @@ export class CommentRepoImpl implements OCommentRepo {
   async getCommentsByArticleId(articleId: string): Promise<Comment[] | string> {
     try {
       const comments = await prisma.comments.findMany({
-        where: { article_id: articleId },
+        where: { articleId },
       });
       return comments;
     } catch (error) {
@@ -60,10 +60,10 @@ export class CommentRepoImpl implements OCommentRepo {
     }
   }
 
-  async getCommentsByBuyerId(buyerId: string): Promise<Comment[] | string> {
+  async getCommentsByBuyerId(userId: string): Promise<Comment[] | string> {
     try {
       return await prisma.comments.findMany({
-        where: { buyerId },
+        where: { userId },
       });
     } catch (error) {
       console.error(error);
