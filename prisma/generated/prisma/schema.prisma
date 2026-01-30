@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  vendeur       Boolean  @default(false)
+  code          Int?
+  address       String?
+  image         String?
+  certified     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  articles       Articles[]
+  comments       Comments[]
+  messagesSent   Messages[] @relation("Sender")
+  ordersAsBuyer  Orders[]   @relation("Buyer")
+  ordersAsSeller Orders[]   @relation("Seller")
+  roomsAsBuyer   Room[]     @relation("BuyerRoom")
+  roomsAsSeller  Room[]     @relation("SellerRoom")
+  carts          Carts[]
+  accounts       Account[]
+  sessions       Session[]
+  numbers        Numbers[]
+  appreciations  Notes[]
+
+  @@map("user")
+}
+
+model Notes {
+  id        String @id @default(uuid())
+  number    Int // La note (ex: 1 à 5)
+  userId    String
+  articleId String
+
+  user    User     @relation(fields: [userId], references: [id])
+  article Articles @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, articleId]) // Un utilisateur ne note qu'une fois un article
+}
+
+model Categories {
+  name        String     @id
+  description String?
+  image       String?
+  articles    Articles[] // Relation inverse ajoutée
+
+  categoriesByArticle CateByArticle[] // Relation inverse ajoutée
+
+  @@map("category")
+}
+
+model CateByArticle {
+  articleId  String
+  categoryId String
+
+  article  Articles   @relation(fields: [articleId], references: [id])
+  category Categories @relation(fields: [categoryId], references: [name])
+
+  @@unique([articleId, categoryId]) // Une catégorie ne peut être attribuée qu'une fois à un article
+}
+
+model Articles {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  images      String[]
+  category    String[]
+  description String
+  price       Int
+  stock       Int
+  rates       Float[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user           User            @relation(fields: [userId], references: [id])
+  comments       Comments[]
+  messages       Messages[]
+  appreciations  Notes[]
+  categories     Categories?     @relation(fields: [categoriesName], references: [name])
+  categoriesName String?
+  cateByArticles CateByArticle[]
+}
+
+model Comments {
+  id        String   @id @default(uuid())
+  articleId String
+  userId    String
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  article Articles @relation(fields: [articleId], references: [id])
+  buyer   User     @relation(fields: [userId], references: [id])
+}
+
+model Room {
+  id        String   @id @default(uuid())
+  buyerId   String
+  sellerId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buyer    User       @relation("BuyerRoom", fields: [buyerId], references: [id])
+  seller   User       @relation("SellerRoom", fields: [sellerId], references: [id])
+  messages Messages[]
+}
+
+model Messages {
+  id        String   @id @default(uuid())
+  roomId    String
+  userId    String
+  message   String
+  articleId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room    Room      @relation(fields: [roomId], references: [id])
+  sender  User      @relation("Sender", fields: [userId], references: [id])
+  article Articles? @relation(fields: [articleId], references: [id])
+}
+
+model Numbers {
+  number   Int    @id @unique
+  sellerId String
+  user     User   @relation(fields: [sellerId], references: [id])
+}
+
+model Carts {
+  userId String @id
+  cart   Json // Contenu du panier
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Orders {
+  id             String   @id @default(uuid())
+  articleDetails Json
+  status         String   @default("accepted")
+  buyerId        String
+  sellerId       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  buyer  User @relation("Buyer", fields: [buyerId], references: [id])
+  seller User @relation("Seller", fields: [sellerId], references: [id])
+}
+
+// Modèles d'authentification (compatibles avec Auth.js / NextAuth)
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}
