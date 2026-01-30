@@ -16,7 +16,6 @@ export class ArticleRepoImpl implements OArticleRepo {
           userId: article.userId,
           title: article.title,
           images: article.images,
-          category: article.category,
           description: article.description,
           price: article.price,
           stock: article.stock,

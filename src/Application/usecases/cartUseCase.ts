@@ -1,7 +1,7 @@
 import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
 import type { createCartDto, updateCartDto, cartDto } from "../dtos/cart.js";
-import { type Carts } from "../../Domaine/entities/carts.js"; 
-import { type ICartService } from "../../Domaine/ports/inputs/cartService.js"; 
+import { type Carts } from "../../Domaine/entities/carts.js";
+import { type ICartService } from "../../Domaine/ports/inputs/cartService.js";
 
 export class CartUseCase implements ICartService {
   private cartRepo: OCartRepo;
@@ -23,9 +23,10 @@ export class CartUseCase implements ICartService {
     return `Cart with ID ${cardId} has been deleted successfully.`;
   }
 
-  async getByUserId(cartId: string): Promise<Carts[] | string> {
-    return this.cartRepo.getByUserId(cartId);
+  getByUserId(userId: string): Promise<Carts | string> {
+    return this.cartRepo.getByUserId(userId);
   }
+
   async getAllCarts(): Promise<Carts[] | string> {
     return this.cartRepo.getAllCarts();
   }

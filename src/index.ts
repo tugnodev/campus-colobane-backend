@@ -22,7 +22,7 @@ app.route("/", userRoutes);
 app.route("/chat", chatRoutes);
 app.route("/cart", cartRoutes);
 app.route("/categories", categorieRoutes);
-app.route("/", articleRoutes);
+app.route("/articles", articleRoutes);
 app.route("/commandes", commandeRoutes);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;

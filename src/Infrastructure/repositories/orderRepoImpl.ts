@@ -5,6 +5,7 @@ import type {
   updateOrderDto,
 } from "../../Application/dtos/order.js";
 import type { Order } from "../../Domaine/entities/orders.js";
+import { OrderStatus } from "../../Domaine/entities/orders.js";
 
 const prisma = new PrismaClient();
 
@@ -13,10 +14,10 @@ export class OrderRepoImpl implements OOrderRepo {
     try {
       const created = await prisma.orders.create({
         data: {
-          article_details: order.article_details,
-          buyer_id: order.buyer_id,
-          seller_id: order.seller_id,
-          order_status: "accepted",
+          articleDetails: order.articleDetails,
+          buyerId: order.buyerId,
+          sellerId: order.sellerId,
+          status: OrderStatus.ACCEPTED,
         },
       });
       return created;
@@ -31,7 +32,12 @@ export class OrderRepoImpl implements OOrderRepo {
       const { id, ...data } = order;
       const updated = await prisma.orders.update({
         where: { id },
-        data,
+        data: {
+          articleDetails: data.articleDetails!,
+          buyerId: data.buyerId!,
+          sellerId: data.sellerId!,
+          status: data.status!,
+        },
       });
       return updated;
     } catch (error) {
@@ -54,7 +60,7 @@ export class OrderRepoImpl implements OOrderRepo {
   async getOrdersByBuyerId(buyerId: string): Promise<Order[] | string> {
     try {
       const orders = await prisma.orders.findMany({
-        where: { buyer_id: buyerId },
+        where: { buyerId },
         orderBy: { createdAt: "desc" },
       });
       return orders;
@@ -67,7 +73,7 @@ export class OrderRepoImpl implements OOrderRepo {
   async getOrdersBySellerId(sellerId: string): Promise<Order[] | string> {
     try {
       const orders = await prisma.orders.findMany({
-        where: { seller_id: sellerId },
+        where: { sellerId },
         orderBy: { createdAt: "desc" },
       });
       return orders;

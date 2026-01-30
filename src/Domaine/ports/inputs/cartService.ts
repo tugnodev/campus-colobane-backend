@@ -9,5 +9,5 @@ export interface ICartService {
   updateCart(card: updateCartDto): Promise<Carts | string>;
   deleteCart(id: string): Promise<string>;
   getAllCarts(): Promise<Carts[] | string>;
-  getByUserId(userId: string): Promise<Carts[] | string>;
+  getByUserId(userId: string): Promise<Carts | string>;
 }

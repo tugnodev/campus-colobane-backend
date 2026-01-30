@@ -10,6 +10,5 @@ export interface OCartRepo {
   updateCart(cart: updateCartDto): Promise<Carts | string>;
   deleteCart(id: string): Promise<string>;
   getAllCarts(): Promise<Carts[] | string>;
-  getByUserId(userId: string): Promise<string | Carts[]>;
-  getByCartId(cartId: string): Promise<Carts | string>;
+  getByUserId(userId: string): Promise<Carts | string>;
 }

@@ -1,13 +1,19 @@
 import type {
   createMessageDto,
   updateMessageDto,
+  getConversationDto,
 } from "../../../Application/dtos/messages.js";
-import { type Message } from "../../entities/message.js";
+import type { Message } from "../../entities/message.js";
 
 export interface OMessageRepo {
-  saveMessage(message: createMessageDto): Promise<Message | string>;
+  createMessage(newMessage: createMessageDto): Promise<Message | string>;
   updateMessage(message: updateMessageDto): Promise<Message | string>;
   deleteMessage(id: string): Promise<string>;
-  getMessageById(id: string): Promise<Message | null>;
-  getMessagesByUserId(sender_id : string,receiver_id: string): Promise<Message[] | string>;
+  getConversation(data: getConversationDto): Promise<Message[] | string>;
+}
+
+export interface OMessageBroadcast {
+  sendMessage(newMessage: createMessageDto): Promise<Message | string>;
+  updateMessage(newMessage: createMessageDto): Promise<Message | string>;
+  deleteMessage(newMessage: createMessageDto): Promise<Message | string>;
 }

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { MessageController } from "../../controllers/messageController.js";
 import { MessageUseCase } from "../../../../Application/usecases/messageUseCase.js";
 import { MessageRepoImpl } from "../repositories/messageRepoImpl.js";
-import { WebSocketHandler } from "../../../../Infrastructure/websocket/websocketService.js";
+import { WebSocketHandler } from "../../../websocket/messageBroadcast.js";
 
 const messageRepository = new MessageRepoImpl();
 const notificationService = new WebSocketHandler();

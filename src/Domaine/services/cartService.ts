@@ -13,7 +13,7 @@ export class CartService implements ICartService {
     this.cartRepo = cartRepo;
   }
 
-  async getByUserId(userId: string): Promise<Carts[] | string> {
+  async getByUserId(userId: string): Promise<Carts | string> {
     return this.cartRepo.getByUserId(userId);
   }
 
@@ -27,10 +27,6 @@ export class CartService implements ICartService {
 
   async deleteCart(id: string): Promise<string> {
     return this.cartRepo.deleteCart(id);
-  }
-
-  async getByCartId(cartId: string): Promise<Carts | string> {
-    return this.cartRepo.getByCartId(cartId);
   }
 
   async getAllCarts(): Promise<Carts[] | string> {

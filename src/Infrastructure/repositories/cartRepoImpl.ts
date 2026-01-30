@@ -1,4 +1,3 @@
-
 import { PrismaClient } from "../../generated/prisma/index.js";
 import type { Carts } from "../../Domaine/entities/carts.js";
 import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
@@ -15,7 +14,7 @@ export class CartRepoImpl implements OCartRepo {
       const created = await prisma.carts.create({
         data: {
           cart: cart.cart || [],
-          user_id: cart.user_id,
+          userId: cart.userId,
         },
       });
       return created;
@@ -27,9 +26,9 @@ export class CartRepoImpl implements OCartRepo {
 
   async updateCart(cart: updateCartDto): Promise<Carts | string> {
     try {
-      const { id, ...data } = cart;
+      const { userId, ...data } = cart;
       const updated = await prisma.carts.update({
-        where: { id },
+        where: { userId },
         data: data,
       });
       return updated;
@@ -39,9 +38,9 @@ export class CartRepoImpl implements OCartRepo {
     }
   }
 
-  async deleteCart(id: string): Promise<string> {
+  async deleteCart(userId: string): Promise<string> {
     try {
-      await prisma.carts.delete({ where: { id } });
+      await prisma.carts.delete({ where: { userId } });
       return "Panier supprimé avec succès";
     } catch (error) {
       console.error(error);
@@ -49,10 +48,12 @@ export class CartRepoImpl implements OCartRepo {
     }
   }
 
-  async getByUserId(user_id: string): Promise<Carts[] | string> {
+  async getByUserId(userId: string): Promise<Carts | string> {
     try {
-      const carts = await prisma.carts.findMany({ where: { user_id } });
-      return carts.length > 0 ? carts : "Aucun panier trouvé pour cet utilisateur";
+      const carts = await prisma.carts.findUnique({
+        where: { userId },
+      });
+      return carts!;
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération des paniers par utilisateur";
@@ -61,7 +62,7 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByCartId(cartId: string): Promise<Carts | string> {
     try {
-      const cart = await prisma.carts.findUnique({ where: { id: cartId } });
+      const cart = await prisma.carts.findUnique({ where: { userId: cartId } });
       return cart ?? "Panier non trouvé";
     } catch (error) {
       console.error(error);

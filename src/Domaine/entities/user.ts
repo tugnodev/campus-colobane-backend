@@ -1,10 +1,10 @@
 export type User = {
-  email: string;
-  code: number | null;
   id: string;
   name: string;
+  email: string;
   emailVerified: boolean;
   vendeur: boolean;
+  code: number | null;
   address: string | null;
   image: string | null | undefined;
   certified: boolean;

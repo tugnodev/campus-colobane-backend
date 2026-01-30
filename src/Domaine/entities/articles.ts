@@ -7,6 +7,7 @@ export type Articles = {
   description: string;
   price: number;
   stock: number;
+  rates: number;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -4,136 +4,177 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id               String         @id @default(uuid())
-  name             String
-  email            String         @unique
-  emailVerified    Boolean        @default(false)
-  vendeur          Boolean        @default(false)
-  code             Int?
-  address          String?
-  image            String?
-  certified        Boolean        @default(false)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  Articles         Articles[]
-  Comments         Comments[]
-  MessagesSent     Messages[]     @relation("Sender")
-  MessagesReceived Messages[]     @relation("Receiver")
-  OrdersBuyer      Orders[]       @relation("Buyer")
-  OrdersSeller     Orders[]       @relation("Seller")
-  Carts            Carts[]
-  Account          Account[]
-  Session          Session[]
-  Numbers          Numbers[]
-  Appreciations    ArticleNotes[]
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  vendeur       Boolean  @default(false)
+  code          Int?
+  address       String?
+  image         String?
+  certified     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  articles       Articles[]
+  comments       Comments[]
+  messagesSent   Messages[] @relation("Sender")
+  ordersAsBuyer  Orders[]   @relation("Buyer")
+  ordersAsSeller Orders[]   @relation("Seller")
+  roomsAsBuyer   Room[]     @relation("BuyerRoom")
+  roomsAsSeller  Room[]     @relation("SellerRoom")
+  carts          Carts[]
+  accounts       Account[]
+  sessions       Session[]
+  numbers        Numbers[]
+  appreciations  Notes[]
 
   @@map("user")
 }
 
-model ArticleNotes {
-  number     Int      @unique
-  seller_id  String
-  article_id String
-  User       User     @relation(fields: [seller_id], references: [id])
-  Articles   Articles @relation(fields: [article_id], references: [id])
+model Notes {
+  id        String @id @default(uuid())
+  number    Int // La note (ex: 1 à 5)
+  userId    String @map("user_id")
+  articleId String @map("article_id")
+
+  user    User     @relation(fields: [userId], references: [id])
+  article Articles @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, articleId]) // Un utilisateur ne note qu'une fois un article
 }
 
 model Categories {
-  name        String  @id
+  name        String     @id
   description String?
   image       String?
+  articles    Articles[] // Relation inverse ajoutée
+
+  categoriesByArticle CateByArticle[] // Relation inverse ajoutée
+
+  @@map("category")
+}
+
+model CateByArticle {
+  articleId  String @map("article_id")
+  categoryId String @map("category_id")
+
+  article  Articles   @relation(fields: [articleId], references: [id])
+  category Categories @relation(fields: [categoryId], references: [name])
+
+  @@unique([articleId, categoryId]) // Une catégorie ne peut être attribuée qu'une fois à un article
 }
 
 model Articles {
-  id            String         @id @default(uuid())
-  userId        String
-  title         String
-  images        String[]
-  category      String[]
-  description   String
-  price         Int
-  stock         Int
-  rates         Float[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  User          User           @relation(fields: [userId], references: [id])
-  Comments      Comments[]
-  Messages      Messages[]
-  Appreciations ArticleNotes[]
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  images      String[]
+  category    String[]
+  description String
+  price       Int
+  stock       Int
+  rates       Float[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user           User            @relation(fields: [userId], references: [id])
+  comments       Comments[]
+  messages       Messages[]
+  appreciations  Notes[]
+  categories     Categories?     @relation(fields: [categoriesName], references: [name])
+  categoriesName String?
+  cateByArticles CateByArticle[]
 }
 
 model Comments {
-  id         String   @id @default(uuid())
-  article_id String
-  buyer_id   String
-  comment    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  Articles   Articles @relation(fields: [article_id], references: [id])
-  User       User     @relation(fields: [buyer_id], references: [id])
+  id        String   @id @default(uuid())
+  articleId String   @map("article_id")
+  userId    String   @map("buyer_id")
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  article Articles @relation(fields: [articleId], references: [id])
+  buyer   User     @relation(fields: [userId], references: [id])
+}
+
+model Room {
+  id        String   @id @default(uuid())
+  buyerId   String   @map("buyer_id")
+  sellerId  String   @map("seller_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  buyer    User       @relation("BuyerRoom", fields: [buyerId], references: [id])
+  seller   User       @relation("SellerRoom", fields: [sellerId], references: [id])
+  messages Messages[]
 }
 
 model Messages {
-  id          String    @id @default(uuid())
-  message     String
-  sender_id   String
-  receiver_id String
-  article_id  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Sender      User      @relation("Sender", fields: [sender_id], references: [id])
-  Receiver    User      @relation("Receiver", fields: [receiver_id], references: [id])
-  Articles    Articles? @relation(fields: [article_id], references: [id])
+  id        String   @id @default(uuid())
+  roomId    String   @map("room_id")
+  userId    String   @map("user_id")
+  message   String
+  articleId String?  @map("article_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  room    Room      @relation(fields: [roomId], references: [id])
+  sender  User      @relation("Sender", fields: [userId], references: [id])
+  article Articles? @relation(fields: [articleId], references: [id])
 }
 
 model Numbers {
-  id        Int    @id
-  number    Int    @unique
-  seller_id String
-  User      User   @relation(fields: [seller_id], references: [id])
+  number   Int    @id @unique
+  sellerId String @map("seller_id")
+  user     User   @relation(fields: [sellerId], references: [id])
 }
 
 model Carts {
-  id      String @id @default(uuid())
-  cart    Json
-  user_id String
-  User    User   @relation(fields: [user_id], references: [id])
+  userId String @id @map("user_id")
+  cart   Json // Contenu du panier
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Orders {
-  id              String   @id @default(uuid())
-  article_details Json
-  buyer_id        String
-  seller_id       String
-  order_status    String   @default("accepted")
-  order_date      DateTime @default(now()) // champ ajouté
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  Buyer           User     @relation("Buyer", fields: [buyer_id], references: [id])
-  Seller          User     @relation("Seller", fields: [seller_id], references: [id])
+  id             String   @id @default(uuid())
+  articleDetails Json
+  status         String   @default("accepted")
+  buyerId        String   @map("buyer_id")
+  sellerId       String   @map("seller_id")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  buyer  User @relation("Buyer", fields: [buyerId], references: [id])
+  seller User @relation("Seller", fields: [sellerId], references: [id])
 }
 
+// Modèles d'authentification (compatibles avec Auth.js / NextAuth)
 model Session {
-  id        String   @id
+  id        String   @id @default(uuid())
   expiresAt DateTime
-  token     String
-  createdAt DateTime
-  updatedAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(uuid())
   accountId             String
   providerId            String
   userId                String
@@ -145,19 +186,19 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@map("account")
 }
 
 model Verification {
-  id         String    @id
+  id         String    @id @default(uuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
 
   @@map("verification")
 }
