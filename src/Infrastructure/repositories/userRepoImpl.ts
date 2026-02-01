@@ -1,6 +1,6 @@
 import type { User } from "../../Domaine/entities/user.js";
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import { auth } from "../config/auth.js";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { BetterAuthError } from "better-auth";
@@ -150,7 +150,7 @@ export class UserRepoImpl implements OUserRepo {
 
   async getAllUsers(): Promise<User[] | string> {
     try {
-      const users = await prisma.users.findMany();
+      const users = await prisma.user.findMany();
       return users;
     } catch (e) {
       switch (e) {
