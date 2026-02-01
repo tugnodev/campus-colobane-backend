@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { CartController } from "../../controllers/cartController.js";
 import { CartUseCase } from "../../../../Application/usecases/cartUseCase.js";
-import { CartRepoImpl } from "../repositories/cartRepoImpl.js";
+import { CartRepoImpl } from "../../../repositories/cartRepoImpl.js";
 
 const cartRepository = new CartRepoImpl();
 export const cartUseCase = new CartUseCase(cartRepository);
@@ -14,7 +14,7 @@ cartRoutes.get("/cart/all", async (c: any) => {
 });
 
 cartRoutes.get("/cart/:id", async (c: any) => {
-  return cartController.getByCartId(c);
+  return cartController.getByUserId(c);
 });
 
 cartRoutes.post("/cart/add", async (c: any) => {

@@ -1,11 +1,7 @@
 import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
 import type { IOrderService } from "../../Domaine/ports/inputs/orderService.js";
 import type { Order } from "../../Domaine/entities/orders.js";
-import type {
-  createOrderDto,
-  updateOrderDto,
-  orderDto,
-} from "../dtos/order.js";
+import type { createOrderDto, updateOrderDto } from "../dtos/order.js";
 
 export class OrderUseCase {
   private orderRepo: OOrderRepo;
@@ -15,7 +11,7 @@ export class OrderUseCase {
   }
 
   async create(orderData: createOrderDto): Promise<Order | string> {
-    if (!orderData.article_details) {
+    if (!orderData.articleDetails) {
       return "Article details are required.";
     }
     return this.orderRepo.saveOrder(orderData);
@@ -32,8 +28,7 @@ export class OrderUseCase {
   }
 
   async delete(orderId: string): Promise<string> {
-    await this.orderRepo.deleteOrder(orderId);
-    return `Order with ID ${orderId} has been deleted successfully.`;
+    return this.orderRepo.deleteOrder(orderId);
   }
 
   async getByBuyerId(buyerId: string): Promise<Order[] | string> {

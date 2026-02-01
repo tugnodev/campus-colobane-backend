@@ -1,5 +1,5 @@
 import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
-import type { createCartDto, updateCartDto, cartDto } from "../dtos/cart.js";
+import type { createCartDto, updateCartDto } from "../dtos/cart.js";
 import { type Carts } from "../../Domaine/entities/carts.js";
 import { type ICartService } from "../../Domaine/ports/inputs/cartService.js";
 

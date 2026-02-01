@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { ArticleController } from "../../controllers/articleController.js";
 import { ArticleUseCase } from "../../../../Application/usecases/articleUseCase.js";
-import { ArticleRepoImpl } from "../repositories/articleRepoImpl.js";
+import { ArticleRepoImpl } from "../../../repositories/articleRepoImpl.js";
 
 const articleRepo = new ArticleRepoImpl();
 const articleUseCase = new ArticleUseCase(articleRepo);

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { CategorieController } from "../../controllers/categorieController.js";
 import { CategorieUseCase } from "../../../../Application/usecases/categorieUseCase.js";
-import { CategorieRepoImpl } from "../repositories/categorieRepoImpl.js";
+import { CategorieRepoImpl } from "../../../repositories/categorieRepoImpl.js";
 
 const categorieRepository = new CategorieRepoImpl();
 const categorieUseCase = new CategorieUseCase(categorieRepository);

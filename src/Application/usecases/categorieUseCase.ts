@@ -1,6 +1,7 @@
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { ICategorieService } from "../../Domaine/ports/inputs/categorieService.js";
 import type { categorieDto } from "../dtos/categorie.js";
+import type { linkToArticleDto } from "../dtos/cart.js";
 
 export class CategorieUseCase implements ICategorieService {
   private categorieRepo: OCategorieRepo;
@@ -28,5 +29,13 @@ export class CategorieUseCase implements ICategorieService {
 
   async getAllCategories(): Promise<categorieDto[] | string> {
     return this.categorieRepo.getAllCategories();
+  }
+
+  async linkToArticle(data: linkToArticleDto): Promise<string> {
+    return this.categorieRepo.linkToArticle(data);
+  }
+
+  async unLinkToArticle(data: linkToArticleDto): Promise<string> {
+    return this.categorieRepo.unLinkToArticle(data);
   }
 }

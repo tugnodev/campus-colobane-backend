@@ -2,6 +2,7 @@ import { MessageUseCase } from "../../../Application/usecases/messageUseCase.js"
 import type {
   createMessageDto,
   updateMessageDto,
+  getConversationDto,
 } from "../../../Application/dtos/messages.js";
 import type { Context } from "hono";
 
@@ -36,25 +37,12 @@ export class MessageController {
     return ctx.json(message);
   }
 
-  async getMessagesByUserId(ctx: Context) {
-    const id = ctx.req.param("id");
-    const receiverFromParam = ctx.req.param("receiver_id");
-    const receiverFromQuery = new URL(ctx.req.url).searchParams.get(
-      "receiver_id",
-    );
-    const receiver_id = receiverFromParam ?? receiverFromQuery ?? "";
-
-    if (!id || !receiver_id) {
-      return ctx.json(
-        { message: "Missing required parameters: id and receiver_id" },
-        400,
-      );
+  async getConversation(ctx: Context) {
+    const data: getConversationDto = await ctx.req.json();
+    if (!data) {
+      return ctx.json({ message: "Invalid data" });
     }
-
-    const message = await this.messageUseCase.getConversation(id, receiver_id);
-    if (typeof message === "string") {
-      return ctx.json({ message: "Error while getting message" });
-    }
-    return ctx.json(message);
+    const res = await this.messageUseCase.getConversation(data);
+    return ctx.json(res);
   }
 }

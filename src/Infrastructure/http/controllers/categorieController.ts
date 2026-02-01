@@ -10,7 +10,7 @@ export class CategorieController {
 
   async create(ctx: Context) {
     const orderData: categorieDto = await ctx.req.json();
-    const result = await this.categorieUseCase.create(orderData);
+    const result = await this.categorieUseCase.createCategorie(orderData);
     if (typeof result === "string") {
       return ctx.json("Error");
     }
@@ -19,7 +19,7 @@ export class CategorieController {
 
   async update(ctx: Context) {
     const orderData: categorieDto = await ctx.req.json();
-    const result = await this.categorieUseCase.update(orderData);
+    const result = await this.categorieUseCase.updateCategorie(orderData);
     if (typeof result === "string") {
       return ctx.json({ message: result });
     }
@@ -28,7 +28,7 @@ export class CategorieController {
 
   async delete(ctx: Context) {
     const name = await ctx.req.json();
-    const result = await this.categorieUseCase.delete(name);
+    const result = await this.categorieUseCase.deleteCategorie(name);
     if (typeof result === "string") {
       return ctx.json({ message: result });
     }
@@ -36,7 +36,7 @@ export class CategorieController {
   }
 
   async getAll(ctx: Context) {
-    const result = await this.categorieUseCase.getAll();
+    const result = await this.categorieUseCase.getAllCategories();
     if (typeof result === "string") {
       return ctx.json({ message: result });
     }
