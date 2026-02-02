@@ -1,29 +1,45 @@
-import { PrismaClient } from '../prisma/generated/index.js';
-import { faker } from '@faker-js/faker';
 import { type User } from '../src/Domaine/entities/user.js';
-import { type Articles } from '../src/Domaine/entities/articles.js';
+import { CommentRepoImpl } from '../src/Infrastructure/repositories/commentRepoImpl.js';
+import type { Articles } from '../src/Domaine/entities/articles.js';
+import type { createCommentDto,} from '../src/Application/dtos/comment.js';
+import type { createNotesDto } from '../src/Application/dtos/notes.js';
+// Ajuste l'import selon ton fichier
+import { faker } from '@faker-js/faker';
 
-export async function seedInteractions(prisma: PrismaClient, users: User[], articles: Articles[]) {
+export async function seedInteractions(
+  commentRepo: CommentRepoImpl, 
+  articles: Articles[], 
+  users: User[]
+) {
   for (const article of articles) {
-    const buyer = faker.helpers.arrayElement(users.filter(u => u.id !== article.userId));
     
-    // Commentaire
-    await prisma.comments.create({
-      data: {
-        article_id: article.id,
-        buyer_id: buyer.id,
-        comment: faker.lorem.sentence(),
-      }
-    });
+    // On définit combien de personnes vont interagir avec cet article (ex: 1 à 4)
+    const interactionCount = faker.number.int({ min: 1, max: 4 });
 
-    // Message
-    await prisma.messages.create({
-      data: {
-        message: faker.lorem.sentence(),
-        sender_id: buyer.id,
-        receiver_id: article.userId,
-        article_id: article.id,
+    for (let i = 0; i < interactionCount; i++) {
+      const randomUser = faker.helpers.arrayElement(users);
+
+      // 1. Génération du commentaire
+      const commentData: createCommentDto = {
+        articleId: article.id,
+        userId: randomUser.id,
+        comment: faker.lorem.sentence()
+      };
+      await commentRepo.saveComment(commentData);
+
+      // 2. Génération de la note (respectant createNotesDto)
+      const noteData: createNotesDto = {
+        articleId: article.id,
+        userId: randomUser.id,
+        number: faker.number.int({ min: 1, max: 5 }) // Note entre 1 et 5
+      };
+      
+      // On suppose que ton repo a une méthode pour les notes, par exemple 'saveNote'
+      if (typeof (commentRepo as any).saveNote === 'function') {
+        await (commentRepo as any).saveNote(noteData);
       }
-    });
+    }
   }
+
+  console.log(`✅ Interactions (Commentaires + Notes) créées pour ${articles.length} articles.`);
 }

@@ -1,32 +1,79 @@
-import { PrismaClient } from '../prisma/generated/index.js';
-import { seedUsers } from '../prisma/user.seed.js';
-import { seedArticles } from '../prisma/articles.seed.js';
-import { seedInteractions } from'../prisma/interaction.seed.js';
-import { seedOrders } from '../prisma/order.seed.js';
+import { PrismaClient } from './generated/prisma/index.js';
+import { seedUsers } from './user.seed.js';
+import { seedArticles } from './articles.seed.js';
+import { seedInteractions } from './interaction.seed.js';
+import { seedOrders } from './order.seed.js';
+import { seedCategories } from './categorie.seed.js';
+
+// Import des Repositories
+import { UserRepoImpl } from '../src/Infrastructure/repositories/userRepoImpl.js';
+import { ArticleRepoImpl } from '../src/Infrastructure/repositories/articleRepoImpl.js';
+import { CategorieRepoImpl } from '../src/Infrastructure/repositories/categorieRepoImpl.js';
+import { OrderRepoImpl } from '../src/Infrastructure/repositories/orderRepoImpl.js';
+import { CommentRepoImpl } from '../src/Infrastructure/repositories/commentRepoImpl.js';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("♻️  Resetting database...");
-  const tables = ['Verification', 'Session', 'Account', 'Orders', 'Carts', 'Messages', 'Comments', 'ArticleNotes', 'Articles', 'Numbers', 'User', 'Categories'];
+  console.log("♻️  Nettoyage de la base de données...");
+  
+  // Ordre de suppression pour éviter les erreurs de clés étrangères (FK)
+  const tables = ['Orders', 'Carts', 'Comments', 'ArticleNotes', 'Articles', 'Categories', 'User'];
   for (const table of tables) {
-    await (prisma as any)[table.toLowerCase()].deleteMany();
+    const modelName = table.toLowerCase();
+    if ((prisma as any)[modelName]) {
+      await (prisma as any)[modelName].deleteMany();
+    }
   }
 
-  console.log("🌱 Starting modular seeding...");
+  console.log("🌱 Début du seeding modulaire...");
 
-  const users = await seedUsers(prisma, 20);
-  const vendeurs = users.filter(u => u.vendeur);
+  // 1. Initialisation des implémentations
+  const userRepo = new UserRepoImpl();
+  const articleRepo = new ArticleRepoImpl();
+  const categoryRepo = new CategorieRepoImpl();
+  const orderRepo = new OrderRepoImpl();
+  const commentRepo = new CommentRepoImpl();
+
+  // 2. Seed des Utilisateurs
+  console.log("👥 Création des utilisateurs...");
+  await seedUsers(userRepo, 10);
+  const allUsers = await prisma.user.findMany();
+
+  // 3. Seed des Catégories
+  console.log("📂 Création des catégories...");
+  await seedCategories(categoryRepo);
+
+  // 4. Seed des Articles
+  console.log("📦 Création des articles...");
+  await seedArticles(articleRepo, allUsers);
   
-  await seedArticles(prisma, vendeurs);
-  const articles = await prisma.articles.findMany();
+  // Récupération et correction du type Articles (Tableau vs Nombre seul pour 'rates')
+  const rawArticles = await prisma.articles.findMany();
+  const allArticles = rawArticles.map(art => ({
+    ...art,
+    // On convertit le tableau de notes en une seule valeur (moyenne) pour correspondre à ton interface Domaine
+    rates: art.rates.length > 0 
+      ? art.rates.reduce((a, b) => a + b, 0) / art.rates.length 
+      : 0
+  })) as any; // Cast en any si ton interface Articles est très stricte
 
-  await seedInteractions(prisma, users, articles);
-  await seedOrders(prisma, users, articles);
+  // 5. Seed des Interactions (Commentaires & Notes)
+  console.log("💬 Création des commentaires et notes...");
+  await seedInteractions(commentRepo, allArticles, allUsers);
 
-  console.log("🏁 Seeding complete!");
+  // 6. Seed des Commandes
+  console.log("🛒 Création des commandes...");
+  await seedOrders(orderRepo, allUsers, allArticles);
+
+  console.log("🏁 Seeding terminé avec succès !");
 }
 
 main()
-  .catch(e => { console.error(e); process.exit(1); })
-  .finally(() => prisma.$disconnect());
+  .catch((e) => {
+    console.error("❌ Erreur pendant le seeding:", e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

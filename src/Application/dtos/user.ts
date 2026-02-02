@@ -1,6 +1,6 @@
 import type { User } from "../../Domaine/entities/user.js";
 
-enum address {
+export enum address {
   UADB = "Université Alioune Diop",
   UGB = "Université Gaston Berger",
   UCAD = "Université Cheikh Anta Diop",

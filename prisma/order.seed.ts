@@ -1,40 +1,39 @@
-import { PrismaClient } from "../prisma/generated/index.js";
-import { faker } from "@faker-js/faker";
 import { type User } from "../src/Domaine/entities/user.js";
-import { type Articles } from "../src/Domaine/entities/articles.js";
-import { type Carts } from "../src/Domaine/entities/carts.js";
+import type { createOrderDto } from "../src/Application/dtos/order.js";
+import type { OrderRepoImpl } from "../src/Infrastructure/repositories/orderRepoImpl.js";
+import type { Articles } from "../src/Domaine/entities/articles.js"; // Ajuste le chemin si besoin
+import { faker } from '@faker-js/faker';
 
 export async function seedOrders(
-  prisma: PrismaClient,
+  create: OrderRepoImpl,
   users: User[],
-  articles: Articles[],
+  articles: Articles[]
 ) {
+  
+  // On crée une commande pour chaque utilisateur (en tant qu'acheteur)
   for (const user of users) {
-    const article = faker.helpers.arrayElement(articles);
+    
+    // 1. On sélectionne un vendeur au hasard (différent de l'acheteur si possible)
+    const seller = faker.helpers.arrayElement(users.filter(u => u.id !== user.id)) || users[0];
 
-    // Panier (Carts)
-    await prisma.carts.create({
-      data: {
-        user_id: user.id,
-        cart: {
-          items: [{ id: article.id, user_id: user.id, card_details: article }],
-        } as unknown as Carts,
-      },
-    });
+    // 2. On génère entre 1 et 3 articles pour cette commande
+    const selectedArticles = faker.helpers.arrayElements(articles, { min: 1, max: 3 });
 
-    // Commande (Orders)
-    if (faker.datatype.boolean()) {
-      await prisma.orders.create({
-        data: {
-          buyer_id: user.id,
-          seller_id: article.userId,
-          order_status: "accepted",
-          article_details: {
-            title: article.title,
-            price: article.price,
-          } as Articles,
-        },
-      });
-    }
+    // 3. On construit l'objet articleDetails
+    const articleDetails = selectedArticles.map(art => ({
+      articleId: art, // Ici on passe l'entité Article complète comme demandé par ton type
+      quantity: faker.number.int({ min: 1, max: 5 })
+    }));
+
+    // 4. On respecte strictement ton interface createOrderDto
+    const orderData: createOrderDto = {
+      articleDetails: articleDetails,
+      buyerId: user.id,   // L'utilisateur actuel est l'acheteur
+      sellerId: seller.id // Un autre utilisateur est le vendeur
+    };
+
+    await create.saveOrder(orderData);
   }
+
+  console.log(`✅ Seed terminé : Des commandes ont été créées pour ${users.length} acheteurs.`);
 }

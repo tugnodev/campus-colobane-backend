@@ -1,32 +1,40 @@
-import { PrismaClient} from'../prisma/generated/index.js';
-import { faker } from '@faker-js/faker';
 import { type User } from '../src/Domaine/entities/user.js';
+import type { ArticleRepoImpl } from '../src/Infrastructure/repositories/articleRepoImpl.js';
+import type { createArticleDto } from '../src/Application/dtos/article.js';
+import { faker } from '@faker-js/faker';
 
-export async function seedArticles(prisma: PrismaClient, vendeurs: User[], ) {
-  const categories = ['Électronique', 'Mode', 'Maison', 'Sport'];
-  // Création des catégories d'abord
-  for (const name of categories) {
-    await prisma.categories.create({
-        data:{
-            name : name,
-            description: faker.lorem.sentence(),
-            image : faker.image.url({width: 640, height: 480})
+export async function seedArticles(create: ArticleRepoImpl, vendeurs: User[]) {
+  
+  const articleCount = 10;
 
-        }
-    });
+  for (let i = 0; i < articleCount; i++) {
+    const randomVendeur = faker.helpers.arrayElement(vendeurs);
+
+    const articleData: createArticleDto = {
+      userId: randomVendeur.id,
+      title: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      // Utilisation de number.float pour correspondre au type 'number' du DTO
+      price: faker.number.float({ min: 5, max: 1000, fractionDigits: 2 }),
+      stock: faker.number.int({ min: 0, max: 50 }),
+      
+      // CORRECTION : On passe l'objet d'options directement
+      images: [
+        faker.image.urlLoremFlickr({ 
+          category: 'technics', 
+          width: 640, 
+          height: 480 
+        })
+      ],
+
+      category: faker.helpers.arrayElements(
+        ['Tech', 'Art', 'Fashion', 'Home'], 
+        { min: 1, max: 2 }
+      ),
+    };
+
+    await create.saveArticle(articleData);
   }
 
-  for (const vendeur of vendeurs) {
-    await prisma.articles.create({
-      data: {
-        userId: vendeur.id,
-        title: faker.commerce.productName(),
-        description: faker.commerce.productDescription(),
-        price: parseInt(faker.commerce.price({ min: 10, max: 1000 })),
-        stock: faker.number.int({ min: 1, max: 50 }),
-        images: [faker.image.url(), faker.image.url()],
-        category: [faker.helpers.arrayElement(categories)],
-      }
-    });
-  }
+  console.log(`✅ Articles générés sans avertissements.`);
 }
