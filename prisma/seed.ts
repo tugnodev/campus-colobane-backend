@@ -12,17 +12,36 @@ import { CategorieRepoImpl } from '../src/Infrastructure/repositories/categorieR
 import { OrderRepoImpl } from '../src/Infrastructure/repositories/orderRepoImpl.js';
 import { CommentRepoImpl } from '../src/Infrastructure/repositories/commentRepoImpl.js';
 
+// Dans prisma/seed.ts
 const prisma = new PrismaClient();
+  
 
 async function main() {
-  console.log("♻️  Nettoyage de la base de données...");
+console.log("♻️  Nettoyage de la base de données...");
   
-  // Ordre de suppression pour éviter les erreurs de clés étrangères (FK)
-  const tables = ['Orders', 'Carts', 'Comments', 'ArticleNotes', 'Articles', 'Categories', 'User'];
-  for (const table of tables) {
-    const modelName = table.toLowerCase();
-    if ((prisma as any)[modelName]) {
-      await (prisma as any)[modelName].deleteMany();
+  // L'ordre est crucial : on supprime d'abord les enfants, puis les parents
+  // On utilise les noms exacts générés par Prisma (souvent camelCase)
+  const models = [
+    'verification', // @@map("verification")
+    'account',      // @@map("account")
+    'session',      // @@map("session")
+    'orders',
+    'carts',
+    'numbers',
+    'messages',
+    'room',
+    'comments',
+    'notes',
+    'cateByArticle',
+    'articles',
+    'categories',
+    'user'          // @@map("user")
+  ];
+
+  for (const model of models) {
+    if ((prisma as any)[model]) {
+      await (prisma as any)[model].deleteMany();
+      console.log(`   - ${model} nettoyé`);
     }
   }
 

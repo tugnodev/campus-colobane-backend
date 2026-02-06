@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 
 export async function seedArticles(create: ArticleRepoImpl, vendeurs: User[]) {
   
-  const articleCount = 10;
+  const articleCount = 100;
 
   for (let i = 0; i < articleCount; i++) {
     const randomVendeur = faker.helpers.arrayElement(vendeurs);
