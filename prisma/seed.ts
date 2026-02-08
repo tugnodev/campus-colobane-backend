@@ -1,8 +1,9 @@
 import { PrismaClient } from "./generated/prisma/index.js";
-import { seedUsers } from "../prisma/user.seed.js";
-import { seedArticles } from "../prisma/articles.seed.js";
-import { seedInteractions } from "../prisma/interaction.seed.js";
-import { seedOrders } from "../prisma/order.seed.js";
+import { seedUsers } from "./user.seed.js";
+import { seedArticles } from "./articles.seed.js";
+import { seedInteractions } from "./interaction.seed.js";
+import { seedOrders } from "./order.seed.js";
+import { seedCategories } from "./categorie.seed.js";
 
 // Import des Repositories
 import { UserRepoImpl } from "../src/Infrastructure/repositories/userRepoImpl.js";
@@ -10,29 +11,37 @@ import { ArticleRepoImpl } from "../src/Infrastructure/repositories/articleRepoI
 import { CategorieRepoImpl } from "../src/Infrastructure/repositories/categorieRepoImpl.js";
 import { OrderRepoImpl } from "../src/Infrastructure/repositories/orderRepoImpl.js";
 import { CommentRepoImpl } from "../src/Infrastructure/repositories/commentRepoImpl.js";
-import { seedCategories } from "./categorie.seed.js";
 
 // Dans prisma/seed.ts
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("♻️  Resetting database...");
-  const tables = [
-    "Verification",
-    "Session",
-    "Account",
-    "Orders",
-    "Carts",
-    "Messages",
-    "Comments",
-    "ArticleNotes",
-    "Articles",
-    "Numbers",
-    "User",
-    "Categories",
+  console.log("♻️  Nettoyage de la base de données...");
+
+  // L'ordre est crucial : on supprime d'abord les enfants, puis les parents
+  // On utilise les noms exacts générés par Prisma (souvent camelCase)
+  const models = [
+    "verification", // @@map("verification")
+    "account", // @@map("account")
+    "session", // @@map("session")
+    "orders",
+    "carts",
+    "numbers",
+    "messages",
+    "room",
+    "comments",
+    "notes",
+    "cateByArticle",
+    "articles",
+    "categories",
+    "user", // @@map("user")
   ];
-  for (const table of tables) {
-    await (prisma as any)[table.toLowerCase()].deleteMany();
+
+  for (const model of models) {
+    if ((prisma as any)[model]) {
+      await (prisma as any)[model].deleteMany();
+      console.log(`   - ${model} nettoyé`);
+    }
   }
 
   console.log("🌱 Début du seeding modulaire...");
