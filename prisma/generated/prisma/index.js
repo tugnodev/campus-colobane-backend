@@ -277,7 +277,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/kali/Documents/Projets/campus-colobane-backend/prisma/generated/prisma",
+      "value": "/home/hackev/Documents/campus-colobane-backend/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -291,7 +291,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/kali/Documents/Projets/campus-colobane-backend/prisma/schema.prisma",
+    "sourceFilePath": "/home/hackev/Documents/campus-colobane-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -305,6 +305,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
