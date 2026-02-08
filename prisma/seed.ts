@@ -1,16 +1,8 @@
 import { PrismaClient } from "./generated/prisma/index.js";
-<<<<<<< HEAD
 import { seedUsers } from "../prisma/user.seed.js";
 import { seedArticles } from "../prisma/articles.seed.js";
 import { seedInteractions } from "../prisma/interaction.seed.js";
 import { seedOrders } from "../prisma/order.seed.js";
-=======
-import { seedUsers } from "./user.seed.js";
-import { seedArticles } from "./articles.seed.js";
-import { seedInteractions } from "./interaction.seed.js";
-import { seedOrders } from "./order.seed.js";
-import { seedCategories } from "./categorie.seed.js";
->>>>>>> a328c05 (package)
 
 // Import des Repositories
 import { UserRepoImpl } from "../src/Infrastructure/repositories/userRepoImpl.js";
@@ -18,16 +10,12 @@ import { ArticleRepoImpl } from "../src/Infrastructure/repositories/articleRepoI
 import { CategorieRepoImpl } from "../src/Infrastructure/repositories/categorieRepoImpl.js";
 import { OrderRepoImpl } from "../src/Infrastructure/repositories/orderRepoImpl.js";
 import { CommentRepoImpl } from "../src/Infrastructure/repositories/commentRepoImpl.js";
-<<<<<<< HEAD
 import { seedCategories } from "./categorie.seed.js";
-=======
->>>>>>> a328c05 (package)
 
 // Dans prisma/seed.ts
 const prisma = new PrismaClient();
 
 async function main() {
-<<<<<<< HEAD
   console.log("♻️  Resetting database...");
   const tables = [
     "Verification",
@@ -42,27 +30,6 @@ async function main() {
     "Numbers",
     "User",
     "Categories",
-=======
-  console.log("♻️  Nettoyage de la base de données...");
-
-  // L'ordre est crucial : on supprime d'abord les enfants, puis les parents
-  // On utilise les noms exacts générés par Prisma (souvent camelCase)
-  const models = [
-    "verification", // @@map("verification")
-    "account", // @@map("account")
-    "session", // @@map("session")
-    "orders",
-    "carts",
-    "numbers",
-    "messages",
-    "room",
-    "comments",
-    "notes",
-    "cateByArticle",
-    "articles",
-    "categories",
-    "user", // @@map("user")
->>>>>>> a328c05 (package)
   ];
   for (const table of tables) {
     await (prisma as any)[table.toLowerCase()].deleteMany();
