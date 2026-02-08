@@ -27,9 +27,13 @@ export class UserRepoImpl implements OUserRepo {
         },
       });
 
-      const user: User = await prisma.user.update({
+      const user = await prisma.user.update({
         where: { id: newUser.user.id },
-        data,
+        data: {
+          vendeur: data.vendeur,
+          address: data.address,
+          certified: false,
+        },
       });
 
       newUser.user = user;

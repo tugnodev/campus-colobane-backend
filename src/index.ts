@@ -9,8 +9,14 @@ import { cartRoutes } from "./Infrastructure/http/routes/market/cart.js";
 import { categorieRoutes } from "./Infrastructure/http/routes/market/categories.js";
 import { articleRoutes } from "./Infrastructure/http/routes/market/articles.js";
 import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js";
+import { createNodeWebSocket, type NodeWebSocketInit } from "@hono/node-ws";
 
 const app = new Hono();
+const webSocketInit: NodeWebSocketInit = {
+  app,
+  baseUrl: `http://localhost:${3000}`,
+};
+const ws = createNodeWebSocket(webSocketInit);
 
 app.use("*", corsMiddleware);
 app.use("/api/auth/*", authMiddleware);
@@ -24,6 +30,8 @@ app.route("/cart", cartRoutes);
 app.route("/categories", categorieRoutes);
 app.route("/articles", articleRoutes);
 app.route("/commandes", commandeRoutes);
+
+//ws.upgradeWebSocket();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 

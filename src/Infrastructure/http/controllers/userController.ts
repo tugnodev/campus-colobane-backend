@@ -18,9 +18,6 @@ export class UserController {
   async createUser(ctx: Context) {
     const userData: createUserDto = await ctx.req.json();
     const result = await this.userUseCase.createUser(userData);
-    if (typeof result === "string") {
-      return ctx.json({ message: "User already exists" });
-    }
     return ctx.json(result);
   }
 
