@@ -32,6 +32,7 @@ export async function seedArticles(create: ArticleRepoImpl, vendeurs: User[]) {
         { min: 1, max: 2 }
       ),
     };
+    //ici
 
     await create.saveArticle(articleData);
   }
