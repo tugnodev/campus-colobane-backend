@@ -16,11 +16,11 @@ const webSocketInit: NodeWebSocketInit = {
   app,
   baseUrl: `http://localhost:${3000}`,
 };
-const ws = createNodeWebSocket(webSocketInit);
+export const webSocketServer = createNodeWebSocket(webSocketInit);
 
-app.use("*", corsMiddleware);
-app.use("/api/auth/*", authMiddleware);
-app.use("*", logger());
+//app.use("*", corsMiddleware);
+//app.use("/api/auth/*", authMiddleware);
+//app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello Hono!" }));
 
@@ -31,16 +31,16 @@ app.route("/categories", categorieRoutes);
 app.route("/articles", articleRoutes);
 app.route("/commandes", commandeRoutes);
 
-//ws.upgradeWebSocket();
-
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-serve(
+const server = serve(
   {
     fetch: app.fetch,
     port: port,
+    hostname: "localhost",
   },
   () => {
     console.log(`Server is running on http://localhost:${port}`);
   },
 );
+webSocketServer.injectWebSocket(server);

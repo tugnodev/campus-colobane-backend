@@ -1,33 +1,16 @@
 import type { Message } from "../../Domaine/entities/message.js";
-import type { OMessageRepo } from "../../Domaine/ports/outputs/messageRepo.js";
+import { webSocketServer } from "../../index.js";
+import type {
+  OMessageRepo,
+  OMessageBroadcast,
+} from "../../Domaine/ports/outputs/messageRepo.js";
+import type { broadcastMessageDto } from "../../Application/dtos/messages.js";
 
-export class WebSocketHandler {
+//const { upgradeWebSocket, wss } = webSocketServer;
+
+export class MessageBroadcast implements OMessageBroadcast {
   private clients = new Map<string, WebSocket>();
-  private messageRepo: OMessageRepo;
-  constructor(repo: OMessageRepo) {
-    this.messageRepo = repo;
-  }
-
-  onOpen(userId: string, ws: WebSocket) {
-    this.clients.set(userId, ws);
-    console.log(`✅ ${userId} connecté`);
-  }
-
-  async onMessage(raw: string) {
-    const data: Message = JSON.parse(raw);
-    // Notifier le destinataire si connecté
-    const receiverSocket = this.clients.get(data.userId);
-    if (receiverSocket) {
-      receiverSocket.send(JSON.stringify(data));
-    }
-  }
-
-  onClose(userId: string) {
-    this.clients.delete(userId);
-    console.log(`❌ ${userId} déconnecté`);
-  }
-
-  getAllClients() {
-    return this.clients;
+  async broadcast(message: broadcastMessageDto): Promise<any> {
+    return JSON.stringify(message);
   }
 }

@@ -22,8 +22,11 @@ export class ArticleRepoImpl implements OArticleRepo {
         },
       });
 
-      const categories = await prisma.cateByArticle.findMany({
-        where: { articleId: created.id },
+      await prisma.cateByArticle.createMany({
+        data: article.category.map((categoryId) => ({
+          articleId: created.id,
+          categoryId,
+        })),
       });
 
       const newarticle: Articles = {
@@ -33,8 +36,8 @@ export class ArticleRepoImpl implements OArticleRepo {
         images: created.images,
         description: created.description,
         price: created.price,
-        rates: rateCalculation(created.rates),
-        category: categories.map((category) => category.categoryId),
+        rates: 0,
+        category: article.category,
         stock: created.stock,
         createdAt: created.createdAt,
         updatedAt: created.updatedAt,
@@ -55,8 +58,16 @@ export class ArticleRepoImpl implements OArticleRepo {
         data,
       });
 
-      const categories = await prisma.cateByArticle.findMany({
-        where: { articleId: id },
+      await prisma.cateByArticle.updateMany({
+        data: article.category!.map((categoryId) => ({
+          articleId: update.id,
+          categoryId,
+        })),
+      });
+
+      const rates = await prisma.notes.findMany({
+        where: { articleId: update.id },
+        select: { number: true },
       });
 
       const newarticle: Articles = {
@@ -66,8 +77,8 @@ export class ArticleRepoImpl implements OArticleRepo {
         images: update.images,
         description: update.description,
         price: update.price,
-        rates: rateCalculation(update.rates),
-        category: categories.map((category) => category.categoryId),
+        rates: rateCalculation(rates.map((rate) => rate.number)),
+        category: article.category!,
         stock: update.stock,
         createdAt: update.createdAt,
         updatedAt: update.updatedAt,
@@ -102,6 +113,11 @@ export class ArticleRepoImpl implements OArticleRepo {
 
       const categories = await prisma.cateByArticle.findMany({
         where: { articleId: id },
+        select: { categoryId: true },
+      });
+      const notes = await prisma.notes.findMany({
+        where: { articleId: id },
+        select: { number: true },
       });
 
       const newarticle: Articles = {
@@ -111,7 +127,7 @@ export class ArticleRepoImpl implements OArticleRepo {
         images: article.images,
         description: article.description,
         price: article.price,
-        rates: rateCalculation(article.rates),
+        rates: rateCalculation(notes.map((note) => note.number)),
         category: categories.map((category) => category.categoryId),
         stock: article.stock,
         createdAt: article.createdAt,
@@ -128,10 +144,16 @@ export class ArticleRepoImpl implements OArticleRepo {
   async getAllArticles(): Promise<Articles[] | string> {
     try {
       const articles = await prisma.articles.findMany();
+      console.log(articles);
       const newarticles = await Promise.all(
         articles.map(async (article) => {
           const categories = await prisma.cateByArticle.findMany({
             where: { articleId: article.id },
+            select: { categoryId: true },
+          });
+          const notes = await prisma.notes.findMany({
+            where: { articleId: article.id },
+            select: { number: true },
           });
 
           const newarticle: Articles = {
@@ -141,7 +163,7 @@ export class ArticleRepoImpl implements OArticleRepo {
             images: article.images,
             description: article.description,
             price: article.price,
-            rates: rateCalculation(article.rates),
+            rates: rateCalculation(notes.map((note) => note.number)),
             category: categories.map((category) => category.categoryId),
             stock: article.stock,
             createdAt: article.createdAt,

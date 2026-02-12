@@ -158,14 +158,11 @@ exports.Prisma.ArticlesScalarFieldEnum = {
   userId: 'userId',
   title: 'title',
   images: 'images',
-  category: 'category',
   description: 'description',
   price: 'price',
   stock: 'stock',
-  rates: 'rates',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  categoriesName: 'categoriesName'
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.CommentsScalarFieldEnum = {

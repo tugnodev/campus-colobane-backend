@@ -11,6 +11,7 @@ import { ArticleRepoImpl } from "../src/Infrastructure/repositories/articleRepoI
 import { CategorieRepoImpl } from "../src/Infrastructure/repositories/categorieRepoImpl.js";
 import { OrderRepoImpl } from "../src/Infrastructure/repositories/orderRepoImpl.js";
 import { CommentRepoImpl } from "../src/Infrastructure/repositories/commentRepoImpl.js";
+import { NotesRepoImpl } from "../src/Infrastructure/repositories/notesRepoImpl.js";
 
 // Dans prisma/seed.ts
 const prisma = new PrismaClient();
@@ -52,6 +53,7 @@ async function main() {
   const categoryRepo = new CategorieRepoImpl();
   const orderRepo = new OrderRepoImpl();
   const commentRepo = new CommentRepoImpl();
+  const notesRepo = new NotesRepoImpl();
 
   // 2. Seed des Utilisateurs
   console.log("👥 Création des utilisateurs...");
@@ -79,7 +81,7 @@ async function main() {
 
   // 5. Seed des Interactions (Commentaires & Notes)
   console.log("💬 Création des commentaires et notes...");
-  await seedInteractions(commentRepo, allArticles, allUsers);
+  await seedInteractions(commentRepo, notesRepo, allArticles, allUsers);
 
   // 6. Seed des Commandes
   console.log("🛒 Création des commandes...");

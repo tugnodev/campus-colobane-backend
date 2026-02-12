@@ -1,8 +1,6 @@
 export interface createRoomDto {
   buyerId: string;
   sellerId: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface updateRoomDto {

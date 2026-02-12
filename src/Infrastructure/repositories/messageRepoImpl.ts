@@ -8,11 +8,36 @@ import type {
 } from "../../Application/dtos/messages.js";
 
 import { type Message } from "../../Domaine/entities/message.js";
+import type { Room } from "../../Domaine/entities/room.js";
 const prisma = new PrismaClient();
 
 export class MessageRepoImpl implements OMessageRepo {
   async createMessage(data: createMessageDto): Promise<Message | string> {
     try {
+      const room = await prisma.room
+        .findUnique({
+          where: { id: data.roomId },
+        })
+        .catch((error) => {
+          return "room not found";
+        });
+
+      if (!room) {
+        //create room
+        const newRoom = await prisma.room.create({
+          data: {
+            buyerId: data.userId,
+            sellerId: data.sellerId!,
+          },
+        });
+
+        if (!newRoom) {
+          return "error while creating room";
+        }
+
+        data.roomId = newRoom.id;
+      }
+
       const newArticle: Message = await prisma.messages.create({
         data,
       });

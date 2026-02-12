@@ -1,18 +1,19 @@
-import { type User } from '../src/Domaine/entities/user.js';
-import { CommentRepoImpl } from '../src/Infrastructure/repositories/commentRepoImpl.js';
-import type { Articles } from '../src/Domaine/entities/articles.js';
-import type { createCommentDto,} from '../src/Application/dtos/comment.js';
-import type { createNotesDto } from '../src/Application/dtos/notes.js';
+import { type User } from "../src/Domaine/entities/user.js";
+import { CommentRepoImpl } from "../src/Infrastructure/repositories/commentRepoImpl.js";
+import { NotesRepoImpl } from "../src/Infrastructure/repositories/notesRepoImpl.js";
+import type { Articles } from "../src/Domaine/entities/articles.js";
+import type { createCommentDto } from "../src/Application/dtos/comment.js";
+import type { createNotesDto } from "../src/Application/dtos/notes.js";
 // Ajuste l'import selon ton fichier
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 
 export async function seedInteractions(
-  commentRepo: CommentRepoImpl, 
-  articles: Articles[], 
-  users: User[]
+  commentRepo: CommentRepoImpl,
+  noteRepo: NotesRepoImpl,
+  articles: Articles[],
+  users: User[],
 ) {
   for (const article of articles) {
-    
     // On définit combien de personnes vont interagir avec cet article (ex: 1 à 4)
     const interactionCount = faker.number.int({ min: 1, max: 4 });
 
@@ -23,7 +24,7 @@ export async function seedInteractions(
       const commentData: createCommentDto = {
         articleId: article.id,
         userId: randomUser.id,
-        comment: faker.lorem.sentence()
+        comment: faker.lorem.sentence(),
       };
       await commentRepo.saveComment(commentData);
 
@@ -31,15 +32,18 @@ export async function seedInteractions(
       const noteData: createNotesDto = {
         articleId: article.id,
         userId: randomUser.id,
-        number: faker.number.int({ min: 1, max: 5 }) // Note entre 1 et 5
+        number: faker.number.int({ min: 1, max: 5 }), // Note entre 1 et 5
       };
-      
+      await noteRepo.createNote(noteData);
+
       // On suppose que ton repo a une méthode pour les notes, par exemple 'saveNote'
-      if (typeof (commentRepo as any).saveNote === 'function') {
+      if (typeof (commentRepo as any).saveNote === "function") {
         await (commentRepo as any).saveNote(noteData);
       }
     }
   }
 
-  console.log(`✅ Interactions (Commentaires + Notes) créées pour ${articles.length} articles.`);
+  console.log(
+    `✅ Interactions (Commentaires + Notes) créées pour ${articles.length} articles.`,
+  );
 }
