@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { corsMiddleware } from "./Infrastructure/http/middleware/cors.js";
 import { authMiddleware } from "./Infrastructure/http/middleware/auth.js";
@@ -12,6 +13,11 @@ import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js
 import { createNodeWebSocket, type NodeWebSocketInit } from "@hono/node-ws";
 
 const app = new Hono();
+
+app.use('/*', cors({
+  origin: 'http://localhost:1420',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}))
 const webSocketInit: NodeWebSocketInit = {
   app,
   baseUrl: `http://localhost:${3000}`,

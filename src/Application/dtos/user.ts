@@ -12,9 +12,9 @@ export enum address {
 export interface createUserDto {
   name: string;
   email: string;
-  image: string;
+  image?: string;
   password: string;
-  address: address;
+  address?: address;
   vendeur?: boolean;
   rememberMe?: boolean;
 }
