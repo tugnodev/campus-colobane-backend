@@ -143,36 +143,45 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getAllArticles(): Promise<Articles[] | string> {
     try {
-      const articles = await prisma.articles.findMany();
-      console.log(articles);
-      const newarticles = await Promise.all(
-        articles.map(async (article) => {
-          const categories = await prisma.cateByArticle.findMany({
-            where: { articleId: article.id },
-            select: { categoryId: true },
-          });
-          const notes = await prisma.notes.findMany({
-            where: { articleId: article.id },
-            select: { number: true },
-          });
+      let newarticles: Articles[] = [];
+      let newarticle: Articles;
+      let articles = await prisma.articles.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              address: true,
+            },
+          },
+          categories: {
+            select: {
+              categoryId: true,
+            },
+          },
+          rates: {
+            select: {
+              number: true,
+            },
+          },
+        },
+      });
 
-          const newarticle: Articles = {
-            id: article.id,
-            userId: article.userId,
-            title: article.title,
-            images: article.images,
-            description: article.description,
-            price: article.price,
-            rates: rateCalculation(notes.map((note) => note.number)),
-            category: categories.map((category) => category.categoryId),
-            stock: article.stock,
-            createdAt: article.createdAt,
-            updatedAt: article.updatedAt,
-          };
-
-          return newarticle;
-        }),
-      );
+      for (const article of articles) {
+        newarticle = {
+          id: article.id,
+          userId: article.userId,
+          title: article.title,
+          images: article.images,
+          description: article.description,
+          price: article.price,
+          rates: rateCalculation(article.rates.map((rate) => rate.number)),
+          category: article.categories.map((category) => category.categoryId),
+          stock: article.stock,
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt,
+        };
+        newarticles.push(newarticle);
+      }
 
       return newarticles;
     } catch (error) {

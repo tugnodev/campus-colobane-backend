@@ -49,12 +49,25 @@ export class UserController {
   }
 
   async userLogin(ctx: Context) {
-    const userData: userLoginDto = await ctx.req.json();
-    const result = await auth.api.signInEmail({ body: userData });
-    if (typeof result === "string") {
-      return ctx.json({ message: "User Not Found" });
+    try {
+      const userData: userLoginDto = await ctx.req.json();
+      const result = await auth.api.signInEmail({ body: userData });
+      if (typeof result === "string") {
+        return ctx.json({ message: "User Not Found" });
+      }
+      const user = await this.userUseCase.getUserById(result.user.id);
+      switch (typeof user) {
+        case "string":
+          return ctx.json({ message: "User Not Found" });
+        case "object":
+          result.user = user;
+          return ctx.json(result);
+        default:
+          return ctx.json({ message: "Unknown Error" });
+      }
+    } catch (error) {
+      return ctx.json({ message: "Invalid Credentials" });
     }
-    return ctx.json(result.user);
   }
 
   async getAllUsers(ctx: Context) {

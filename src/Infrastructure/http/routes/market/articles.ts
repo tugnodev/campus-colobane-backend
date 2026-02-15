@@ -13,9 +13,7 @@ articleRoutes.post("/", async (c) => {
 });
 articleRoutes.get("/all", async (c) => {
   console.log("Getting all articles");
-  const res = await articleController.getAll(c);
-  console.log(res);
-  return c.json(res);
+  return await articleController.getAll(c);
 });
 articleRoutes.get("/:id", async (c) => {
   return await articleController.getById(c);

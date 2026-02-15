@@ -12,6 +12,7 @@ import { CategorieRepoImpl } from "../src/Infrastructure/repositories/categorieR
 import { OrderRepoImpl } from "../src/Infrastructure/repositories/orderRepoImpl.js";
 import { CommentRepoImpl } from "../src/Infrastructure/repositories/commentRepoImpl.js";
 import { NotesRepoImpl } from "../src/Infrastructure/repositories/notesRepoImpl.js";
+import type { Articles } from "../src/Domaine/entities/articles.js";
 
 // Dans prisma/seed.ts
 const prisma = new PrismaClient();
@@ -69,15 +70,11 @@ async function main() {
   await seedArticles(articleRepo, allUsers);
 
   // Récupération et correction du type Articles (Tableau vs Nombre seul pour 'rates')
-  const rawArticles = await prisma.articles.findMany();
-  const allArticles = rawArticles.map((art) => ({
-    ...art,
-    // On convertit le tableau de notes en une seule valeur (moyenne) pour correspondre à ton interface Domaine
-    rates:
-      art.rates.length > 0
-        ? art.rates.reduce((a, b) => a + b, 0) / art.rates.length
-        : 0,
-  })) as any; // Cast en any si ton interface Articles est très stricte
+  const rawArticles = await articleRepo.getAllArticles();
+  const allArticles: Articles[] = [];
+  if (typeof rawArticles !== "string") {
+    allArticles.push(...rawArticles);
+  }
 
   // 5. Seed des Interactions (Commentaires & Notes)
   console.log("💬 Création des commentaires et notes...");

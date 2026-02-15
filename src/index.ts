@@ -24,9 +24,9 @@ const webSocketInit: NodeWebSocketInit = {
 };
 export const webSocketServer = createNodeWebSocket(webSocketInit);
 
-//app.use("*", corsMiddleware);
+app.use("*", corsMiddleware);
 //app.use("/api/auth/*", authMiddleware);
-//app.use("*", logger());
+app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello Hono!" }));
 
