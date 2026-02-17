@@ -38,6 +38,19 @@ export class UserRepoImpl implements OUserRepo {
 
       newUser.user = user;
 
+      const cart = await prisma.carts
+        .create({
+          data: {
+            userId: user.id,
+            cart: [],
+          },
+        })
+        .catch((error) => {
+          return `Erreur lors de la création du panier: ${JSON.stringify(error)}"`;
+        });
+
+      console.log(cart);
+
       return newUser as authPack;
     } catch (e) {
       switch (e) {
@@ -45,10 +58,8 @@ export class UserRepoImpl implements OUserRepo {
           return "Unvalid data";
         case e instanceof BetterAuthError:
           return "User already exists";
-        case e instanceof Error:
-          return "Error creating user";
         default:
-          return "Error creating user";
+          return "unknown Error";
       }
     }
   }

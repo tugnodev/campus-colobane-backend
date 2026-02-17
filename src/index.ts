@@ -14,10 +14,13 @@ import { createNodeWebSocket, type NodeWebSocketInit } from "@hono/node-ws";
 
 const app = new Hono();
 
-app.use('/*', cors({
-  origin: 'http://localhost:1420',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-}))
+app.use(
+  "/*",
+  cors({
+    origin: "http://localhost:1420",
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  }),
+);
 const webSocketInit: NodeWebSocketInit = {
   app,
   baseUrl: `http://localhost:${3000}`,

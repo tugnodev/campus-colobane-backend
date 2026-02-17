@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { bearer } from "better-auth/plugins";
 
 export const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -22,7 +23,7 @@ export const auth = betterAuth({
     maxPasswordLength: 32,
     minPasswordLength: 8,
   },
-  plugins: [],
+  plugins: [bearer()],
   advanced: {
     cookiePrefix: "campus-colobane",
     cookieSecure: process.env.NODE_ENV === "production",

@@ -34,9 +34,7 @@ export class ArticleController {
 
   async getAll(ctx: Context) {
     const res = await this.articleUseCase.getAllArticles();
-    console.log(res);
     const response = ctx.json(res);
-    console.log(response);
     return response;
   }
 }

@@ -1,6 +1,8 @@
 export type item = {
   articleId: string;
-  quantity: number;
+  image: string;
+  name: string;
+  price: number;
 };
 
 export interface createCartDto {

@@ -29,7 +29,9 @@ export class CartRepoImpl implements OCartRepo {
       const { userId, ...data } = cart;
       const updated = await prisma.carts.update({
         where: { userId },
-        data: data,
+        data: {
+          cart: data.cart,
+        },
       });
       return updated;
     } catch (error) {
@@ -50,10 +52,11 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByUserId(userId: string): Promise<Carts | string> {
     try {
-      const carts = await prisma.carts.findUnique({
+      const cart = await prisma.carts.findUnique({
         where: { userId },
       });
-      return carts!;
+      if (cart === null) return "Panier non trouvé";
+      return cart;
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération des paniers par utilisateur";
@@ -63,7 +66,10 @@ export class CartRepoImpl implements OCartRepo {
   async getByCartId(cartId: string): Promise<Carts | string> {
     try {
       const cart = await prisma.carts.findUnique({ where: { userId: cartId } });
-      return cart ?? "Panier non trouvé";
+      if (!cart) {
+        return "Panier non trouvé";
+      }
+      return cart;
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération du panier par ID";

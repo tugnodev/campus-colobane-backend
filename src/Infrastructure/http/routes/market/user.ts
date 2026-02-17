@@ -18,11 +18,19 @@ userRoutes.post("/login", async (c) => {
   return userController.userLogin(c);
 });
 
+userRoutes.post("/logout", async (c) => {
+  return userController.userLogout(c);
+});
+
 userRoutes.get("/all", async (c) => {
   return userController.getAllUsers(c);
 });
 
-userRoutes.get("/:id", async (c) => {
+userRoutes.get("/session", async (c) => {
+  return userController.getUserBySession(c);
+});
+
+userRoutes.get("/", async (c) => {
   return userController.getUserById(c);
 });
 
