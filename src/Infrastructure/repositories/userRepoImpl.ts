@@ -128,9 +128,20 @@ export class UserRepoImpl implements OUserRepo {
 
   async turnToVendor(user: turnToVendorDto): Promise<User | string> {
     try {
+      const phoneNumber = await prisma.numbers
+        .create({
+          data: {
+            sellerId: user.id,
+            number: user.phone,
+          },
+        })
+        .catch(() => {
+          return "error whilw saving number";
+        });
+
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { vendeur: true },
+        data: { vendeur: true, address: user.address },
       });
 
       return updatedUser;

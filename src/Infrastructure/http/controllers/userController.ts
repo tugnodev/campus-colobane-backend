@@ -114,7 +114,7 @@ export class UserController {
     const userData: turnToVendorDto = await ctx.req.json();
     const result = await this.userUseCase.turnToVendor(userData);
     if (typeof result === "string") {
-      return ctx.json({ message: "User Not Found" });
+      return ctx.text("Error credentials");
     }
     return ctx.json(result);
   }

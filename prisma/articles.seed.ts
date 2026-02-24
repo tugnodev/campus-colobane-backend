@@ -22,23 +22,11 @@ export async function seedArticles(create: ArticleRepoImpl, vendeurs: User[]) {
       userId: randomVendeur.id,
       title: faker.commerce.productName(),
       description: faker.commerce.productDescription(),
-      // Utilisation de number.float pour correspondre au type 'number' du DTO
-      price: faker.number.float({ min: 5, max: 1000, fractionDigits: 2 }),
+      price: faker.number.float({ min: 1000, max: 100000 }),
       stock: faker.number.int({ min: 0, max: 50 }),
-
-      // CORRECTION : On passe l'objet d'options directement
-      images: [
-        faker.image.urlLoremFlickr({
-          category: "technics",
-          width: 640,
-          height: 480,
-        }),
-      ],
-
-      category: faker.helpers.arrayElements(categoryNames, { min: 1, max: 3 }),
+      images: ["1", "2", "3", "4", "5"].map(() => faker.image.url()),
+      category: faker.helpers.arrayElements(categoryNames, { min: 1, max: 1 }),
     };
-    //ici
-
     await create.saveArticle(articleData);
   }
 

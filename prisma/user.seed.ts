@@ -18,5 +18,6 @@ export async function seedUsers(create: UserRepoImpl, count: number) {
     await create.createUser(us);
   }
 
+  console.log(JSON.stringify(users));
   console.log(`${count} utilisateurs ont été créés avec succès.`);
 }

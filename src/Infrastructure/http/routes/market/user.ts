@@ -37,6 +37,11 @@ userRoutes.get("/", async (c) => {
 userRoutes.patch("/update", async (c) => {
   return userController.updateUser(c);
 });
+
+userRoutes.patch("/update/vendor", async (c) => {
+  return userController.turnToVendor(c);
+});
+
 userRoutes.delete("/user/delete", async (c) => {
   return userController.deleteUser(c);
 });

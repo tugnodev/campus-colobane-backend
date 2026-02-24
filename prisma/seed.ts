@@ -58,7 +58,7 @@ async function main() {
 
   // 2. Seed des Utilisateurs
   console.log("👥 Création des utilisateurs...");
-  await seedUsers(userRepo, 10);
+  await seedUsers(userRepo, 100);
   const allUsers = await prisma.user.findMany();
 
   // 3. Seed des Catégories
