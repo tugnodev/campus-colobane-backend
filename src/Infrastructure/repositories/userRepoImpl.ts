@@ -9,6 +9,7 @@ import type {
   createUserDto,
   turnToVendorDto,
   updateUserDto,
+  userStatsDto,
 } from "../../Application/dtos/user.js";
 
 const prisma = new PrismaClient();
@@ -30,7 +31,7 @@ export class UserRepoImpl implements OUserRepo {
       const user = await prisma.user.update({
         where: { id: newUser.user.id },
         data: {
-          vendeur: data.vendeur,
+          vendeur: false,
           address: data.address,
           certified: false,
         },
@@ -171,6 +172,35 @@ export class UserRepoImpl implements OUserRepo {
       }
     } catch (e) {
       return { success: false };
+    }
+  }
+  async getStats(id: string): Promise<userStatsDto | string> {
+    try {
+      let articles = await prisma.articles.findMany({
+        where: { userId: id },
+      });
+      let commandes = await prisma.orders.findMany({
+        where: { sellerId: id },
+      });
+      return {
+        articles: {
+          total: articles.length,
+          rupture: articles.filter((article) => article.stock === 0).length,
+        },
+        commandes: {
+          total: commandes.length,
+          attente: commandes.filter((commande) => commande.status === "attente")
+            .length,
+          acceptees: commandes.filter(
+            (commande) => commande.status === "acceptee",
+          ).length,
+          annulees: commandes.filter(
+            (commande) => commande.status === "annulee",
+          ).length,
+        },
+      };
+    } catch (e) {
+      return "Error getting stats";
     }
   }
 

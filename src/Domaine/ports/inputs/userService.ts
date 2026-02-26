@@ -2,7 +2,7 @@ import type {
   authPack,
   createUserDto,
   updateUserDto,
-  userDto,
+  userStatsDto,
 } from "../../../Application/dtos/user.js";
 import type { User } from "../../entities/user.js";
 
@@ -13,4 +13,5 @@ export interface IUserService {
   deleteUser(id: string): Promise<string>;
   getUserById(id: string): Promise<User | string>;
   getAllUsers(): Promise<User[] | string>;
+  getStats(userId: string): Promise<userStatsDto | string>;
 }

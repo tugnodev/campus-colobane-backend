@@ -118,4 +118,13 @@ export class UserController {
     }
     return ctx.json(result);
   }
+
+  async getStats(ctx: Context) {
+    const userId = ctx.req.param("id") as string;
+    const result = await this.userUseCase.getStats(userId);
+    if (typeof result === "string") {
+      return ctx.json({ message: result });
+    }
+    return ctx.json(result);
+  }
 }

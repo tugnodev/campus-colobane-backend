@@ -42,3 +42,16 @@ export interface authPack {
   token: string | null;
   user: User | undefined | null;
 }
+
+export interface userStatsDto {
+  articles: {
+    total: number;
+    rupture: number;
+  };
+  commandes: {
+    total: number;
+    attente: number;
+    acceptees: number;
+    annulees: number;
+  };
+}

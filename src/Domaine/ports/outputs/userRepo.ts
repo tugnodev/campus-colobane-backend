@@ -3,6 +3,7 @@ import type {
   turnToVendorDto,
   updateUserDto,
   authPack,
+  userStatsDto,
 } from "../../../Application/dtos/user.js";
 import type { User } from "../../entities/user.js";
 
@@ -14,4 +15,5 @@ export interface OUserRepo {
   getUserById(id: string): Promise<User | string>;
   getAllUsers(): Promise<User[] | string>;
   turnToVendor(user: turnToVendorDto): Promise<User | string>;
+  getStats(userId: string): Promise<userStatsDto | string>;
 }

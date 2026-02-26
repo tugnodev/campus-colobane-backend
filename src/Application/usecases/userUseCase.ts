@@ -5,6 +5,7 @@ import type {
   updateUserDto,
   authPack,
   turnToVendorDto,
+  userStatsDto,
 } from "../dtos/user.js";
 import { type IUserService } from "../../Domaine/ports/inputs/userService.js";
 
@@ -45,5 +46,9 @@ export class UserUseCase implements IUserService {
 
   async turnToVendor(user: turnToVendorDto): Promise<User | string> {
     return this.userRepo.turnToVendor(user);
+  }
+
+  async getStats(userId: string): Promise<userStatsDto | string> {
+    return this.userRepo.getStats(userId);
   }
 }

@@ -17,7 +17,7 @@ export class OrderRepoImpl implements OOrderRepo {
           articleDetails: order.articleDetails,
           buyerId: order.buyerId,
           sellerId: order.sellerId,
-          status: OrderStatus.ACCEPTED,
+          status: OrderStatus.ATTENTE,
         },
       });
       return created;

@@ -1,10 +1,9 @@
 import type { JsonValue } from "../../../prisma/generated/prisma/runtime/library.js";
 
 export enum OrderStatus {
-  ACCEPTED = "accepted",
-  SHIPPED = "shipped",
-  DELIVRED = "delivred",
-  CANCELLED = "cancelled",
+  VALIDEE = "valide",
+  ATTENTE = "attente",
+  ANNULEE = "annulee",
 }
 
 type ADetails = {
