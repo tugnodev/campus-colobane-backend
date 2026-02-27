@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { UserController } from "../../controllers/userController.js";
 import { UserUseCase } from "../../../../Application/usecases/userUseCase.js";
 import { UserRepoImpl } from "../../../../Infrastructure/repositories/userRepoImpl.js";
-import { auth } from "../../../config/auth.js";
 
 const userRepository = new UserRepoImpl();
 export const userUseCase = new UserUseCase(userRepository);
