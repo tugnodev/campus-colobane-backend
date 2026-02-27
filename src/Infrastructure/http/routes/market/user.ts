@@ -33,7 +33,7 @@ userRoutes.get("/", async (c) => {
   return userController.getUserById(c);
 });
 
-userRoutes.get("/stats", async (c) => {
+userRoutes.get("/stats/:id", async (c) => {
   return userController.getStats(c);
 });
 

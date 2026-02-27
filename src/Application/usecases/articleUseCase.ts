@@ -47,4 +47,11 @@ export class ArticleUseCase implements IArticleService {
   async getAllArticles(): Promise<Articles[] | string> {
     return this.articleRepo.getAllArticles();
   }
+  async getAllArticlesByUserId(userId: string): Promise<Articles[] | string> {
+    return this.articleRepo.getAllArticlesByUserId(userId);
+  }
+
+  async searchArticles(query: string): Promise<Articles[] | string> {
+    return this.articleRepo.searchArticles(query);
+  }
 }

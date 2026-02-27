@@ -38,7 +38,7 @@ app.route("/chat", chatRoutes);
 app.route("/cart", cartRoutes);
 app.route("/categories", categorieRoutes);
 app.route("/articles", articleRoutes);
-app.route("/commandes", commandeRoutes);
+app.route("/order", commandeRoutes);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 

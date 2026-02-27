@@ -32,6 +32,17 @@ export class ArticleController {
     return ctx.json(res);
   }
 
+  async getByUserId(ctx: Context) {
+    const id = ctx.req.param<string>() as string;
+    const res = await this.articleUseCase.getAllArticlesByUserId(id);
+    return ctx.json(res);
+  }
+
+  async searArticles(ctx: Context) {
+    const query = ctx.req.param("query");
+    await this.articleUseCase.searchArticles(query);
+  }
+
   async getAll(ctx: Context) {
     const res = await this.articleUseCase.getAllArticles();
     const response = ctx.json(res);

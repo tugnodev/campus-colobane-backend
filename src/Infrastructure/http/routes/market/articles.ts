@@ -15,6 +15,15 @@ articleRoutes.get("/all", async (c) => {
   console.log("Getting all articles");
   return await articleController.getAll(c);
 });
+
+articleRoutes.get("/user/:id", async (ctx) => {
+  return await articleController.getByUserId(ctx);
+});
+
+articleRoutes.get("/search/:query", async (ctx) => {
+  return await articleController.searArticles(ctx);
+});
+
 articleRoutes.get("/:id", async (c) => {
   return await articleController.getById(c);
 });

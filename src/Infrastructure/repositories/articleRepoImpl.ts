@@ -189,6 +189,135 @@ export class ArticleRepoImpl implements OArticleRepo {
       return "Error fetching articles";
     }
   }
+
+  async getAllArticlesByUserId(userId: string): Promise<Articles[] | string> {
+    try {
+      let newarticles: Articles[] = [];
+      let newarticle: Articles;
+      let articles = await prisma.articles.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              address: true,
+            },
+          },
+          categories: {
+            select: {
+              categoryId: true,
+            },
+          },
+          rates: {
+            select: {
+              number: true,
+            },
+          },
+        },
+      });
+
+      for (const article of articles) {
+        newarticle = {
+          id: article.id,
+          userId: article.userId,
+          title: article.title,
+          images: article.images,
+          description: article.description,
+          price: article.price,
+          rates: rateCalculation(article.rates.map((rate) => rate.number)),
+          category: article.categories.map((category) => category.categoryId),
+          stock: article.stock,
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt,
+        };
+        newarticles.push(newarticle);
+      }
+
+      return newarticles;
+    } catch (error) {
+      console.log(error);
+      return "Error";
+    }
+  }
+
+  async searchArticles(query: string): Promise<Articles[] | string> {
+    try {
+      //raw query
+      const articles = (await prisma.$queryRaw`
+        SELECT
+          a.id,
+          a.userId,
+          a.title,
+          a.images,
+          a.description,
+          a.price,
+          a.stock,
+          a.createdAt,
+          a.updatedAt,
+          u.name,
+          u.address,
+          json_agg(DISTINCT c.categoryId) AS categories,
+          json_agg(DISTINCT r.number) AS rates
+        FROM
+          "Articles" a
+        LEFT JOIN "User" u ON a.userId = u.id
+        LEFT JOIN "CateByArticle" cba ON a.id = cba.articleId
+        LEFT JOIN "Categories" c ON cba.categoryId = c.name
+        LEFT JOIN "Notes" r ON a.id = r.articleId
+        WHERE
+          a.title ILIKE ${query}
+          OR a.description ILIKE ${query}
+          OR c.name ILIKE ${query}
+          LIMIT 100;
+      `) as ({
+        user: {
+          name: string;
+          address: string | null;
+        };
+        rates: {
+          number: number;
+        }[];
+        categories: {
+          categoryId: string;
+        }[];
+      } & {
+        id: string;
+        title: string;
+        images: string[];
+        description: string;
+        price: number;
+        stock: number;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+      })[];
+
+      let newarticles: Articles[] = [];
+
+      for (const article of articles) {
+        const newarticle = {
+          id: article.id,
+          userId: article.userId,
+          title: article.title,
+          images: article.images,
+          description: article.description,
+          price: article.price,
+          rates: rateCalculation(article.rates.map((rate) => rate.number)),
+          category: article.categories.map((category) => category.categoryId),
+          stock: article.stock,
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt,
+        };
+        newarticles.push(newarticle);
+      }
+      return newarticles;
+    } catch (error) {
+      console.error(error);
+      return "error";
+    }
+  }
 }
 
 const rateCalculation = (rates: number[]): number => {

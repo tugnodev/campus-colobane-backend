@@ -10,4 +10,6 @@ export interface IArticleService {
   deleteArticle(id: string): Promise<string>;
   getArticleById(id: string): Promise<Articles | string>;
   getAllArticles(): Promise<Articles[] | string>;
+  getAllArticlesByUserId(userId: string): Promise<Articles[] | string>;
+  searchArticles(query: string): Promise<Articles[] | string>;
 }
