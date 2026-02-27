@@ -34,6 +34,10 @@ userRoutes.get("/", async (c) => {
   return userController.getUserById(c);
 });
 
+userRoutes.get("/stats", async (c) => {
+  return userController.getStats(c);
+});
+
 userRoutes.patch("/update", async (c) => {
   return userController.updateUser(c);
 });
