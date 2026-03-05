@@ -276,7 +276,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/kali/Documents/Projets/campus-colobane-backend/prisma/generated/prisma",
+      "value": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -285,16 +285,17 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/kali/Documents/Projets/campus-colobane-backend/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
   "clientVersion": "6.19.2",
@@ -303,7 +304,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
