@@ -1,7 +1,9 @@
+import type { WSEvents } from "hono/ws";
 import type {
   createMessageDto,
   updateMessageDto,
   getConversationDto,
+  broadcastMessageDto,
 } from "../../../Application/dtos/messages.js";
 import type { Message } from "../../entities/message.js";
 
@@ -13,7 +15,5 @@ export interface OMessageRepo {
 }
 
 export interface OMessageBroadcast {
-  sendMessage(newMessage: createMessageDto): Promise<Message | string>;
-  updateMessage(newMessage: createMessageDto): Promise<Message | string>;
-  deleteMessage(newMessage: createMessageDto): Promise<Message | string>;
+  broadcast(message: broadcastMessageDto): Promise<any>;
 }

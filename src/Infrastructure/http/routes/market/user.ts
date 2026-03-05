@@ -18,17 +18,30 @@ userRoutes.post("/login", async (c) => {
   return userController.userLogin(c);
 });
 
+userRoutes.post("/logout", async (c) => {
+  return userController.userLogout(c);
+});
+
 userRoutes.get("/all", async (c) => {
   return userController.getAllUsers(c);
 });
 
-userRoutes.get("/:id", async (c) => {
+userRoutes.get("/session", async (c) => {
+  return userController.getUserBySession(c);
+});
+
+userRoutes.get("/", async (c) => {
   return userController.getUserById(c);
 });
 
 userRoutes.patch("/update", async (c) => {
   return userController.updateUser(c);
 });
+
+userRoutes.patch("/update/vendor", async (c) => {
+  return userController.turnToVendor(c);
+});
+
 userRoutes.delete("/user/delete", async (c) => {
   return userController.deleteUser(c);
 });

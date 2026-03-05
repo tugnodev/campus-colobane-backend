@@ -1,20 +1,23 @@
-import type { OMessageRepo } from "../../Domaine/ports/outputs/messageRepo.js";
+import type {
+  OMessageRepo,
+  OMessageBroadcast,
+} from "../../Domaine/ports/outputs/messageRepo.js";
 import type {
   createMessageDto,
   updateMessageDto,
   getConversationDto,
+  broadcastMessageDto,
 } from "../dtos/messages.js";
-import { WebSocketHandler } from "../../Infrastructure/websocket/messageBroadcast.js";
 import { type Message } from "../../Domaine/entities/message.js";
 import { type IMessageService } from "../../Domaine/ports/inputs/messageService.js";
 
 export class MessageUseCase implements IMessageService {
   private messageRepo: OMessageRepo;
-  private notificationService: WebSocketHandler;
+  private notificationService: OMessageBroadcast;
 
   constructor(
     messageRepo: OMessageRepo,
-    notificationService: WebSocketHandler,
+    notificationService: OMessageBroadcast,
   ) {
     this.messageRepo = messageRepo;
     this.notificationService = notificationService;
@@ -24,11 +27,16 @@ export class MessageUseCase implements IMessageService {
     messageData: createMessageDto,
   ): Promise<Message | string> {
     const newMessage = await this.messageRepo.createMessage(messageData);
-    const receiverSocket = this.notificationService
-      .getAllClients()
-      .get(messageData.userId);
-    if (receiverSocket) {
-      receiverSocket.send(JSON.stringify(newMessage));
+    switch (typeof newMessage) {
+      case "string":
+        return newMessage;
+      case "object":
+        const dto: broadcastMessageDto = {
+          roomId: messageData.roomId,
+          payload: JSON.stringify(newMessage),
+        };
+        this.notificationService.broadcast(dto);
+        return newMessage;
     }
     return newMessage;
   }
@@ -37,13 +45,17 @@ export class MessageUseCase implements IMessageService {
     messageData: updateMessageDto,
   ): Promise<Message | string> {
     const updatedMessage = await this.messageRepo.updateMessage(messageData);
-    const receiverSocket = this.notificationService
-      .getAllClients()
-      .get(messageData.userId);
-    if (receiverSocket) {
-      receiverSocket.send(JSON.stringify(updatedMessage));
+    switch (typeof updatedMessage) {
+      case "string":
+        return updatedMessage;
+      case "object":
+        const dto: broadcastMessageDto = {
+          roomId: messageData.roomId,
+          payload: JSON.stringify(updatedMessage),
+        };
+        this.notificationService.broadcast(dto);
+        return updatedMessage;
     }
-    return updatedMessage;
   }
 
   async deleteMessage(messageId: string): Promise<string> {

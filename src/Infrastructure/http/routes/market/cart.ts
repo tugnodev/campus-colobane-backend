@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { CartController } from "../../controllers/cartController.js";
 import { CartUseCase } from "../../../../Application/usecases/cartUseCase.js";
 import { CartRepoImpl } from "../../../repositories/cartRepoImpl.js";
@@ -9,23 +9,23 @@ const cartController = new CartController(cartUseCase);
 
 const cartRoutes = new Hono();
 
-cartRoutes.get("/cart/all", async (c: any) => {
+cartRoutes.get("/all", async (c: Context) => {
   return cartController.getAllCarts(c);
 });
 
-cartRoutes.get("/cart/:id", async (c: any) => {
+cartRoutes.get("/:id", async (c: Context) => {
   return cartController.getByUserId(c);
 });
 
-cartRoutes.post("/cart/add", async (c: any) => {
+cartRoutes.post("/add", async (c: Context) => {
   return cartController.createCart(c);
 });
 
-cartRoutes.patch("/update", async (c: any) => {
+cartRoutes.patch("/", async (c: Context) => {
   return cartController.updateCart(c);
 });
 
-cartRoutes.delete("/cart/delete", async (c: any) => {
+cartRoutes.delete("/delete", async (c: Context) => {
   return cartController.deleteCart(c);
 });
 

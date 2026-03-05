@@ -7,6 +7,7 @@ import type {
 } from "../../../Application/dtos/user.js";
 import type { Context } from "hono";
 import { auth } from "../../config/auth.js";
+import type { User } from "better-auth";
 
 export class UserController {
   private userUseCase: UserUseCase;
@@ -18,9 +19,6 @@ export class UserController {
   async createUser(ctx: Context) {
     const userData: createUserDto = await ctx.req.json();
     const result = await this.userUseCase.createUser(userData);
-    if (typeof result === "string") {
-      return ctx.json({ message: "User already exists" });
-    }
     return ctx.json(result);
   }
 
@@ -42,6 +40,26 @@ export class UserController {
     return ctx.json(result);
   }
 
+  async getUserBySession(ctx: Context) {
+    const session = await auth.api.getSession({
+      headers: ctx.req.raw.headers,
+    });
+
+    console.log(session);
+    if (!session) {
+      ctx.redirect("/auth/login");
+      return ctx.json("Session Not Found");
+    }
+    const usr = session!.user as User;
+    console.log(JSON.stringify(usr.id));
+    const result = await this.userUseCase.getUserById(usr.id);
+    if (typeof result === "string") {
+      return ctx.json({ message: "User Not Found" });
+    }
+    console.log(JSON.stringify(result));
+    return ctx.json(result);
+  }
+
   async getUserById(ctx: Context) {
     const id = ctx.req.param("id");
     const result = await this.userUseCase.getUserById(id);
@@ -52,12 +70,28 @@ export class UserController {
   }
 
   async userLogin(ctx: Context) {
-    const userData: userLoginDto = await ctx.req.json();
-    const result = await auth.api.signInEmail({ body: userData });
-    if (typeof result === "string") {
-      return ctx.json({ message: "User Not Found" });
+    try {
+      const userData: userLoginDto = await ctx.req.json();
+      const result = await auth.api.signInEmail({ body: userData });
+      if (typeof result === "string") {
+        return ctx.json({ message: "User Not Found" });
+      }
+      const user = await this.userUseCase.getUserById(result.user.id);
+      switch (typeof user) {
+        case "string":
+          return ctx.json({ message: "User Not Found" });
+        case "object":
+          result.user = user;
+          return ctx.json({
+            token: result.token,
+            user: result.user,
+          });
+        default:
+          return ctx.json({ message: "Unknown Error" });
+      }
+    } catch (error) {
+      return ctx.json({ message: "Invalid Credentials" });
     }
-    return ctx.json(result.user);
   }
 
   async getAllUsers(ctx: Context) {
@@ -70,10 +104,9 @@ export class UserController {
   }
 
   async userLogout(ctx: Context) {
+    auth.handler(ctx.req.raw);
     const result = await auth.api.signOut({ headers: ctx.req.raw.headers });
-    if (typeof result === "string") {
-      return ctx.json({ message: "User Not Found" });
-    }
+    console.log(result);
     return ctx.json(result);
   }
 
@@ -81,7 +114,7 @@ export class UserController {
     const userData: turnToVendorDto = await ctx.req.json();
     const result = await this.userUseCase.turnToVendor(userData);
     if (typeof result === "string") {
-      return ctx.json({ message: "User Not Found" });
+      return ctx.text("Error credentials");
     }
     return ctx.json(result);
   }

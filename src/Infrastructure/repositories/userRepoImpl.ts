@@ -27,12 +27,29 @@ export class UserRepoImpl implements OUserRepo {
         },
       });
 
-      const user: User = await prisma.user.update({
+      const user = await prisma.user.update({
         where: { id: newUser.user.id },
-        data,
+        data: {
+          vendeur: data.vendeur,
+          address: data.address,
+          certified: false,
+        },
       });
 
       newUser.user = user;
+
+      const cart = await prisma.carts
+        .create({
+          data: {
+            userId: user.id,
+            cart: [],
+          },
+        })
+        .catch((error) => {
+          return `Erreur lors de la création du panier: ${JSON.stringify(error)}"`;
+        });
+
+      console.log(cart);
 
       return newUser as authPack;
     } catch (e) {
@@ -41,10 +58,8 @@ export class UserRepoImpl implements OUserRepo {
           return "Unvalid data";
         case e instanceof BetterAuthError:
           return "User already exists";
-        case e instanceof Error:
-          return "Error creating user";
         default:
-          return "Error creating user";
+          return "unknown Error";
       }
     }
   }
@@ -113,9 +128,20 @@ export class UserRepoImpl implements OUserRepo {
 
   async turnToVendor(user: turnToVendorDto): Promise<User | string> {
     try {
+      const phoneNumber = await prisma.numbers
+        .create({
+          data: {
+            sellerId: user.id,
+            number: user.phone,
+          },
+        })
+        .catch(() => {
+          return "error whilw saving number";
+        });
+
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
-        data: { vendeur: true },
+        data: { vendeur: true, address: user.address },
       });
 
       return updatedUser;

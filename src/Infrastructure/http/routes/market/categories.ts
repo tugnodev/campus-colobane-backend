@@ -21,8 +21,8 @@ categorieRoutes.delete("/categories/delete", async (c) => {
   return categorieController.delete(c);
 });
 // Register specific routes BEFORE dynamic ones to avoid collisions
-categorieRoutes.get("/categories/all", async (c) => {
-  return c.json({ message: "Route Categorie" });
+categorieRoutes.get("/all", async (c) => {
+  return categorieController.getAll(c);
 });
 categorieRoutes.get("/categories/:name", async (c) => {
   return categorieController.getAll(c);

@@ -8,18 +8,19 @@ const articleUseCase = new ArticleUseCase(articleRepo);
 const articleController = new ArticleController(articleUseCase);
 
 export const articleRoutes = new Hono();
-articleRoutes.post("articles/create", async (c) => {
+articleRoutes.post("/", async (c) => {
   return await articleController.createArticle(c);
 });
-articleRoutes.get("articles/all", async (c) => {
+articleRoutes.get("/all", async (c) => {
+  console.log("Getting all articles");
   return await articleController.getAll(c);
 });
-articleRoutes.get("articles/one/:id", async (c) => {
+articleRoutes.get("/:id", async (c) => {
   return await articleController.getById(c);
 });
-articleRoutes.delete("articles/delete/:id", async (c) => {
+articleRoutes.delete("/:id", async (c) => {
   return await articleController.deleteArticle(c);
 });
-articleRoutes.patch("articles/update/:id", async (c) => {
+articleRoutes.patch("/:id", async (c) => {
   return await articleController.updateArticle(c);
 });
