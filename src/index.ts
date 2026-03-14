@@ -21,14 +21,14 @@ app.use(
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );
-//const webSocketInit: NodeWebSocketInit = {
-//  app,
-//  baseUrl: `http://localhost:${port}`,
-//};
-//export const webSocketServer = createNodeWebSocket(webSocketInit);
+const webSocketInit: NodeWebSocketInit = {
+  app,
+  baseUrl: `http://localhost:${3000}`,
+};
+export const webSocketServer = createNodeWebSocket(webSocketInit);
 
 app.use("*", corsMiddleware);
-//app.use("/api/auth/*", authMiddleware);
+app.use("/api/auth/*", authMiddleware);
 app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello Hono!" }));
@@ -52,4 +52,4 @@ const server = serve(
     console.log(`Server is running on http://0.0.0.0:${port}`);
   },
 );
-//webSocketServer.injectWebSocket(server);
+webSocketServer.injectWebSocket(server);
