@@ -3,7 +3,7 @@ import type {
   authPack,
   createUserDto,
   updateUserDto,
-  userDto,
+  userStatsDto,
 } from "../../Application/dtos/user.js";
 import type { OUserRepo } from "../ports/outputs/userRepo.js";
 import type { User } from "../entities/user.js";
@@ -41,5 +41,9 @@ export class UserService implements IUserService {
 
   async getAllUsers(): Promise<User[] | string> {
     return this.userRepo.getAllUsers();
+  }
+
+  async getStats(userId: string): Promise<userStatsDto | string> {
+    return this.userRepo.getStats(userId);
   }
 }
