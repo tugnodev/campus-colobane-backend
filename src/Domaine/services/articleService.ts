@@ -32,4 +32,12 @@ export class ArticleService implements IArticleService {
   async getAllArticles(): Promise<Articles[] | string> {
     return this.articleRepo.getAllArticles();
   }
+
+  getAllArticlesByUserId(userId: string): Promise<Articles[] | string> {
+    return this.articleRepo.getAllArticlesByUserId(userId);
+  }
+
+  async searchArticles(query: string): Promise<Articles[] | string> {
+    return this.articleRepo.searchArticles(query);
+  }
 }

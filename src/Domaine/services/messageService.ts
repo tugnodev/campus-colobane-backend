@@ -6,28 +6,22 @@ import type {
 } from "../../Application/dtos/messages.js";
 import type {
   OMessageRepo,
-  OMessageBroadcast,
+  //OMessageBroadcast,
 } from "../ports/outputs/messageRepo.js";
 import type { IMessageService } from "../ports/inputs/messageService.js";
 import type { Message } from "../entities/message.js";
 
 export class MessageService implements IMessageService {
   private messageRepo: OMessageRepo;
-  private messageBroadcast: OMessageBroadcast;
+  //private messageBroadcast: OMessageBroadcast;
 
-  constructor(messageRepo: OMessageRepo, messageBroadcast: OMessageBroadcast) {
+  constructor(messageRepo: OMessageRepo) {
     this.messageRepo = messageRepo;
-    this.messageBroadcast = messageBroadcast;
+    //this.messageBroadcast = messageBroadcast;
   }
 
   async createMessage(message: createMessageDto): Promise<Message | string> {
-    const createdMessage = await this.messageRepo.createMessage(message);
-    const dto: broadcastMessageDto = {
-      roomId: message.roomId,
-      payload: JSON.stringify(createdMessage),
-    };
-    this.messageBroadcast.broadcast(dto);
-    return createdMessage;
+    return this.messageRepo.createMessage(message);
   }
 
   async updateMessage(message: updateMessageDto): Promise<Message | string> {
