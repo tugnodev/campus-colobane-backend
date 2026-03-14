@@ -13,14 +13,14 @@ import { type IMessageService } from "../../Domaine/ports/inputs/messageService.
 
 export class MessageUseCase implements IMessageService {
   private messageRepo: OMessageRepo;
-  private notificationService: OMessageBroadcast;
+  //private notificationService: OMessageBroadcast;
 
   constructor(
     messageRepo: OMessageRepo,
-    notificationService: OMessageBroadcast,
+    //notificationService: OMessageBroadcast,
   ) {
     this.messageRepo = messageRepo;
-    this.notificationService = notificationService;
+    //this.notificationService = notificationService;
   }
 
   async createMessage(
@@ -35,7 +35,7 @@ export class MessageUseCase implements IMessageService {
           roomId: messageData.roomId,
           payload: JSON.stringify(newMessage),
         };
-        this.notificationService.broadcast(dto);
+        //this.notificationService.broadcast(dto);
         return newMessage;
     }
     return newMessage;
@@ -53,7 +53,7 @@ export class MessageUseCase implements IMessageService {
           roomId: messageData.roomId,
           payload: JSON.stringify(updatedMessage),
         };
-        this.notificationService.broadcast(dto);
+        //this.notificationService.broadcast(dto);
         return updatedMessage;
     }
   }

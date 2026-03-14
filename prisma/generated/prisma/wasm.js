@@ -273,7 +273,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/tugnodev/Projects/campus colobane/campus-colobane-backend/prisma/generated/prisma",
+      "value": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -282,11 +282,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-3.0.x",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
+    "sourceFilePath": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\schema.prisma",
     "sourceFilePath": "/home/tugnodev/Projects/campus colobane/campus-colobane-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
@@ -301,6 +302,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {

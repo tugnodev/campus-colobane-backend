@@ -5,10 +5,10 @@ import { MessageRepoImpl } from "../../../repositories/messageRepoImpl.js";
 import { MessageBroadcast } from "../../../websocket/messageBroadcast.js";
 
 const messageRepository = new MessageRepoImpl();
-const notificationService = new MessageBroadcast(messageRepository);
+//const notificationService = new MessageBroadcast(messageRepository);
 const messageUseCase = new MessageUseCase(
   messageRepository,
-  notificationService,
+  //notificationService,
 );
 const messageController = new MessageController(messageUseCase);
 
