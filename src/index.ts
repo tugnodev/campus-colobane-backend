@@ -10,9 +10,9 @@ import { cartRoutes } from "./Infrastructure/http/routes/market/cart.js";
 import { categorieRoutes } from "./Infrastructure/http/routes/market/categories.js";
 import { articleRoutes } from "./Infrastructure/http/routes/market/articles.js";
 import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js";
-import { createNodeWebSocket, type NodeWebSocketInit } from "@hono/node-ws";
+import { createNodeWebSocket } from "@hono/node-ws";
 
-const app = new Hono();
+export const app = new Hono();
 
 app.use(
   "/*",
@@ -21,14 +21,34 @@ app.use(
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
 );
-const webSocketInit: NodeWebSocketInit = {
+
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   app,
   baseUrl: `http://localhost:${3000}`,
-};
-export const webSocketServer = createNodeWebSocket(webSocketInit);
+});
 
-app.use("*", corsMiddleware);
-app.use("/api/auth/*", authMiddleware);
+export const clients = new Set<string>();
+
+app.get(
+  "/ws/:id",
+  upgradeWebSocket((c) => {
+    const id = c.req.param("id");
+    clients.add(id);
+    return {
+      onOpen: () => {},
+      onMessage: (evt) => {
+        const message = evt.data;
+      },
+      onError: (evt) => {},
+      onClose: () => {
+        clients.delete(id);
+      },
+    };
+  }),
+);
+
+//app.use("*", corsMiddleware);
+//app.use("/api/auth/*", authMiddleware);
 app.use("*", logger());
 
 app.get("/", (c) => c.json({ message: "Hello Hono!" }));
@@ -52,4 +72,4 @@ const server = serve(
     console.log(`Server is running on http://0.0.0.0:${port}`);
   },
 );
-webSocketServer.injectWebSocket(server);
+injectWebSocket(server);

@@ -15,5 +15,5 @@ export interface OMessageRepo {
 }
 
 export interface OMessageBroadcast {
-  broadcast(message: broadcastMessageDto): Promise<any>;
+  broadcast(message: broadcastMessageDto): void;
 }

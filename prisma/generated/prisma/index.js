@@ -274,8 +274,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\generated\\prisma",
-      "value": "/home/tugnodev/Projects/campus colobane/campus-colobane-backend/prisma/generated/prisma",
+      "value": "/run/media/tugnodev/tugnodisk/Projects/campus colobane/campus-colobane-backend/prisma/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -284,13 +283,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-1.1.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Ebeydi\\cc\\campus-colobane-backend\\prisma\\schema.prisma",
-    "sourceFilePath": "/home/tugnodev/Projects/campus colobane/campus-colobane-backend/prisma/schema.prisma",
+    "sourceFilePath": "/run/media/tugnodev/tugnodisk/Projects/campus colobane/campus-colobane-backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -353,8 +351,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "prisma/generated/prisma/query_engine-windows.dll.node")
+path.join(__dirname, "libquery_engine-debian-openssl-1.1.x.so.node");
+path.join(process.cwd(), "prisma/generated/prisma/libquery_engine-debian-openssl-1.1.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "prisma/generated/prisma/schema.prisma")
