@@ -28,6 +28,5 @@ export class MessageBroadcast implements OMessageBroadcast {
         },
       };
     });
-    return "broadcasted";
   }
 }
