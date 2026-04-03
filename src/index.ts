@@ -39,15 +39,13 @@ app.get(
       onOpen: (event, context) => {
         const client = context;
         clients.add(client);
-        client.send('connected successfully')
+        client.send("connected successfully");
       },
       onMessage: (evt) => {
         const message: WSMessageReceive = evt.data;
       },
       onError: (evt) => {},
-      onClose: () => {
-        clients.delete(id);
-      },
+      onClose: () => {},
     };
   }),
 );
