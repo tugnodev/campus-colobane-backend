@@ -11,6 +11,8 @@ import { categorieRoutes } from "./Infrastructure/http/routes/market/categories.
 import { articleRoutes } from "./Infrastructure/http/routes/market/articles.js";
 import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js";
 import { createNodeWebSocket } from "@hono/node-ws";
+import type { WSContext, WSMessageReceive } from "hono/ws";
+import type { Message } from "./Domaine/entities/message.js";
 
 export const app = new Hono();
 
@@ -27,17 +29,20 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   baseUrl: `http://localhost:${3000}`,
 });
 
-export const clients = new Set<string>();
+export const clients = new Set<WSContext>();
 
 app.get(
   "/ws/:id",
   upgradeWebSocket((c) => {
     const id = c.req.param("id");
-    clients.add(id);
     return {
-      onOpen: () => {},
+      onOpen: (event, context) => {
+        const client = context;
+        clients.add(client);
+        client.send('connected successfully')
+      },
       onMessage: (evt) => {
-        const message = evt.data;
+        const message: WSMessageReceive = evt.data;
       },
       onError: (evt) => {},
       onClose: () => {
