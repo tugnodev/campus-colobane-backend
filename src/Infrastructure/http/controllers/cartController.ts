@@ -32,6 +32,7 @@ export class CartController {
 
   async updateCart(ctx: Context) {
     const cartData: updateCartDto = await ctx.req.json();
+    console.log(cartData);
     const result = await this.cartUseCase.updateCart(cartData);
     if (typeof result === "string") {
       return ctx.json({ message: result });

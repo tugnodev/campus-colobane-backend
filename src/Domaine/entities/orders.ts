@@ -1,20 +1,17 @@
-import type { JsonValue } from "../../../prisma/generated/prisma/runtime/library.js";
-
 export enum OrderStatus {
-  VALIDEE = "valide",
-  ATTENTE = "attente",
+  VALIDEE = "validee",
+  ATTENTE = "en attente",
   ANNULEE = "annulee",
 }
 
-type ADetails = {
+export type Items = {
   articleId: string;
-  sellerId: string;
   quantity: number;
 };
 
 export type Order = {
   id: string;
-  articleDetails: JsonValue;
+  items: Items[];
   status: string;
   buyerId: string;
   sellerId: string;

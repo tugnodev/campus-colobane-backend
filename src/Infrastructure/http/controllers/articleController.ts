@@ -27,8 +27,9 @@ export class ArticleController {
   }
 
   async getById(ctx: Context) {
-    const id = ctx.req.param<string>() as string;
-    const res = await this.articleUseCase.getArticleById(id);
+    const params = ctx.req.param();
+    console.log(`${JSON.stringify(params)}`);
+    const res = await this.articleUseCase.getArticleById(params.id);
     return ctx.json(res);
   }
 

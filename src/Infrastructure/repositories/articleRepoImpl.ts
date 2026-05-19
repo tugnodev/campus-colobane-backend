@@ -105,8 +105,9 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getArticleById(id: string): Promise<Articles | string> {
     try {
+      console.log(`getArticleById: id=${id}`);
       const article = await prisma.articles.findUnique({
-        where: { id },
+        where: { id: id },
       });
 
       if (!article) return "Article non trouvé";

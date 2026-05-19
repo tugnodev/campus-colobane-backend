@@ -29,7 +29,7 @@ userRoutes.get("/session", async (c) => {
   return userController.getUserBySession(c);
 });
 
-userRoutes.get("/", async (c) => {
+userRoutes.get("/:id", async (c) => {
   return userController.getUserById(c);
 });
 

@@ -13,6 +13,15 @@ import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js
 import { createNodeWebSocket } from "@hono/node-ws";
 import type { WSContext, WSMessageReceive } from "hono/ws";
 import type { Message } from "./Domaine/entities/message.js";
+import type { socketData } from "./Application/dtos/socket.js";
+import { json } from "node:stream/consumers";
+import { MessageController } from "./Infrastructure/http/controllers/messageController.js";
+import { MessageRepoImpl } from "./Infrastructure/repositories/messageRepoImpl.js";
+import { MessageUseCase } from "./Application/usecases/messageUseCase.js";
+import type {
+  createMessageDto,
+  updateMessageDto,
+} from "./Application/dtos/messages.js";
 
 export const app = new Hono();
 
@@ -29,23 +38,102 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   baseUrl: `http://localhost:${3000}`,
 });
 
-export const clients = new Set<WSContext>();
+const messageRepo = new MessageRepoImpl();
+const messageUseCase = new MessageUseCase(messageRepo);
+const messageController = new MessageController(messageUseCase);
+export const clients = new Map<string, WSContext>();
+const pendingMessages = new Map<string, string[]>();
 
 app.get(
   "/ws/:id",
   upgradeWebSocket((c) => {
     const id = c.req.param("id");
+
     return {
       onOpen: (event, context) => {
         const client = context;
-        clients.add(client);
+        clients.set(id, client);
         client.send("connected successfully");
+        const messages = pendingMessages.get(id);
+        if (typeof messages === "object" && messages !== undefined) {
+          for (const msg of messages) {
+            client.send(msg);
+          }
+          pendingMessages.delete(id);
+        }
       },
-      onMessage: (evt) => {
-        const message: WSMessageReceive = evt.data;
+      onMessage: async (evt, ctx) => {
+        const data: WSMessageReceive = evt.data as string;
+        const message: socketData = JSON.parse(data);
+        switch (message.type) {
+          case "create":
+            const data: createMessageDto = JSON.parse(message.payload);
+            const msg = await messageUseCase.createMessage(data);
+            switch (typeof msg) {
+              case "string":
+                clients
+                  .get(id)
+                  ?.send(JSON.stringify({ type: "error", payload: msg }));
+                break;
+              case "object":
+                const client = clients.get(id);
+                if (typeof client === "object" && client !== undefined) {
+                  client.send(
+                    JSON.stringify({
+                      type: "create",
+                      payload: JSON.stringify(msg),
+                    }),
+                  );
+                } else {
+                  pendingMessages.set(id, [
+                    ...(pendingMessages.get(id) ?? []),
+                    JSON.stringify(msg),
+                  ]);
+                }
+                break;
+            }
+            break;
+          case "delete":
+            const idToDelete: string = JSON.parse(message.payload);
+            const del = await messageUseCase.deleteMessage(idToDelete);
+            if (del === "message deleted") {
+              clients
+                .get(id)
+                ?.send(JSON.stringify({ type: "error", payload: del }));
+            } else {
+              clients
+                .get(id)
+                ?.send(
+                  JSON.stringify({
+                    type: "delete",
+                    payload: JSON.stringify(del),
+                  }),
+                );
+            }
+            break;
+          case "update":
+            const toUpdate: updateMessageDto = JSON.parse(message.payload);
+            const updated = await messageUseCase.updateMessage(toUpdate);
+            if (typeof updated === "string") {
+              clients
+                .get(id)
+                ?.send(JSON.stringify({ type: "error", payload: updated }));
+            } else {
+              clients
+                .get(id)
+                ?.send(
+                  JSON.stringify({
+                    type: "update",
+                    payload: JSON.stringify(updated),
+                  }),
+                );
+            }
+            break;
+        }
       },
-      onError: (evt) => {},
-      onClose: () => {},
+      onClose: () => {
+        clients.delete(id);
+      },
     };
   }),
 );

@@ -11,7 +11,6 @@ export class MessageController {
 
   async create(ctx: Context) {
     const body: createMessageDto = await ctx.req.json();
-    //verificay
     const message = await this.messageUseCase.createMessage(body);
     if (typeof message === "string") {
       return ctx.json({ message: "Error while creating message" });

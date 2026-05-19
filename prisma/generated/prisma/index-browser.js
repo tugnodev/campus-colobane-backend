@@ -202,9 +202,14 @@ exports.Prisma.CartsScalarFieldEnum = {
   cart: 'cart'
 };
 
+exports.Prisma.OrderItemsScalarFieldEnum = {
+  orderId: 'orderId',
+  articleId: 'articleId',
+  quantity: 'quantity'
+};
+
 exports.Prisma.OrdersScalarFieldEnum = {
   id: 'id',
-  articleDetails: 'articleDetails',
   status: 'status',
   buyerId: 'buyerId',
   sellerId: 'sellerId',
@@ -285,6 +290,7 @@ exports.Prisma.ModelName = {
   Messages: 'Messages',
   Numbers: 'Numbers',
   Carts: 'Carts',
+  OrderItems: 'OrderItems',
   Orders: 'Orders',
   Session: 'Session',
   Account: 'Account',

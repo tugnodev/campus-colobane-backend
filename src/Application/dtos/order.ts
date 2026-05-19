@@ -1,28 +1,21 @@
-import type { Articles } from "../../Domaine/entities/articles.js";
-import type { JsonValue } from "../../../prisma/generated/prisma/runtime/library.js";
+import type { Items } from "../../Domaine/entities/orders.js";
 
-enum OrderStatus {
-  ACCEPTED = "accepted",
-  SHIPPED = "shipped",
-  DELIVRED = "delivred",
-  CANCELLED = "cancelled",
+export enum OrderStatus {
+  VALIDEE = "valide",
+  ATTENTE = "attente",
+  ANNULEE = "annulee",
 }
 
-type article_details = {
-  articleId: Articles;
-  quantity: number;
-};
-
 export interface createOrderDto {
-  articleDetails: article_details[];
+  items: Items[];
   buyerId: string;
   sellerId: string;
 }
 
 export interface updateOrderDto {
   id: string;
-  articleDetails?: article_details[] | JsonValue;
+  items?: Items[];
   buyerId?: string;
   sellerId?: string;
-  status?: OrderStatus;
+  status: OrderStatus;
 }

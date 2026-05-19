@@ -11,19 +11,13 @@ export class OrderUseCase {
   }
 
   async create(orderData: createOrderDto): Promise<Order | string> {
-    if (!orderData.articleDetails) {
+    if (!orderData.items) {
       return "Article details are required.";
     }
     return this.orderRepo.saveOrder(orderData);
   }
 
   async update(orderData: updateOrderDto): Promise<Order | string> {
-    const existingOrder = await this.orderRepo.getOrdersByBuyerId(
-      orderData.id.toString(),
-    );
-    if (!existingOrder || existingOrder.length === 0) {
-      return `Order with ID ${orderData.id} does not exist.`;
-    }
     return this.orderRepo.updateOrder(orderData);
   }
 

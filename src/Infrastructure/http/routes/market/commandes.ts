@@ -10,37 +10,35 @@ const commandeController = new OrderController(commandeUseCase);
 export const commandeRoutes = new Hono();
 commandeRoutes.post("/", async (c) => {
   const result = await commandeController.create(c);
-  if (!result) {
-    return c.json("erreur");
-  }
-  return c.json({ message: "commande créée", cmd: result });
+  return result;
 });
-commandeRoutes.put("/:id", async (c) => {
+commandeRoutes.patch("/", async (c) => {
   const result = await commandeController.update(c);
-  if (!result) {
-    return c.json("erreur");
+  if (typeof result === "string") {
+    return c.text("erreur");
   }
-  return c.json({ message: "commande mise à jour", cmd: result });
+  return c.json(result);
 });
 commandeRoutes.delete("/:id", async (c) => {
   const result = await commandeController.delete(c);
-  if (!result) {
-    return c.json("erreur");
+  if (result === "Error") {
+    return c.text("erreur");
   }
-  return c.json({ message: "commande supprimée", cmd: result });
+  return c.json({ message: result });
 });
 
-commandeRoutes.get("/:SellerId", async (c) => {
+commandeRoutes.get("/user/:SellerId", async (c) => {
   const commands = await commandeController.getBySellerId(c);
   if (!commands) {
     return c.json("erreur");
   }
   return c.json({ message: "commandes", cmd: commands });
 });
-commandeRoutes.get("/buyer:BuyerId", async (c) => {
+commandeRoutes.get("/:buyerId", async (c) => {
   const commands = await commandeController.getByBuyerId(c);
   if (!commands) {
     return c.json("erreur");
   }
-  return c.json({ message: "commandes", cmd: commands });
+
+  return commands;
 });

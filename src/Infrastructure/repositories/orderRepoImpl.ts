@@ -12,15 +12,32 @@ const prisma = new PrismaClient();
 export class OrderRepoImpl implements OOrderRepo {
   async saveOrder(order: createOrderDto): Promise<Order | string> {
     try {
-      const created = await prisma.orders.create({
+      const newOrder = await prisma.orders.create({
         data: {
-          articleDetails: order.articleDetails,
           buyerId: order.buyerId,
           sellerId: order.sellerId,
           status: OrderStatus.ATTENTE,
         },
       });
-      return created;
+
+      const items = await Promise.all(
+        order.items.map(async (item) => {
+          return await prisma.orderItems.create({
+            data: {
+              orderId: newOrder.id,
+              articleId: item.articleId,
+              quantity: item.quantity,
+            },
+            omit: {
+              orderId: true,
+            },
+          });
+        }),
+      );
+      return {
+        ...newOrder,
+        items: items,
+      };
     } catch (error) {
       console.error(error);
       return "Error creating order";
@@ -33,12 +50,11 @@ export class OrderRepoImpl implements OOrderRepo {
       const updated = await prisma.orders.update({
         where: { id },
         data: {
-          articleDetails: data.articleDetails!,
-          buyerId: data.buyerId!,
-          sellerId: data.sellerId!,
-          status: data.status!,
+          status: data.status,
         },
+        include: { items: true },
       });
+
       return updated;
     } catch (error) {
       console.error(error);
@@ -46,14 +62,13 @@ export class OrderRepoImpl implements OOrderRepo {
     }
   }
 
-  // CORRECTION ICI : Le type de retour doit être Promise<string>
   async deleteOrder(id: string): Promise<string> {
     try {
       await prisma.orders.delete({ where: { id } });
       return "Order deleted successfully";
     } catch (error) {
       console.error(error);
-      return "Error deleting order";
+      return "Error";
     }
   }
 
@@ -62,7 +77,10 @@ export class OrderRepoImpl implements OOrderRepo {
       const orders = await prisma.orders.findMany({
         where: { buyerId },
         orderBy: { createdAt: "desc" },
+        include: { items: { include: { article: true } } },
       });
+
+      console.log(JSON.stringify(orders));
       return orders;
     } catch (error) {
       console.error(error);
@@ -75,6 +93,7 @@ export class OrderRepoImpl implements OOrderRepo {
       const orders = await prisma.orders.findMany({
         where: { sellerId },
         orderBy: { createdAt: "desc" },
+        include: { items: true },
       });
       return orders;
     } catch (error) {
