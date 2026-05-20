@@ -77,12 +77,12 @@ async function main() {
   }
 
   // 5. Seed des Interactions (Commentaires & Notes)
-  //console.log("💬 Création des commentaires et notes...");
-  //await seedInteractions(commentRepo, notesRepo, allArticles, allUsers);
+  console.log("💬 Création des commentaires et notes...");
+  await seedInteractions(commentRepo, notesRepo, allArticles, allUsers);
 
   // 6. Seed des Commandes
   console.log("🛒 Création des commandes...");
-  await seedOrders(orderRepo, allUsers, allArticles);
+  //await seedOrders(orderRepo, allUsers, allArticles);
 
   console.log("🏁 Seeding terminé avec succès !");
 }

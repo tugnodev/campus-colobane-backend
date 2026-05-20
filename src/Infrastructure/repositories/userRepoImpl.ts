@@ -2,6 +2,7 @@ import type { User } from "../../Domaine/entities/user.js";
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
 import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
 import { auth } from "../config/auth.js";
+import { OrderStatus } from "../../Domaine/entities/orders.js";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { BetterAuthError } from "better-auth";
 import type {
@@ -180,7 +181,7 @@ export class UserRepoImpl implements OUserRepo {
         where: { userId: id },
       });
       let commandes = await prisma.orders.findMany({
-        where: { sellerId: id },
+        where: { buyerId: id },
       });
       return {
         articles: {
@@ -189,13 +190,14 @@ export class UserRepoImpl implements OUserRepo {
         },
         commandes: {
           total: commandes.length,
-          attente: commandes.filter((commande) => commande.status === "attente")
-            .length,
+          attente: commandes.filter(
+            (commande) => commande.status === OrderStatus.ATTENTE,
+          ).length,
           acceptees: commandes.filter(
-            (commande) => commande.status === "acceptee",
+            (commande) => commande.status === OrderStatus.VALIDEE,
           ).length,
           annulees: commandes.filter(
-            (commande) => commande.status === "annulee",
+            (commande) => commande.status === OrderStatus.ANNULEE,
           ).length,
         },
       };

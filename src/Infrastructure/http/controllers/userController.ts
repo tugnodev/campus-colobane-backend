@@ -7,7 +7,7 @@ import type {
 } from "../../../Application/dtos/user.js";
 import type { Context } from "hono";
 import { auth } from "../../config/auth.js";
-import type { User } from "better-auth";
+import { APIError, type User } from "better-auth";
 
 export class UserController {
   private userUseCase: UserUseCase;
@@ -71,15 +71,14 @@ export class UserController {
 
   async userLogin(ctx: Context) {
     try {
+      console.log("userLogin");
       const userData: userLoginDto = await ctx.req.json();
       const result = await auth.api.signInEmail({ body: userData });
-      if (typeof result === "string") {
-        return ctx.json({ message: "User Not Found" });
-      }
+
       const user = await this.userUseCase.getUserById(result.user.id);
       switch (typeof user) {
         case "string":
-          return ctx.json({ message: "User Not Found" });
+          return ctx.json("User Not Found");
         case "object":
           result.user = user;
           return ctx.json({
@@ -87,10 +86,14 @@ export class UserController {
             user: result.user,
           });
         default:
-          return ctx.json({ message: "Unknown Error" });
+          return ctx.json("Unknown Error");
       }
     } catch (error) {
-      return ctx.json({ message: "Invalid Credentials" });
+      console.log(error instanceof APIError);
+      if (error instanceof APIError) {
+        return ctx.json(error.message);
+      }
+      return ctx.json("unknown error");
     }
   }
 
