@@ -1,28 +1,33 @@
-import type { OCartRepo } from '../../Domaine/ports/outputs/cartRepo.js';
-import type { createCartDto, updateCartDto, cartDto } from '../dtos/cart.js';
+import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
+import type { createCartDto, updateCartDto } from "../dtos/cart.js";
+import { type Carts } from "../../Domaine/entities/carts.js";
+import { type ICartService } from "../../Domaine/ports/inputs/cartService.js";
 
-export class CartUseCase {
-    private cartRepo: OCartRepo;
+export class CartUseCase implements ICartService {
+  private cartRepo: OCartRepo;
 
-    constructor(cartRepo: OCartRepo) {
-        this.cartRepo = cartRepo;
-    }
+  constructor(cartRepo: OCartRepo) {
+    this.cartRepo = cartRepo;
+  }
 
-    async create(cardData: createCartDto): Promise<cartDto | string> {
-        return this.cartRepo.createCart(cardData);
-    }
+  async createCart(cardData: createCartDto): Promise<Carts | string> {
+    return this.cartRepo.createCart(cardData);
+  }
 
-    async update(cardData: updateCartDto): Promise<cartDto | string> {
-        // Pas de méthode getCardById, donc on ne vérifie pas l'existence ici
-        return this.cartRepo.updateCart(cardData);
-    }
+  async updateCart(cardData: updateCartDto): Promise<Carts | string> {
+    return this.cartRepo.updateCart(cardData);
+  }
 
-    async delete(cardId: string): Promise<string> {
-        await this.cartRepo.deleteCart(cardId);
-        return `Cart with ID ${cardId} has been deleted successfully.`;
-    }
-    
-    async getByUserId(userId: string): Promise<cartDto[] | string> {
-        return this.cartRepo.getByUserId(userId);
-    }
+  async deleteCart(cardId: string): Promise<string> {
+    await this.cartRepo.deleteCart(cardId);
+    return `Cart with ID ${cardId} has been deleted successfully.`;
+  }
+
+  getByUserId(userId: string): Promise<Carts | string> {
+    return this.cartRepo.getByUserId(userId);
+  }
+
+  async getAllCarts(): Promise<Carts[] | string> {
+    return this.cartRepo.getAllCarts();
+  }
 }

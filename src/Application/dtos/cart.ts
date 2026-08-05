@@ -1,21 +1,28 @@
-type item = {
-    articleId: string;
-    quantity: number;
-}
+export type item = {
+  articleId: string;
+  image: string;
+  name: string;
+  price: number;
+};
 
 export interface createCartDto {
-    card_details: item[];
-    userId: string;
+  cart: item[];
+  userId: string;
 }
 
 export interface updateCartDto {
-    id: string;
-    card_details?: item[];
-    user_id?: string;
+  id: string;
+  cart: item[];
+  userId: string;
 }
 
 export interface cartDto {
-    id: string;
-    card_details: item[];
-    user_id: string;
+  id: string;
+  cart: item[];
+  userId: string;
+}
+
+export interface linkToArticleDto {
+  name: string;
+  articleId: string;
 }

@@ -1,10 +1,13 @@
-import type { createCardDto, updateCardDto, cardDto } from "../../../Application/dtos/cart.js";
-
+import type {
+  createCartDto,
+  updateCartDto,
+} from "../../../Application/dtos/cart.js";
+import { type Carts } from "../../../Domaine/entities/carts.js";
 
 export interface ICartService {
-    createCart(newCart: createCardDto): Promise<cardDto | string>;
-    updateCart(card: updateCardDto): Promise<cardDto | string>;
-    deleteCart(id: string): Promise<string>;
-    getAllCarts(): Promise<cardDto[] | string>;
-    getByUserId(userId: string): Promise<cardDto[] | string>;
+  createCart(newCart: createCartDto): Promise<Carts | string>;
+  updateCart(card: updateCartDto): Promise<Carts | string>;
+  deleteCart(id: string): Promise<string>;
+  getAllCarts(): Promise<Carts[] | string>;
+  getByUserId(userId: string): Promise<Carts | string>;
 }

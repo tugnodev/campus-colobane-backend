@@ -1,23 +1,25 @@
 export interface createMessageDto {
-    sender_id: string;
-    receiver_id: string;
-    article_id?: string;
-    message: string;
+  roomId: string;
+  userId: string;
+  sellerId?: string;
+  message: string;
+  articleId: string | null;
 }
 
 export interface updateMessageDto {
-    id: string;
-    sender_id?: string;
-    receiver_id?: string;
-    article_id?: string;
-    message?: string;
+  id: string;
+  roomId: string;
+  userId: string;
+  message: string;
+  articleId: string | null;
 }
 
-export interface messageDto {
-    id: string;
-    sender_id: string;
-    receiver_id: string;
-    article_id?: string;
-    message: string;
-    date: string;
+export interface getConversationDto {
+  roomId: string;
+  userId: string;
+}
+
+export interface broadcastMessageDto {
+  roomId: string;
+  payload: string;
 }

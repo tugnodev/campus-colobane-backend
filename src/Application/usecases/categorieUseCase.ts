@@ -1,27 +1,41 @@
-import type { OCategorieRepo } from '../../Domaine/ports/outputs/categorieRepo.js';
-import type { categorieDto } from '../dtos/categorie.js';
+import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
+import type { ICategorieService } from "../../Domaine/ports/inputs/categorieService.js";
+import type { categorieDto } from "../dtos/categorie.js";
+import type { linkToArticleDto } from "../dtos/cart.js";
 
-export class CategorieUseCase {
-    private categorieRepo: OCategorieRepo;
+export class CategorieUseCase implements ICategorieService {
+  private categorieRepo: OCategorieRepo;
 
-    constructor(categorieRepo: OCategorieRepo) {
-        this.categorieRepo = categorieRepo;
-    }
+  constructor(categorieRepo: OCategorieRepo) {
+    this.categorieRepo = categorieRepo;
+  }
 
-    async create(categorieData: categorieDto): Promise<categorieDto | string> {
-        return this.categorieRepo.createCategorie(categorieData);
-    }
+  async createCategorie(
+    categorieData: categorieDto,
+  ): Promise<categorieDto | string> {
+    return this.categorieRepo.createCategorie(categorieData);
+  }
 
-    async update(categorieData: categorieDto): Promise<categorieDto | string> {
-        return this.categorieRepo.updateCategorie(categorieData);
-    }
+  async updateCategorie(
+    categorieData: categorieDto,
+  ): Promise<categorieDto | string> {
+    return this.categorieRepo.updateCategorie(categorieData);
+  }
 
-    async delete(name: string): Promise<string> {
-        await this.categorieRepo.deleteCategorie(name);
-        return `Categorie with name ${name} has been deleted successfully.`;
-    }
+  async deleteCategorie(name: string): Promise<string> {
+    await this.categorieRepo.deleteCategorie(name);
+    return `Categorie with name ${name} has been deleted successfully.`;
+  }
 
-    async getAll(): Promise<categorieDto[] | string> {
-        return this.categorieRepo.getAllCategories();
-    }
+  async getAllCategories(): Promise<categorieDto[] | string> {
+    return this.categorieRepo.getAllCategories();
+  }
+
+  async linkToArticle(data: linkToArticleDto): Promise<string> {
+    return this.categorieRepo.linkToArticle(data);
+  }
+
+  async unLinkToArticle(data: linkToArticleDto): Promise<string> {
+    return this.categorieRepo.unLinkToArticle(data);
+  }
 }

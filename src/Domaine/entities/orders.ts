@@ -1,15 +1,20 @@
-enum OrderStatus {
-    ACCEPTED = 'accepted',
-    SHIPPED = 'shipped',
-    DELIVRED = 'delivred',
-    CANCELLED = 'cancelled'
+export enum OrderStatus {
+  VALIDEE = "validee",
+  ATTENTE = "en attente",
+  ANNULEE = "annulee",
 }
 
+export type Items = {
+  articleId: string;
+  quantity: number;
+};
+
 export type Order = {
-    id : Promise<string>
-    article_details : {}
-    buyer_id : string
-    seller_id : string
-    order_date : string
-    order_status : OrderStatus
-}
+  id: string;
+  items: Items[];
+  status: string;
+  buyerId: string;
+  sellerId: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

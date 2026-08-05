@@ -1,5 +1,5 @@
-export type categorie = {
-    name: string;
-    description: string;
-    image: string;
-}
+export type Categorie = {
+  name: string;
+  description: string;
+  image?: string;
+};

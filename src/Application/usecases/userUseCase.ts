@@ -1,30 +1,54 @@
-import type { OUserRepo } from '../../Domaine/ports/outputs/userRepo.js';
-import type { createUserDto, updateUserDto, userDto } from '../dtos/user.js';
+import type { User } from "../../Domaine/entities/user.js";
+import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
+import type {
+  createUserDto,
+  updateUserDto,
+  authPack,
+  turnToVendorDto,
+  userStatsDto,
+} from "../dtos/user.js";
+import { type IUserService } from "../../Domaine/ports/inputs/userService.js";
 
-export class UserUseCase {
-    private userRepo: OUserRepo;
+export class UserUseCase implements IUserService {
+  private userRepo: OUserRepo;
 
-    constructor(userRepo: OUserRepo) {
-        this.userRepo = userRepo;
-    }
+  constructor(userRepo: OUserRepo) {
+    this.userRepo = userRepo;
+  }
 
-    async createUser(userData: createUserDto): Promise<userDto | string> {
-        return this.userRepo.createUser(userData);
-    }   
+  async createUser(userData: createUserDto): Promise<authPack | string> {
+    return this.userRepo.createUser(userData);
+  }
 
-    async updateUser(userData: updateUserDto): Promise<userDto | string> {
-        return this.userRepo.updateUser(userData);
-    }
+  async updateUser(userData: updateUserDto): Promise<User | string> {
+    return this.userRepo.updateUser(userData);
+  }
 
-    async deleteUser(userId: string): Promise<string> {
-        return this.userRepo.deleteUser(userId);
-    }
+  async userLogout({
+    headers,
+  }: {
+    headers: Headers;
+  }): Promise<{ success: boolean }> {
+    return this.userRepo.userLogout({ headers });
+  }
 
-    async getUserById(userId: string): Promise<userDto | string> {
-        return this.userRepo.getUserById(userId);
-    }
+  async deleteUser(userId: string): Promise<string> {
+    return this.userRepo.deleteUser(userId);
+  }
 
-    async getAllUsers(): Promise<userDto[] | string> {
-        return this.userRepo.getAllUsers();
-    }
+  async getUserById(userId: string): Promise<User | string> {
+    return this.userRepo.getUserById(userId);
+  }
+
+  async getAllUsers(): Promise<User[] | string> {
+    return this.userRepo.getAllUsers();
+  }
+
+  async turnToVendor(user: turnToVendorDto): Promise<User | string> {
+    return this.userRepo.turnToVendor(user);
+  }
+
+  async getStats(userId: string): Promise<userStatsDto | string> {
+    return this.userRepo.getStats(userId);
+  }
 }

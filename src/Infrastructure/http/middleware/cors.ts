@@ -1,10 +1,10 @@
-import { cors } from 'hono/cors'
+import { cors } from "hono/cors";
 
 export const corsMiddleware = cors({
-  origin: ['http://localhost:3000', "http://localhost:5173", "http://127.0.0.1:3000", "http://127.0.0.1:5173"],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  exposeHeaders: ['X-Custom-Header'],
+  origin: ["http://10.223.12.103:1420/", "http://localhost:1420"],
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowHeaders: ["Content-Type", "Authorization"],
+  exposeHeaders: ["X-Custom-Header"],
   maxAge: 86400,
-  credentials: true
-})
+  credentials: true,
+});

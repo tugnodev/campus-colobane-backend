@@ -1,33 +1,52 @@
-import { Hono } from 'hono';
-import { UserController } from '../../controllers/userController.js';
-import { UserUseCase } from '../../../../Application/usecases/userUseCase.js';
-import { UserRepoImpl } from '../../../repositories/userRepoImpl.js';
+import { Hono } from "hono";
+import { UserController } from "../../controllers/userController.js";
+import { UserUseCase } from "../../../../Application/usecases/userUseCase.js";
+import { UserRepoImpl } from "../../../../Infrastructure/repositories/userRepoImpl.js";
 
 const userRepository = new UserRepoImpl();
-const userUseCase = new UserUseCase(userRepository);
+export const userUseCase = new UserUseCase(userRepository);
 const userController = new UserController(userUseCase);
 
 const userRoutes = new Hono();
 
-userRoutes.get('/', async (c) => {
-    return c.json({ message: 'Hello User!' });
+userRoutes.post("/register", async (c) => {
+  return userController.createUser(c);
 });
 
-userRoutes.post('/register', async (c) => {
-    return userController.createUser(c);
-});
-userRoutes.get('/:id', async (c) => {
-    return userController.getUserById(c);
+userRoutes.post("/login", async (c) => {
+  return userController.userLogin(c);
 });
 
-userRoutes.patch('/update', async (c) => {
-    return userController.updateUser(c);
+userRoutes.post("/logout", async (c) => {
+  return userController.userLogout(c);
 });
-userRoutes.delete('/delete', async (c) => {
-    return userController.deleteUser(c);
+
+userRoutes.get("/all", async (c) => {
+  return userController.getAllUsers(c);
 });
-userRoutes.get('/all', async (c) => {
-    return userController.getAllUsers(c);
+
+userRoutes.get("/session", async (c) => {
+  return userController.getUserBySession(c);
+});
+
+userRoutes.get("/:id", async (c) => {
+  return userController.getUserById(c);
+});
+
+userRoutes.get("/stats/:id", async (c) => {
+  return userController.getStats(c);
+});
+
+userRoutes.patch("/update", async (c) => {
+  return userController.updateUser(c);
+});
+
+userRoutes.patch("/update/vendor", async (c) => {
+  return userController.turnToVendor(c);
+});
+
+userRoutes.delete("/user/delete", async (c) => {
+  return userController.deleteUser(c);
 });
 
 export { userRoutes };

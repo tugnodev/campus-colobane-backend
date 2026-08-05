@@ -1,9 +1,19 @@
-import type { createUserDto, updateUserDto, userDto } from "../../../Application/dtos/user.js";
+import type {
+  createUserDto,
+  turnToVendorDto,
+  updateUserDto,
+  authPack,
+  userStatsDto,
+} from "../../../Application/dtos/user.js";
+import type { User } from "../../entities/user.js";
 
 export interface OUserRepo {
-    createUser(user: createUserDto): Promise<userDto | string>;
-    updateUser(user: updateUserDto): Promise<userDto | string>;
-    deleteUser(id: string): Promise<string>;
-    getUserById(id: string): Promise<userDto | string>;
-    getAllUsers(): Promise<userDto[] | string>;
+  createUser(user: createUserDto): Promise<authPack | string>;
+  updateUser(user: updateUserDto): Promise<User | string>;
+  deleteUser(id: string): Promise<string>;
+  userLogout({ headers }: { headers: Headers }): Promise<{ success: boolean }>;
+  getUserById(id: string): Promise<User | string>;
+  getAllUsers(): Promise<User[] | string>;
+  turnToVendor(user: turnToVendorDto): Promise<User | string>;
+  getStats(userId: string): Promise<userStatsDto | string>;
 }
