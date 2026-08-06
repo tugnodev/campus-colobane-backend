@@ -1,8 +1,5 @@
-import { CartUseCase } from "../../../Application/usecases/cartUseCase.js";
-import type {
-  createCartDto,
-  updateCartDto,
-} from "../../../Application/dtos/cart.ts";
+import { CartUseCase } from "../../Application/usecases/cartUseCase.js";
+import type { createCartDto, updateCartDto } from "../../Application/dtos/cart.js";
 import type { Context } from "hono";
 
 export class CartController {

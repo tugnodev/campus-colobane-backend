@@ -1,12 +1,12 @@
-import { UserUseCase } from "../../../Application/usecases/userUseCase.js";
+import { UserUseCase } from "../../Application/usecases/userUseCase.js";
 import type {
   createUserDto,
   turnToVendorDto,
   updateUserDto,
   userLoginDto,
-} from "../../../Application/dtos/user.js";
+} from "../../Application/dtos/user.js";
 import type { Context } from "hono";
-import { auth } from "../../config/auth.js";
+import { auth } from "../config/auth.js";
 import { APIError, type User } from "better-auth";
 
 export class UserController {

@@ -1,5 +1,5 @@
 import { Hono, type Context } from "hono";
-import { CartController } from "../../controllers/cartController.js";
+import { CartController } from "../../../controllers/cartController.js";
 import { CartUseCase } from "../../../../Application/usecases/cartUseCase.js";
 import { CartRepoImpl } from "../../../repositories/cartRepoImpl.js";
 

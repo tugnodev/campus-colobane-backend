@@ -1,9 +1,9 @@
-import { MessageUseCase } from "../../../Application/usecases/messageUseCase.js";
+import { MessageUseCase } from "../../Application/usecases/messageUseCase.js";
 import type {
   createMessageDto,
   updateMessageDto,
   getConversationDto,
-} from "../../../Application/dtos/messages.js";
+} from "../../Application/dtos/messages.js";
 import type { Context } from "hono";
 
 export class MessageController {

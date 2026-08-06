@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { OrderController } from "../../controllers/orderController.js";
+import { OrderController } from "../../../controllers/orderController.js";
 import { OrderRepoImpl } from "../../../repositories/orderRepoImpl.js";
 import { OrderUseCase } from "../../../../Application/usecases/orderUseCase.js";
 

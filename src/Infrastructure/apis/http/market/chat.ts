@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { MessageController } from "../../controllers/messageController.js";
+import { MessageController } from "../../../controllers/messageController.js";
 import { MessageUseCase } from "../../../../Application/usecases/messageUseCase.js";
 import { MessageRepoImpl } from "../../../repositories/messageRepoImpl.js";
 import { createNodeWebSocket } from "@hono/node-ws";

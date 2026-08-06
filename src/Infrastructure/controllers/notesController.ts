@@ -1,10 +1,10 @@
 import { type Context } from "hono";
-import { type NotesUseCase } from "../../../Application/usecases/notesUseCase.js";
+import { type NotesUseCase } from "../../Application/usecases/notesUseCase.js";
 import type {
   createNotesDto,
   updateNotesDto,
   deleteNotesDto,
-} from "../../../Application/dtos/notes.js";
+} from "../../Application/dtos/notes.js";
 
 export class NotesController {
   constructor(private notesUseCase: NotesUseCase) {}

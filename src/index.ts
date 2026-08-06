@@ -2,20 +2,19 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { corsMiddleware } from "./Infrastructure/http/middleware/cors.js";
-import { authMiddleware } from "./Infrastructure/http/middleware/auth.js";
-import { userRoutes } from "./Infrastructure/http/routes/market/user.js";
-import { chatRoutes } from "./Infrastructure/http/routes/market/chat.js";
-import { cartRoutes } from "./Infrastructure/http/routes/market/cart.js";
-import { categorieRoutes } from "./Infrastructure/http/routes/market/categories.js";
-import { articleRoutes } from "./Infrastructure/http/routes/market/articles.js";
-import { commandeRoutes } from "./Infrastructure/http/routes/market/commandes.js";
+import { corsMiddleware } from "./Infrastructure/middleware/cors.js";
+import { authMiddleware } from "./Infrastructure/middleware/auth.js";
+import { userRoutes } from "./Infrastructure/apis/http/market/user.js";
+import { chatRoutes } from "./Infrastructure/apis/http/market/chat.js";
+import { cartRoutes } from "./Infrastructure/apis/http/market/cart.js";
+import { categorieRoutes } from "./Infrastructure/apis/http/market/categories.js";
+import { articleRoutes } from "./Infrastructure/apis/http/market/articles.js";
+import { commandeRoutes } from "./Infrastructure/apis/http/market/commandes.js";
 import { createNodeWebSocket } from "@hono/node-ws";
 import type { WSContext, WSMessageReceive } from "hono/ws";
 import type { Message } from "./Domaine/entities/message.js";
-import type { socketData } from "./Application/dtos/socket.js";
 import { json } from "node:stream/consumers";
-import { MessageController } from "./Infrastructure/http/controllers/messageController.js";
+import { MessageController } from "./Infrastructure/controllers/messageController.js";
 import { MessageRepoImpl } from "./Infrastructure/repositories/messageRepoImpl.js";
 import { MessageUseCase } from "./Application/usecases/messageUseCase.js";
 import type {
@@ -64,72 +63,7 @@ app.get(
       },
       onMessage: async (evt, ctx) => {
         const data: WSMessageReceive = evt.data as string;
-        const message: socketData = JSON.parse(data);
-        switch (message.type) {
-          case "create":
-            const data: createMessageDto = JSON.parse(message.payload);
-            const msg = await messageUseCase.createMessage(data);
-            switch (typeof msg) {
-              case "string":
-                clients
-                  .get(id)
-                  ?.send(JSON.stringify({ type: "error", payload: msg }));
-                break;
-              case "object":
-                const client = clients.get(id);
-                if (typeof client === "object" && client !== undefined) {
-                  client.send(
-                    JSON.stringify({
-                      type: "create",
-                      payload: JSON.stringify(msg),
-                    }),
-                  );
-                } else {
-                  pendingMessages.set(id, [
-                    ...(pendingMessages.get(id) ?? []),
-                    JSON.stringify(msg),
-                  ]);
-                }
-                break;
-            }
-            break;
-          case "delete":
-            const idToDelete: string = JSON.parse(message.payload);
-            const del = await messageUseCase.deleteMessage(idToDelete);
-            if (del === "message deleted") {
-              clients
-                .get(id)
-                ?.send(JSON.stringify({ type: "error", payload: del }));
-            } else {
-              clients
-                .get(id)
-                ?.send(
-                  JSON.stringify({
-                    type: "delete",
-                    payload: JSON.stringify(del),
-                  }),
-                );
-            }
-            break;
-          case "update":
-            const toUpdate: updateMessageDto = JSON.parse(message.payload);
-            const updated = await messageUseCase.updateMessage(toUpdate);
-            if (typeof updated === "string") {
-              clients
-                .get(id)
-                ?.send(JSON.stringify({ type: "error", payload: updated }));
-            } else {
-              clients
-                .get(id)
-                ?.send(
-                  JSON.stringify({
-                    type: "update",
-                    payload: JSON.stringify(updated),
-                  }),
-                );
-            }
-            break;
-        }
+
       },
       onClose: () => {
         clients.delete(id);

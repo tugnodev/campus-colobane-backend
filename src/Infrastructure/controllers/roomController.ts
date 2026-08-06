@@ -1,10 +1,10 @@
 import type { Context } from "hono";
-import type { RoomUseCase } from "../../../Application/usecases/roomUseCase.js";
+import type { RoomUseCase } from "../../Application/usecases/roomUseCase.js";
 import type {
   createRoomDto,
   updateRoomDto,
   deleteRoomDto,
-} from "../../../Application/dtos/room.js";
+} from "../../Application/dtos/room.js";
 
 export class RoomController {
   constructor(private readonly roomUseCase: RoomUseCase) {}
