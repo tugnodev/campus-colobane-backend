@@ -37,6 +37,10 @@ const messageController = new MessageController(messageUseCase);
 export const clients = new Map<string, WSContext>();
 const pendingMessages = new Map<string, string[]>();
 
+// WebSocket endpoint
+/**
+ *
+
 app.get(
   "/ws/:id",
   upgradeWebSocket((c) => {
@@ -65,7 +69,7 @@ app.get(
     };
   }),
 );
-
+ */
 //app.use("*", corsMiddleware);
 //app.use("/api/auth/*", authMiddleware);
 app.use("*", logger());
