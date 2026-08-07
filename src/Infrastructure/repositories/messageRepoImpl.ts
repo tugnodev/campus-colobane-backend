@@ -18,9 +18,9 @@ const isDataError = (error: any) =>
 export class MessageRepoImpl implements OMessageRepo {
   async createMessage(data: createMessageDto): Promise<Message | string> {
     try {
-      const existingRoom = await db.query.room.findFirst({
-        where: eq(room.id, data.roomId),
-      });
+      const existingRoom = await db.selectDistinct().from(room).where(
+        eq(room.buyerId, data.userId) && eq(room.sellerId, data.sellerId!),
+      );
 
       if (!existingRoom) {
         const [newRoom] = await db

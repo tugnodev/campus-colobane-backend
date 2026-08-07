@@ -99,12 +99,10 @@ export class UserRepoImpl implements OUserRepo {
 
   async getUserById(id: string): Promise<User | string> {
     try {
-      const found = await db.query.user.findFirst({
-        where: eq(user.id, id),
-      });
+      const found = await db.selectDistinct().from(user).where(eq(user.id, id));
 
       if (!found) return "User not found";
-      return found;
+      return found[0];
     } catch (e) {
       return "Error getting user";
     }

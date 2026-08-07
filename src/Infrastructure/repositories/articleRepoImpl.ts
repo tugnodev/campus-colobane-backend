@@ -1,12 +1,12 @@
-import { db } from "../../../db/index.js";
-import { articles, cateByArticle, notes } from "../../../db/schema.js";
+import { db } from "../../db/index.js";
+import { articles, cateByArticle, notes } from "../../db/schema.js";
 import { eq, sql } from "drizzle-orm";
-import type { OArticleRepo } from "../../../Domaine/ports/outputs/articleRepo.js";
+import type { OArticleRepo } from "../../Domaine/ports/outputs/articleRepo.js";
 import type {
   createArticleDto,
   updateAticleDto,
-} from "../../../Application/dtos/article.js";
-import { type Articles } from "../../../Domaine/entities/articles.js";
+} from "../../Application/dtos/article.js";
+import { type Articles } from "../../Domaine/entities/articles.js";
 
 export class ArticleRepoImpl implements OArticleRepo {
   async saveArticle(article: createArticleDto): Promise<Articles | string> {
@@ -196,14 +196,9 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getAllArticlesByUserId(userId: string): Promise<Articles[] | string> {
     try {
-      const result = await db.query.articles.findMany({
-        where: eq(articles.userId, userId),
-        with: {
-          user: { columns: { name: true, address: true } },
-          categories: { columns: { categoryId: true } },
-          rates: { columns: { number: true } },
-        },
-      });
+      const result = await db.select().from(articles).where(eq(articles.userId, userId));
+      const notesResult = await db.select().from(notes).where(eq(notes.articleId, result[0].id));
+      const categoriesResult = await db.select().from(cateByArticle).where(eq(cateByArticle.articleId, result[0].id));
 
       return result.map((article) => ({
         id: article.id,
@@ -212,8 +207,8 @@ export class ArticleRepoImpl implements OArticleRepo {
         images: article.images,
         description: article.description,
         price: article.price,
-        rates: rateCalculation(article.rates.map((r) => r.number)),
-        category: article.categories.map((c) => c.categoryId),
+        rates: rateCalculation(notesResult.map((r) => r.number)),
+        category: categoriesResult.map((c) => c.categoryId),
         stock: article.stock,
         createdAt: article.createdAt,
         updatedAt: article.updatedAt,

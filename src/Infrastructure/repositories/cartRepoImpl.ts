@@ -59,11 +59,9 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByUserId(userId: string): Promise<Carts | string> {
     try {
-      const cart = await db.query.carts.findFirst({
-        where: eq(carts.userId, userId),
-      });
+      const cart = await db.selectDistinct().from(carts).where(eq(carts.userId, userId))
       if (!cart) return "Panier non trouvé";
-      return cart;
+      return cart[0];
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération des paniers par utilisateur";
@@ -72,11 +70,9 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByCartId(cartId: string): Promise<Carts | string> {
     try {
-      const cart = await db.query.carts.findFirst({
-        where: eq(carts.userId, cartId),
-      });
+      const cart = await db.selectDistinct().from(carts).where(eq(carts.userId, cartId));
       if (!cart) return "Panier non trouvé";
-      return cart;
+      return cart[0];
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération du panier par ID";

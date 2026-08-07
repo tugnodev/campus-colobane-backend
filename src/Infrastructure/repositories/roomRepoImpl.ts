@@ -57,12 +57,10 @@ export class RoomRepositoryImpl implements ORoomRepo {
 
   async getRoomById(id: string): Promise<Room | string> {
     try {
-      const found = await db.query.room.findFirst({
-        where: eq(room.id, id),
-      });
+      const found = await db.selectDistinct().from(room).where(eq(room.id, id));
 
       if (!found) return "Room not found";
-      return found;
+      return found[0];
     } catch (error) {
       return "An error occurred";
     }
