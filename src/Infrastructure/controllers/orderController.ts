@@ -54,7 +54,7 @@ export class OrderController {
 
   async getBySellerId(ctx: Context) {
     const sellerId = ctx.req.param("sellerId");
-    const result = await this.orderUseCase.getBySellerId(sellerId);
+    const result = await this.orderUseCase.getBySellerId(sellerId!);
     if (typeof result === "string") {
       return ctx.json({ message: "erreur fetching" }, 400);
     }

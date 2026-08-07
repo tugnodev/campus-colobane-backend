@@ -62,7 +62,7 @@ export class UserController {
 
   async getUserById(ctx: Context) {
     const id = ctx.req.param("id");
-    const result = await this.userUseCase.getUserById(id);
+    const result = await this.userUseCase.getUserById(id!);
     if (typeof result === "string") {
       return ctx.json({ message: "User Not Found" });
     }

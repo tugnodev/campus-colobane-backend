@@ -7,18 +7,19 @@ import type {
   createCartDto,
   updateCartDto,
 } from "../../Application/dtos/cart.js";
+import type { Items } from "../../Domaine/entities/orders.js";
 
 export class CartRepoImpl implements OCartRepo {
   async createCart(cart: createCartDto): Promise<Carts | string> {
     try {
-      const [created] = await db
-        .insert(carts)
-        .values({
-          userId: cart.userId,
-          cart: cart.cart || [],
-        })
-        .returning();
-      return created;
+      const created = await db.insert(carts).values({
+        cart: JSON.stringify(cart.cart),
+        userId: cart.userId
+      }).returning();
+      return {
+        cart : JSON.parse(created[0].cart as string),
+        userId: created[0].userId,
+      };
     } catch (error) {
       console.error(error);
       return "Erreur lors de la création du panier";
@@ -30,12 +31,15 @@ export class CartRepoImpl implements OCartRepo {
       const { userId, ...data } = cart;
       const [updated] = await db
         .update(carts)
-        .set({ cart: data.cart })
+        .set({ cart: JSON.stringify(data.cart) })
         .where(eq(carts.userId, userId))
         .returning();
 
       if (!updated) return "Panier non trouvé";
-      return updated;
+      return {
+        cart : JSON.parse(updated.cart as string),
+        userId: updated.userId,
+      };
     } catch (error) {
       console.error(error);
       return "Erreur lors de la mise à jour du panier";
@@ -61,7 +65,10 @@ export class CartRepoImpl implements OCartRepo {
     try {
       const cart = await db.selectDistinct().from(carts).where(eq(carts.userId, userId))
       if (!cart) return "Panier non trouvé";
-      return cart[0];
+      return {
+        cart: JSON.parse(cart[0].cart as string),
+        userId: cart[0].userId,
+      };
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération des paniers par utilisateur";
@@ -72,7 +79,10 @@ export class CartRepoImpl implements OCartRepo {
     try {
       const cart = await db.selectDistinct().from(carts).where(eq(carts.userId, cartId));
       if (!cart) return "Panier non trouvé";
-      return cart[0];
+      return {
+        cart: JSON.parse(cart[0].cart as string),
+        userId: cart[0].userId,
+      };
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération du panier par ID";
@@ -82,7 +92,12 @@ export class CartRepoImpl implements OCartRepo {
   async getAllCarts(): Promise<Carts[] | string> {
     try {
       const result = await db.select().from(carts);
-      return result.length > 0 ? result : "Aucun panier trouvé";
+      return result.length > 0 ?
+        result.map((cart) => ({
+          cart: JSON.parse(cart.cart as string),
+          userId: cart.userId,
+        })) :
+        "Aucun panier trouvé";
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération de tous les paniers";

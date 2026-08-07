@@ -41,7 +41,7 @@ export class ArticleController {
 
   async searArticles(ctx: Context) {
     const query = ctx.req.param("query");
-    await this.articleUseCase.searchArticles(query);
+    await this.articleUseCase.searchArticles(query!);
   }
 
   async getAll(ctx: Context) {

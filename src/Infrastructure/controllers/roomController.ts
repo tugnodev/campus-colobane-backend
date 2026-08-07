@@ -50,7 +50,7 @@ export class RoomController {
 
   async getRoomById(ctx: Context) {
     const id = ctx.req.param("id");
-    const res = await this.roomUseCase.getRoomById(id);
+    const res = await this.roomUseCase.getRoomById(id!);
     switch (typeof res) {
       case "string":
         ctx.status(400);
