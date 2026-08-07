@@ -54,7 +54,7 @@ export class OrderRepoImpl implements OOrderRepo {
       const { id, ...data } = order;
       const [updated] = await db
         .update(orders)
-        .set({ status: data.status })
+        .set({ status: data!.status })
         .where(eq(orders.id, id))
         .returning();
 
