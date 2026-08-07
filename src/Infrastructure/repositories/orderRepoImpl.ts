@@ -87,17 +87,10 @@ export class OrderRepoImpl implements OOrderRepo {
     }
   }
 
-  async getOrdersByBuyerId(buyerId: string): Promise<Order[] | string> {
+  async getOrdersByBuyerId(buyerId: string): Promise<Order[] | string> {orderItems
     try {
-      const result = await db.query.orders.findMany({
-        where: eq(orders.buyerId, buyerId),
-        orderBy: [desc(orders.createdAt)],
-        with: {
-          items: {
-            with: { article: true },
-          },
-        },
-      });
+      const result = (await db.select().from(orders)).join();
+
 
       return result;
     } catch (error) {
@@ -108,13 +101,23 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersBySellerId(sellerId: string): Promise<Order[] | string> {
     try {
-      const result = await db.query.orders.findMany({
-        where: eq(orders.sellerId, sellerId),
-        orderBy: [desc(orders.createdAt)],
-        with: { items: true },
+      const result = await db.select().from(orders).where(eq(orders.sellerId, sellerId)).leftJoin(orderItems, eq(orders.id, orderItems.orderId))!;
+      return result.map((result) => {
+        return {
+          id: result.Orders.id,
+          buyerId: result.Orders.buyerId,
+          sellerId: result.Orders.sellerId,
+          items: [
+            {
+              articleId: result.OrderItems!.articleId,
+              quantity: result.OrderItems!.quantity,
+            }
+          ],
+          status: result.Orders.status,
+          createdAt: result.Orders.createdAt,
+          updatedAt: result.Orders.updatedAt,
+        }
       });
-
-      return result;
     } catch (error) {
       console.error(error);
       return "Error fetching orders by seller";
