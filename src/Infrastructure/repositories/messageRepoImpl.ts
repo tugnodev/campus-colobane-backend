@@ -1,95 +1,89 @@
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
-import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/runtime/library.js";
+import { db } from "../../db/index.js";
+import { room, messages } from "../../db/schema.js";
+import { eq } from "drizzle-orm";
 import type { OMessageRepo } from "../../Domaine/ports/outputs/messageRepo.js";
 import type {
   createMessageDto,
   getConversationDto,
   updateMessageDto,
 } from "../../Application/dtos/messages.js";
-
 import { type Message } from "../../Domaine/entities/message.js";
-import type { Room } from "../../Domaine/entities/room.js";
-const prisma = new PrismaClient();
+
+// Codes d'erreur Postgres utiles ici :
+// 23505 = violation de contrainte unique
+// 23503 = violation de clé étrangère
+const isDataError = (error: any) =>
+  error?.code === "23505" || error?.code === "23503";
 
 export class MessageRepoImpl implements OMessageRepo {
   async createMessage(data: createMessageDto): Promise<Message | string> {
     try {
-      const room = await prisma.room
-        .findUnique({
-          where: { id: data.roomId },
-        })
-        .catch((error) => {
-          return "room not found";
-        });
+      const existingRoom = await db.query.room.findFirst({
+        where: eq(room.id, data.roomId),
+      });
 
-      if (!room) {
-        //create room
-        const newRoom = await prisma.room.create({
-          data: {
+      if (!existingRoom) {
+        const [newRoom] = await db
+          .insert(room)
+          .values({
             buyerId: data.userId,
             sellerId: data.sellerId!,
-          },
-        });
+          })
+          .returning();
 
-        if (!newRoom) {
-          return "error while creating room";
-        }
+        if (!newRoom) return "error while creating room";
 
         data.roomId = newRoom.id;
       }
 
-      const newArticle: Message = await prisma.messages.create({
-        data,
-      });
-      return newArticle;
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        return "invalid data";
-      }
+      const [newMessage] = await db.insert(messages).values(data).returning();
+      return newMessage;
+    } catch (error) {
+      if (isDataError(error)) return "invalid data";
       return "error while creating";
     }
   }
 
   async updateMessage(data: updateMessageDto): Promise<Message | string> {
     try {
-      const update: Message = await prisma.messages.update({
-        where: { id: data.id },
-        data,
-      });
-      return update;
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        return "invalid data";
-      }
+      const { id, ...rest } = data;
+      const [updated] = await db
+        .update(messages)
+        .set(rest)
+        .where(eq(messages.id, id))
+        .returning();
+
+      if (!updated) return "invalid data";
+      return updated;
+    } catch (error) {
+      if (isDataError(error)) return "invalid data";
       return "error while updating";
     }
   }
 
   async deleteMessage(id: string): Promise<string> {
     try {
-      const deleted = await prisma.messages.delete({
-        where: { id },
-      });
+      const [deleted] = await db
+        .delete(messages)
+        .where(eq(messages.id, id))
+        .returning();
+
       return deleted ? "message deleted" : "message not found";
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        return "invalid data";
-      }
+    } catch (error) {
+      if (isDataError(error)) return "invalid data";
       return "error while deleting";
     }
   }
 
   async getConversation(data: getConversationDto): Promise<Message[] | string> {
     try {
-      const conversation: Message[] = await prisma.messages.findMany({
-        where: { roomId: data.roomId },
-        orderBy: { createdAt: "asc" },
-      });
-      return conversation;
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        return "invalid data";
-      }
+      return await db
+        .select()
+        .from(messages)
+        .where(eq(messages.roomId, data.roomId))
+        .orderBy(messages.createdAt);
+    } catch (error) {
+      if (isDataError(error)) return "invalid data";
       return "error while getting conversation";
     }
   }

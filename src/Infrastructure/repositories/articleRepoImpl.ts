@@ -1,33 +1,36 @@
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
-import type { OArticleRepo } from "../../Domaine/ports/outputs/articleRepo.js";
+import { db } from "../../../db/index.js";
+import { articles, cateByArticle, notes } from "../../../db/schema.js";
+import { eq, sql } from "drizzle-orm";
+import type { OArticleRepo } from "../../../Domaine/ports/outputs/articleRepo.js";
 import type {
   createArticleDto,
   updateAticleDto,
-} from "../../Application/dtos/article.js";
-import { type Articles } from "../../Domaine/entities/articles.js";
-
-const prisma = new PrismaClient();
+} from "../../../Application/dtos/article.js";
+import { type Articles } from "../../../Domaine/entities/articles.js";
 
 export class ArticleRepoImpl implements OArticleRepo {
   async saveArticle(article: createArticleDto): Promise<Articles | string> {
     try {
-      const created = await prisma.articles.create({
-        data: {
+      const [created] = await db
+        .insert(articles)
+        .values({
           userId: article.userId,
           title: article.title,
           images: article.images,
           description: article.description,
           price: article.price,
           stock: article.stock,
-        },
-      });
+        })
+        .returning();
 
-      await prisma.cateByArticle.createMany({
-        data: article.category.map((categoryId) => ({
-          articleId: created.id,
-          categoryId,
-        })),
-      });
+      if (article.category.length > 0) {
+        await db.insert(cateByArticle).values(
+          article.category.map((categoryId) => ({
+            articleId: created.id,
+            categoryId,
+          })),
+        );
+      }
 
       const newarticle: Articles = {
         id: created.id,
@@ -52,23 +55,34 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async updateArticle(article: updateAticleDto): Promise<Articles | string> {
     try {
-      const { id, ...data } = article;
-      const update = await prisma.articles.update({
-        where: { id: id },
-        data,
-      });
+      const { id, category, ...data } = article;
 
-      await prisma.cateByArticle.updateMany({
-        data: article.category!.map((categoryId) => ({
-          articleId: update.id,
-          categoryId,
-        })),
-      });
+      const [update] = await db
+        .update(articles)
+        .set(data)
+        .where(eq(articles.id, id))
+        .returning();
 
-      const rates = await prisma.notes.findMany({
-        where: { articleId: update.id },
-        select: { number: true },
-      });
+      if (!update) return "Article non trouvé";
+
+      // Remplace les catégories liées plutôt qu'un "updateMany" qui n'avait
+      // pas vraiment de sens côté Prisma (pas de clause "where" par ligne).
+      if (category) {
+        await db.delete(cateByArticle).where(eq(cateByArticle.articleId, id));
+        if (category.length > 0) {
+          await db.insert(cateByArticle).values(
+            category.map((categoryId) => ({
+              articleId: id,
+              categoryId,
+            })),
+          );
+        }
+      }
+
+      const rates = await db
+        .select({ number: notes.number })
+        .from(notes)
+        .where(eq(notes.articleId, update.id));
 
       const newarticle: Articles = {
         id: update.id,
@@ -77,8 +91,8 @@ export class ArticleRepoImpl implements OArticleRepo {
         images: update.images,
         description: update.description,
         price: update.price,
-        rates: rateCalculation(rates.map((rate) => rate.number)),
-        category: article.category!,
+        rates: rateCalculation(rates.map((r) => r.number)),
+        category: category ?? [],
         stock: update.stock,
         createdAt: update.createdAt,
         updatedAt: update.updatedAt,
@@ -93,9 +107,12 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async deleteArticle(id: string): Promise<string> {
     try {
-      await prisma.articles.delete({
-        where: { id },
-      });
+      const [deleted] = await db
+        .delete(articles)
+        .where(eq(articles.id, id))
+        .returning();
+
+      if (!deleted) return "Article non trouvé";
       return "Article deleted successfully";
     } catch (error) {
       console.error(error);
@@ -105,34 +122,31 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getArticleById(id: string): Promise<Articles | string> {
     try {
-      console.log(`getArticleById: id=${id}`);
-      const article = await prisma.articles.findUnique({
-        where: { id: id },
-      });
-
+      const article = await db.selectDistinct().from(articles).where(eq(articles.id, id));
       if (!article) return "Article non trouvé";
 
-      const categories = await prisma.cateByArticle.findMany({
-        where: { articleId: id },
-        select: { categoryId: true },
-      });
-      const notes = await prisma.notes.findMany({
-        where: { articleId: id },
-        select: { number: true },
-      });
+      const categoriesResult = await db
+        .select({ categoryId: cateByArticle.categoryId })
+        .from(cateByArticle)
+        .where(eq(cateByArticle.articleId, id));
+
+      const notesResult = await db
+        .select({ number: notes.number })
+        .from(notes)
+        .where(eq(notes.articleId, id));
 
       const newarticle: Articles = {
-        id: article.id,
-        userId: article.userId,
-        title: article.title,
-        images: article.images,
-        description: article.description,
-        price: article.price,
-        rates: rateCalculation(notes.map((note) => note.number)),
-        category: categories.map((category) => category.categoryId),
-        stock: article.stock,
-        createdAt: article.createdAt,
-        updatedAt: article.updatedAt,
+        id: article[0].id,
+        userId: article[0].userId,
+        title: article[0].title,
+        images: article[0].images,
+        description: article[0].description,
+        price: article[0].price,
+        rates: rateCalculation(notesResult.map((n) => n.number)),
+        category: categoriesResult.map((c) => c.categoryId),
+        stock: article[0].stock,
+        createdAt: article[0].createdAt,
+        updatedAt: article[0].updatedAt,
       };
 
       return newarticle;
@@ -144,47 +158,36 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getAllArticles(): Promise<Articles[] | string> {
     try {
-      let newarticles: Articles[] = [];
-      let newarticle: Articles;
-      let articles = await prisma.articles.findMany({
-        include: {
-          user: {
-            select: {
-              name: true,
-              address: true,
-            },
-          },
-          categories: {
-            select: {
-              categoryId: true,
-            },
-          },
-          rates: {
-            select: {
-              number: true,
-            },
-          },
-        },
-      });
+      //const result = await db.query.articles.findMany({
+      //  with: {
+      //    user: { columns: { name: true, address: true } },
+      //    categories: { columns: { categoryId: true } },
+      //    rates: { columns: { number: true } },
+      //  },
+      //});
+      //
+      const result = await db.select().from(articles);
+      const notesResult = await db
+        .select({ number: notes.number })
+        .from(notes);
 
-      for (const article of articles) {
-        newarticle = {
-          id: article.id,
-          userId: article.userId,
-          title: article.title,
-          images: article.images,
-          description: article.description,
-          price: article.price,
-          rates: rateCalculation(article.rates.map((rate) => rate.number)),
-          category: article.categories.map((category) => category.categoryId),
-          stock: article.stock,
-          createdAt: article.createdAt,
-          updatedAt: article.updatedAt,
-        };
-        newarticles.push(newarticle);
-      }
+      const categoriesResult = await db
+        .select({ categoryId: cateByArticle.categoryId })
+        .from(cateByArticle);
 
-      return newarticles;
+      return result.map((article) => ({
+        id: article.id,
+        userId: article.userId,
+        title: article.title,
+        images: article.images,
+        description: article.description,
+        price: article.price,
+        rates: rateCalculation(notesResult.map((r) => r.number)),
+        category: categoriesResult.map((c) => c.categoryId),
+        stock: article.stock,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+      }));
     } catch (error) {
       console.error(error);
       return "Error fetching articles";
@@ -193,50 +196,28 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async getAllArticlesByUserId(userId: string): Promise<Articles[] | string> {
     try {
-      let newarticles: Articles[] = [];
-      let newarticle: Articles;
-      let articles = await prisma.articles.findMany({
-        where: {
-          userId,
-        },
-        include: {
-          user: {
-            select: {
-              name: true,
-              address: true,
-            },
-          },
-          categories: {
-            select: {
-              categoryId: true,
-            },
-          },
-          rates: {
-            select: {
-              number: true,
-            },
-          },
+      const result = await db.query.articles.findMany({
+        where: eq(articles.userId, userId),
+        with: {
+          user: { columns: { name: true, address: true } },
+          categories: { columns: { categoryId: true } },
+          rates: { columns: { number: true } },
         },
       });
 
-      for (const article of articles) {
-        newarticle = {
-          id: article.id,
-          userId: article.userId,
-          title: article.title,
-          images: article.images,
-          description: article.description,
-          price: article.price,
-          rates: rateCalculation(article.rates.map((rate) => rate.number)),
-          category: article.categories.map((category) => category.categoryId),
-          stock: article.stock,
-          createdAt: article.createdAt,
-          updatedAt: article.updatedAt,
-        };
-        newarticles.push(newarticle);
-      }
-
-      return newarticles;
+      return result.map((article) => ({
+        id: article.id,
+        userId: article.userId,
+        title: article.title,
+        images: article.images,
+        description: article.description,
+        price: article.price,
+        rates: rateCalculation(article.rates.map((r) => r.number)),
+        category: article.categories.map((c) => c.categoryId),
+        stock: article.stock,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+      }));
     } catch (error) {
       console.log(error);
       return "Error";
@@ -245,46 +226,39 @@ export class ArticleRepoImpl implements OArticleRepo {
 
   async searchArticles(query: string): Promise<Articles[] | string> {
     try {
-      //raw query
-      const articles = (await prisma.$queryRaw`
+      const pattern = `%${query}%`;
+
+      // Requête équivalente corrigée : la version Prisma d'origine joignait
+      // sur "c.categoryId" (colonne inexistante sur Categories) et n'avait
+      // pas de GROUP BY malgré le json_agg. Corrigé ci-dessous.
+      const result = await db.execute(sql`
         SELECT
           a.id,
-          a.userId,
+          a."userId",
           a.title,
           a.images,
           a.description,
           a.price,
           a.stock,
-          a.createdAt,
-          a.updatedAt,
-          u.name,
-          u.address,
-          json_agg(DISTINCT c.categoryId) AS categories,
-          json_agg(DISTINCT r.number) AS rates
-        FROM
-          "Articles" a
-        LEFT JOIN "User" u ON a.userId = u.id
-        LEFT JOIN "CateByArticle" cba ON a.id = cba.articleId
-        LEFT JOIN "Categories" c ON cba.categoryId = c.name
-        LEFT JOIN "Notes" r ON a.id = r.articleId
+          a."createdAt",
+          a."updatedAt",
+          COALESCE(json_agg(DISTINCT c.name) FILTER (WHERE c.name IS NOT NULL), '[]') AS categories,
+          COALESCE(json_agg(DISTINCT r.number) FILTER (WHERE r.number IS NOT NULL), '[]') AS rates
+        FROM "Articles" a
+        LEFT JOIN "CateByArticle" cba ON a.id = cba."articleId"
+        LEFT JOIN "Categories" c ON cba."categoryId" = c.name
+        LEFT JOIN "Notes" r ON a.id = r."articleId"
         WHERE
-          a.title ILIKE ${query}
-          OR a.description ILIKE ${query}
-          OR c.name ILIKE ${query}
-          LIMIT 100;
-      `) as ({
-        user: {
-          name: string;
-          address: string | null;
-        };
-        rates: {
-          number: number;
-        }[];
-        categories: {
-          categoryId: string;
-        }[];
-      } & {
+          a.title ILIKE ${pattern}
+          OR a.description ILIKE ${pattern}
+          OR c.name ILIKE ${pattern}
+        GROUP BY a.id
+        LIMIT 100;
+      `);
+
+      const rows = result as unknown as {
         id: string;
+        userId: string;
         title: string;
         images: string[];
         description: string;
@@ -292,28 +266,23 @@ export class ArticleRepoImpl implements OArticleRepo {
         stock: number;
         createdAt: Date;
         updatedAt: Date;
-        userId: string;
-      })[];
+        categories: string[];
+        rates: number[];
+      }[];
 
-      let newarticles: Articles[] = [];
-
-      for (const article of articles) {
-        const newarticle = {
-          id: article.id,
-          userId: article.userId,
-          title: article.title,
-          images: article.images,
-          description: article.description,
-          price: article.price,
-          rates: rateCalculation(article.rates.map((rate) => rate.number)),
-          category: article.categories.map((category) => category.categoryId),
-          stock: article.stock,
-          createdAt: article.createdAt,
-          updatedAt: article.updatedAt,
-        };
-        newarticles.push(newarticle);
-      }
-      return newarticles;
+      return rows.map((article) => ({
+        id: article.id,
+        userId: article.userId,
+        title: article.title,
+        images: article.images,
+        description: article.description,
+        price: article.price,
+        rates: rateCalculation(article.rates),
+        category: article.categories,
+        stock: article.stock,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+      }));
     } catch (error) {
       console.error(error);
       return "error";
@@ -322,6 +291,7 @@ export class ArticleRepoImpl implements OArticleRepo {
 }
 
 const rateCalculation = (rates: number[]): number => {
+  if (rates.length === 0) return 0;
   const sum = rates.reduce((acc, rate) => acc + rate, 0);
   return sum / rates.length;
 };

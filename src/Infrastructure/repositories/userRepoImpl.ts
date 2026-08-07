@@ -1,9 +1,10 @@
 import type { User } from "../../Domaine/entities/user.js";
 import type { OUserRepo } from "../../Domaine/ports/outputs/userRepo.js";
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { db } from "../../db/index.js";
+import { user, carts, numbers, articles, orders } from "../../db/schema.js";
+import { eq } from "drizzle-orm";
 import { auth } from "../config/auth.js";
 import { OrderStatus } from "../../Domaine/entities/orders.js";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { BetterAuthError } from "better-auth";
 import type {
   authPack,
@@ -12,8 +13,6 @@ import type {
   updateUserDto,
   userStatsDto,
 } from "../../Application/dtos/user.js";
-
-const prisma = new PrismaClient();
 
 export class UserRepoImpl implements OUserRepo {
   async createUser(data: createUserDto): Promise<authPack | string> {
@@ -29,133 +28,110 @@ export class UserRepoImpl implements OUserRepo {
         },
       });
 
-      const user = await prisma.user.update({
-        where: { id: newUser.user.id },
-        data: {
+      const [updatedUser] = await db
+        .update(user)
+        .set({
           vendeur: false,
           address: data.address,
           certified: false,
-        },
-      });
-
-      newUser.user = user;
-
-      const cart = await prisma.carts
-        .create({
-          data: {
-            userId: user.id,
-            cart: [],
-          },
         })
+        .where(eq(user.id, newUser.user.id))
+        .returning();
+
+      newUser.user = updatedUser;
+
+      await db
+        .insert(carts)
+        .values({ userId: updatedUser.id, cart: [] })
         .catch((error) => {
-          return `Erreur lors de la création du panier: ${JSON.stringify(error)}"`;
+          console.error(
+            `Erreur lors de la création du panier: ${JSON.stringify(error)}`,
+          );
         });
 
-      console.log(cart);
-
       return newUser as authPack;
-    } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof BetterAuthError:
-          return "User already exists";
-        default:
-          return "unknown Error";
+    } catch (e: any) {
+      if (e?.code === "23505") {
+        return "Unvalid data";
       }
+      if (e instanceof BetterAuthError) {
+        return "User already exists";
+      }
+      return "unknown Error";
     }
   }
 
   async updateUser(data: updateUserDto): Promise<User | string> {
     try {
-      const updatedUser = await prisma.user.update({
-        where: { id: data.id },
-        data,
-      });
+      const { id, ...rest } = data;
+      const [updatedUser] = await db
+        .update(user)
+        .set(rest)
+        .where(eq(user.id, id))
+        .returning();
 
+      if (!updatedUser) return "User not found";
       return updatedUser;
-    } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof Error:
-          return "Error updating user";
-        default:
-          return "Error updating user";
+    } catch (e: any) {
+      if (e?.code === "23505") {
+        return "Unvalid data";
       }
+      return "Error updating user";
     }
   }
 
   async deleteUser(id: string): Promise<string> {
     try {
-      await prisma.user.delete({
-        where: { id },
-      });
+      const [deleted] = await db
+        .delete(user)
+        .where(eq(user.id, id))
+        .returning();
 
+      if (!deleted) return "User not found";
       return "User deleted";
-    } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof Error:
-          return "Error deleting user";
-        default:
-          return "Error deleting user";
+    } catch (e: any) {
+      if (e?.code === "23505") {
+        return "Unvalid data";
       }
+      return "Error deleting user";
     }
   }
 
   async getUserById(id: string): Promise<User | string> {
     try {
-      const user = await prisma.user.findUnique({
-        where: { id },
+      const found = await db.query.user.findFirst({
+        where: eq(user.id, id),
       });
 
-      if (!user) {
-        return "User not found";
-      }
-
-      return user;
+      if (!found) return "User not found";
+      return found;
     } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof Error:
-          return "Error getting user";
-        default:
-          return "Error getting user";
-      }
+      return "Error getting user";
     }
   }
 
-  async turnToVendor(user: turnToVendorDto): Promise<User | string> {
+  async turnToVendor(data: turnToVendorDto): Promise<User | string> {
     try {
-      const phoneNumber = await prisma.numbers
-        .create({
-          data: {
-            sellerId: user.id,
-            number: user.phone,
-          },
-        })
-        .catch(() => {
-          return "error whilw saving number";
+      await db
+        .insert(numbers)
+        .values({ sellerId: data.id, number: data.phone })
+        .catch((error) => {
+          console.error("error while saving number", error);
         });
 
-      const updatedUser = await prisma.user.update({
-        where: { id: user.id },
-        data: { vendeur: true, address: user.address },
-      });
+      const [updatedUser] = await db
+        .update(user)
+        .set({ vendeur: true, address: data.address })
+        .where(eq(user.id, data.id))
+        .returning();
 
+      if (!updatedUser) return "User not found";
       return updatedUser;
-    } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof Error:
-          return "Error turning user to vendor";
-        default:
-          return "Error turning user to vendor";
+    } catch (e: any) {
+      if (e?.code === "23505") {
+        return "Unvalid data";
       }
+      return "Error turning user to vendor";
     }
   }
 
@@ -166,39 +142,38 @@ export class UserRepoImpl implements OUserRepo {
   }): Promise<{ success: boolean }> {
     try {
       const logout = await auth.api.signOut({ headers });
-      if (logout) {
-        return { success: true };
-      } else {
-        return { success: false };
-      }
+      return { success: !!logout };
     } catch (e) {
       return { success: false };
     }
   }
+
   async getStats(id: string): Promise<userStatsDto | string> {
     try {
-      let articles = await prisma.articles.findMany({
-        where: { userId: id },
-      });
-      let commandes = await prisma.orders.findMany({
-        where: { buyerId: id },
-      });
+      const userArticles = await db
+        .select()
+        .from(articles)
+        .where(eq(articles.userId, id));
+
+      const userOrders = await db
+        .select()
+        .from(orders)
+        .where(eq(orders.buyerId, id));
+
       return {
         articles: {
-          total: articles.length,
-          rupture: articles.filter((article) => article.stock === 0).length,
+          total: userArticles.length,
+          rupture: userArticles.filter((a) => a.stock === 0).length,
         },
         commandes: {
-          total: commandes.length,
-          attente: commandes.filter(
-            (commande) => commande.status === OrderStatus.ATTENTE,
+          total: userOrders.length,
+          attente: userOrders.filter((o) => o.status === OrderStatus.ATTENTE)
+            .length,
+          acceptees: userOrders.filter(
+            (o) => o.status === OrderStatus.VALIDEE,
           ).length,
-          acceptees: commandes.filter(
-            (commande) => commande.status === OrderStatus.VALIDEE,
-          ).length,
-          annulees: commandes.filter(
-            (commande) => commande.status === OrderStatus.ANNULEE,
-          ).length,
+          annulees: userOrders.filter((o) => o.status === OrderStatus.ANNULEE)
+            .length,
         },
       };
     } catch (e) {
@@ -208,17 +183,9 @@ export class UserRepoImpl implements OUserRepo {
 
   async getAllUsers(): Promise<User[] | string> {
     try {
-      const users = await prisma.user.findMany();
-      return users;
+      return await db.select().from(user);
     } catch (e) {
-      switch (e) {
-        case e instanceof PrismaClientKnownRequestError:
-          return "Unvalid data";
-        case e instanceof Error:
-          return "Error getting users";
-        default:
-          return "Error getting users";
-      }
+      return "Error getting users";
     }
   }
 }

@@ -2,8 +2,6 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { corsMiddleware } from "./Infrastructure/middleware/cors.js";
-import { authMiddleware } from "./Infrastructure/middleware/auth.js";
 import { userRoutes } from "./Infrastructure/apis/http/market/user.js";
 import { chatRoutes } from "./Infrastructure/apis/http/market/chat.js";
 import { cartRoutes } from "./Infrastructure/apis/http/market/cart.js";
@@ -17,10 +15,6 @@ import { json } from "node:stream/consumers";
 import { MessageController } from "./Infrastructure/controllers/messageController.js";
 import { MessageRepoImpl } from "./Infrastructure/repositories/messageRepoImpl.js";
 import { MessageUseCase } from "./Application/usecases/messageUseCase.js";
-import type {
-  createMessageDto,
-  updateMessageDto,
-} from "./Application/dtos/messages.js";
 
 export const app = new Hono();
 

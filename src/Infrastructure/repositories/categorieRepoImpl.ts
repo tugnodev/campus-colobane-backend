@@ -1,28 +1,28 @@
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { db } from "../../db/index.js";
+import { categories, cateByArticle } from "../../db/schema.js";
+import { and, eq } from "drizzle-orm";
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { categorieDto } from "../../Application/dtos/categorie.js";
 import type { Categorie } from "../../Domaine/entities/categorie.js";
 import type { linkToArticleDto } from "../../Application/dtos/cart.js";
 
-const prisma = new PrismaClient();
-
 export class CategorieRepoImpl implements OCategorieRepo {
   async createCategorie(categorie: categorieDto): Promise<Categorie | string> {
     try {
-      const created = await prisma.categories.create({
-        data: {
+      const [created] = await db
+        .insert(categories)
+        .values({
           name: categorie.name,
           description: categorie.description ?? "",
           image: categorie.image ?? "",
-        },
-      });
-      const result: Categorie = {
+        })
+        .returning();
+
+      return {
         name: created.name,
         description: created.description ?? "",
         image: created.image ?? "",
       };
-
-      return result;
     } catch (error) {
       console.error(error);
       return "Error creating categorie";
@@ -31,20 +31,22 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async updateCategorie(categorie: categorieDto): Promise<Categorie | string> {
     try {
-      const updated = await prisma.categories.update({
-        where: { name: categorie.name },
-        data: {
+      const [updated] = await db
+        .update(categories)
+        .set({
           description: categorie.description,
           image: categorie.image,
-        },
-      });
-      const result: Categorie = {
+        })
+        .where(eq(categories.name, categorie.name))
+        .returning();
+
+      if (!updated) return "Categorie non trouvée";
+
+      return {
         name: updated.name,
         description: updated.description ?? "",
         image: updated.image ?? "",
       };
-
-      return result;
     } catch (error) {
       console.error(error);
       return "Error updating categorie";
@@ -53,9 +55,12 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async deleteCategorie(name: string): Promise<string> {
     try {
-      await prisma.categories.delete({
-        where: { name },
-      });
+      const [deleted] = await db
+        .delete(categories)
+        .where(eq(categories.name, name))
+        .returning();
+
+      if (!deleted) return "Categorie non trouvée";
       return "Categorie deleted successfully";
     } catch (error) {
       console.error(error);
@@ -65,9 +70,8 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async getAllCategories(): Promise<Categorie[] | string> {
     try {
-      const categories = await prisma.categories.findMany();
-
-      return categories.map((c) => ({
+      const result = await db.select().from(categories);
+      return result.map((c) => ({
         name: c.name,
         description: c.description ?? "",
         image: c.image ?? "",
@@ -80,15 +84,15 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async linkToArticle(data: linkToArticleDto): Promise<string> {
     try {
-      const link = await prisma.cateByArticle.create({
-        data: {
+      const [link] = await db
+        .insert(cateByArticle)
+        .values({
           articleId: data.articleId,
           categoryId: data.name,
-        },
-      });
-      if (!link) {
-        return "Error linking categorie to article";
-      }
+        })
+        .returning();
+
+      if (!link) return "Error linking categorie to article";
       return "done!";
     } catch (error) {
       console.error(error);
@@ -98,17 +102,17 @@ export class CategorieRepoImpl implements OCategorieRepo {
 
   async unLinkToArticle(data: linkToArticleDto): Promise<string> {
     try {
-      const unlink = await prisma.cateByArticle.delete({
-        where: {
-          articleId_categoryId: {
-            articleId: data.articleId,
-            categoryId: data.name,
-          },
-        },
-      });
-      if (!unlink) {
-        return "Error unlinking categorie from article";
-      }
+      const [unlink] = await db
+        .delete(cateByArticle)
+        .where(
+          and(
+            eq(cateByArticle.articleId, data.articleId),
+            eq(cateByArticle.categoryId, data.name),
+          ),
+        )
+        .returning();
+
+      if (!unlink) return "Error unlinking categorie from article";
       return "done!";
     } catch (error) {
       console.error(error);

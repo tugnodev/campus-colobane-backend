@@ -1,9 +1,8 @@
 import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "../../db/index.js";
 import { bearer } from "better-auth/plugins";
 
-export const prisma = new PrismaClient();
 export const auth = betterAuth({
   appName: "Campus Colobane",
   secret: process.env.BETTER_AUTH_SECRET!,
@@ -15,8 +14,8 @@ export const auth = betterAuth({
     sameSite: "strict",
     httpOnly: true,
   },
-  database: prismaAdapter(prisma, {
-    provider: "postgresql",
+  database: drizzleAdapter(db, {
+    provider: "pg",
   }),
   emailAndPassword: {
     enabled: true,

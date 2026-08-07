@@ -1,5 +1,6 @@
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
-import { PrismaClientKnownRequestError } from "../../../prisma/generated/prisma/runtime/library.js";
+import { db } from "../../db/index.js";
+import { notes } from "../../db/schema.js";
+import { eq } from "drizzle-orm";
 import { type Notes } from "../../Domaine/entities/notes.js";
 import type { ONotesRepo } from "../../Domaine/ports/outputs/notesRepo.js";
 import type {
@@ -8,17 +9,13 @@ import type {
   deleteNotesDto,
 } from "../../Application/dtos/notes.js";
 
-const prisma = new PrismaClient();
-
 export class NotesRepoImpl implements ONotesRepo {
   async createNote(data: createNotesDto): Promise<Notes | string> {
     try {
-      const note = await prisma.notes.create({
-        data,
-      });
+      const [note] = await db.insert(notes).values(data).returning();
       return note;
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
+    } catch (error: any) {
+      if (error?.code === "23505") {
         return "Note already exists";
       }
       throw "Internal Server Error";
@@ -27,13 +24,17 @@ export class NotesRepoImpl implements ONotesRepo {
 
   async updateNote(data: updateNotesDto): Promise<Notes | string> {
     try {
-      const update = await prisma.notes.update({
-        where: { id: data.id },
-        data,
-      });
-      return update;
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
+      const { id, ...rest } = data;
+      const [updated] = await db
+        .update(notes)
+        .set(rest)
+        .where(eq(notes.id, id))
+        .returning();
+
+      if (!updated) return "Note not found";
+      return updated;
+    } catch (error: any) {
+      if (error?.code === "23505") {
         return "Note not found";
       }
       return "Internal Server Error";
@@ -42,14 +43,14 @@ export class NotesRepoImpl implements ONotesRepo {
 
   async deleteNote(data: deleteNotesDto): Promise<string> {
     try {
-      await prisma.notes.delete({
-        where: { id: data.id },
-      });
+      const [deleted] = await db
+        .delete(notes)
+        .where(eq(notes.id, data.id))
+        .returning();
+
+      if (!deleted) return "Note not found";
       return "Note deleted successfully";
-    } catch (e) {
-      if (e instanceof PrismaClientKnownRequestError) {
-        return "Note not found";
-      }
+    } catch (error) {
       throw "Internal Server Error";
     }
   }

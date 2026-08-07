@@ -1,4 +1,6 @@
-import { PrismaClient } from "../../../prisma/generated/prisma/index.js";
+import { db } from "../../db/index.js";
+import { carts } from "../../db/schema.js";
+import { eq } from "drizzle-orm";
 import type { Carts } from "../../Domaine/entities/carts.js";
 import type { OCartRepo } from "../../Domaine/ports/outputs/cartRepo.js";
 import type {
@@ -6,17 +8,16 @@ import type {
   updateCartDto,
 } from "../../Application/dtos/cart.js";
 
-const prisma = new PrismaClient();
-
 export class CartRepoImpl implements OCartRepo {
   async createCart(cart: createCartDto): Promise<Carts | string> {
     try {
-      const created = await prisma.carts.create({
-        data: {
-          cart: cart.cart || [],
+      const [created] = await db
+        .insert(carts)
+        .values({
           userId: cart.userId,
-        },
-      });
+          cart: cart.cart || [],
+        })
+        .returning();
       return created;
     } catch (error) {
       console.error(error);
@@ -27,12 +28,13 @@ export class CartRepoImpl implements OCartRepo {
   async updateCart(cart: updateCartDto): Promise<Carts | string> {
     try {
       const { userId, ...data } = cart;
-      const updated = await prisma.carts.update({
-        where: { userId },
-        data: {
-          cart: data.cart,
-        },
-      });
+      const [updated] = await db
+        .update(carts)
+        .set({ cart: data.cart })
+        .where(eq(carts.userId, userId))
+        .returning();
+
+      if (!updated) return "Panier non trouvé";
       return updated;
     } catch (error) {
       console.error(error);
@@ -42,7 +44,12 @@ export class CartRepoImpl implements OCartRepo {
 
   async deleteCart(userId: string): Promise<string> {
     try {
-      await prisma.carts.delete({ where: { userId } });
+      const [deleted] = await db
+        .delete(carts)
+        .where(eq(carts.userId, userId))
+        .returning();
+
+      if (!deleted) return "Panier non trouvé";
       return "Panier supprimé avec succès";
     } catch (error) {
       console.error(error);
@@ -52,10 +59,10 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByUserId(userId: string): Promise<Carts | string> {
     try {
-      const cart = await prisma.carts.findUnique({
-        where: { userId },
+      const cart = await db.query.carts.findFirst({
+        where: eq(carts.userId, userId),
       });
-      if (cart === null) return "Panier non trouvé";
+      if (!cart) return "Panier non trouvé";
       return cart;
     } catch (error) {
       console.error(error);
@@ -65,10 +72,10 @@ export class CartRepoImpl implements OCartRepo {
 
   async getByCartId(cartId: string): Promise<Carts | string> {
     try {
-      const cart = await prisma.carts.findUnique({ where: { userId: cartId } });
-      if (!cart) {
-        return "Panier non trouvé";
-      }
+      const cart = await db.query.carts.findFirst({
+        where: eq(carts.userId, cartId),
+      });
+      if (!cart) return "Panier non trouvé";
       return cart;
     } catch (error) {
       console.error(error);
@@ -78,8 +85,8 @@ export class CartRepoImpl implements OCartRepo {
 
   async getAllCarts(): Promise<Carts[] | string> {
     try {
-      const carts = await prisma.carts.findMany();
-      return carts.length > 0 ? carts : "Aucun panier trouvé";
+      const result = await db.select().from(carts);
+      return result.length > 0 ? result : "Aucun panier trouvé";
     } catch (error) {
       console.error(error);
       return "Erreur lors de la récupération de tous les paniers";
