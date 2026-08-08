@@ -42,7 +42,10 @@ export class UserRepoImpl implements OUserRepo {
 
       await db
         .insert(carts)
-        .values({ userId: updatedUser.id, cart: [] })
+        .values({
+          userId: newUser.user.id,
+          id: crypto.randomUUID(),
+        })
         .catch((error) => {
           console.error(
             `Erreur lors de la création du panier: ${JSON.stringify(error)}`,

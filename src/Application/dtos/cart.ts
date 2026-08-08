@@ -25,3 +25,8 @@ export interface addToCartDto {
   quantity: number;
   userId: string;
 }
+
+export interface linkToArticleDto {
+  articleId: string;
+  name: string;
+}

@@ -1,6 +1,8 @@
 import type { ICartService } from "../ports/inputs/cartService.js";
 import type {
+    addToCartDto,
   createCartDto,
+  deleteCartDto,
   updateCartDto,
 } from "../../Application/dtos/cart.js";
 import type { OCartRepo } from "../ports/outputs/cartRepo.js";
@@ -25,11 +27,11 @@ export class CartService implements ICartService {
     return this.cartRepo.updateCart(cart);
   }
 
-  async deleteCart(id: string): Promise<string> {
-    return this.cartRepo.deleteCart(id);
+  async deleteCart(data: deleteCartDto): Promise<string> {
+    return this.cartRepo.deleteCart(data);
   }
 
-  async getAllCarts(): Promise<Carts[] | string> {
-    return this.cartRepo.getAllCarts();
+  async addToCart(data: addToCartDto): Promise<string> {
+    return this.cartRepo.addToCart(data);
   }
 }
