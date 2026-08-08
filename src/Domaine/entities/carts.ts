@@ -1,11 +1,13 @@
-import type { Articles } from "./articles.js";
-
-type item = {
-  article: Articles;
+export type Item = {
+  articleId: string;
+  image: string;
+  name: string;
+  price: number;
   quantity: number;
 };
 
 export type Carts = {
-  cart: item[];
+  id: string;
   userId: string;
+  items: Item[];
 };

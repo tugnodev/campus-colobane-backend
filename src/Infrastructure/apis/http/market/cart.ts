@@ -9,8 +9,8 @@ const cartController = new CartController(cartUseCase);
 
 const cartRoutes = new Hono();
 
-cartRoutes.get("/all", async (c: Context) => {
-  return cartController.getAllCarts(c);
+cartRoutes.post("/", async (c: Context) => {
+  return cartController.addToCart(c);
 });
 
 cartRoutes.get("/:id", async (c: Context) => {

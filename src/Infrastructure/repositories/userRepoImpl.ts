@@ -18,7 +18,7 @@ export class UserRepoImpl implements OUserRepo {
   async createUser(data: createUserDto): Promise<authPack | string> {
     try {
       const newUser = await auth.api.signUpEmail({
-        //@ts-ignore
+
         body: {
           name: data.name,
           email: data.email,

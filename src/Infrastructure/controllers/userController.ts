@@ -18,7 +18,9 @@ export class UserController {
 
   async createUser(ctx: Context) {
     const userData: createUserDto = await ctx.req.json();
+    console.log(userData);
     const result = await this.userUseCase.createUser(userData);
+    console.log(result);
     return ctx.json(result);
   }
 
@@ -45,7 +47,6 @@ export class UserController {
       headers: ctx.req.raw.headers,
     });
 
-    console.log(session);
     if (!session) {
       ctx.redirect("/auth/login");
       return ctx.json("Session Not Found");
@@ -74,8 +75,9 @@ export class UserController {
       console.log("userLogin");
       const userData: userLoginDto = await ctx.req.json();
       const result = await auth.api.signInEmail({ body: userData });
-
+      console.log(result);
       const user = await this.userUseCase.getUserById(result.user.id);
+      console.log(user);
       switch (typeof user) {
         case "string":
           return ctx.json("User Not Found");
