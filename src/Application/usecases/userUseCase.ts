@@ -36,7 +36,7 @@ export class UserUseCase implements IUserService {
     return this.userRepo.deleteUser(userId);
   }
 
-  async getUserById(userId: string): Promise<User | string> {
+  async getUserById(userId: string |undefined): Promise<User | string> {
     return this.userRepo.getUserById(userId);
   }
 

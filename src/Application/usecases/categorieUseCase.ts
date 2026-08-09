@@ -1,6 +1,6 @@
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
 import type { ICategorieService } from "../../Domaine/ports/inputs/categorieService.js";
-import type { categorieDto } from "../dtos/categorie.js";
+import type { categorieDto,updateCategorieDto} from "../dtos/categorie.js";
 import type { linkToArticleDto } from "../dtos/cart.js";
 
 export class CategorieUseCase implements ICategorieService {
@@ -17,8 +17,8 @@ export class CategorieUseCase implements ICategorieService {
   }
 
   async updateCategorie(
-    categorieData: categorieDto,
-  ): Promise<categorieDto | string> {
+    categorieData: updateCategorieDto,
+  ): Promise<updateCategorieDto | string> {
     return this.categorieRepo.updateCategorie(categorieData);
   }
 
@@ -37,5 +37,16 @@ export class CategorieUseCase implements ICategorieService {
 
   async unLinkToArticle(data: linkToArticleDto): Promise<string> {
     return this.categorieRepo.unLinkToArticle(data);
+  }
+  async getCategorieByName(name: string): Promise<categorieDto | string> {
+    const categories = await this.categorieRepo.getAllCategories();
+    if (typeof categories === "string") {
+      return categories; // Return the error message if it's a string
+    }
+    const category = categories.find((cat) => cat.name === name);
+    if (!category) {
+      return `Categorie with name ${name} not found.`;
+    }
+    return category;
   }
 }

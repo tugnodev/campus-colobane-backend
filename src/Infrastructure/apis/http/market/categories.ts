@@ -2,28 +2,56 @@ import { Hono } from "hono";
 import { CategorieController } from "../../../controllers/categorieController.js";
 import { CategorieUseCase } from "../../../../Application/usecases/categorieUseCase.js";
 import { CategorieRepoImpl } from "../../../repositories/categorieRepoImpl.js";
+import { validateJson } from "../../../middleware/valideSchema.js";
+import { categorieSchema, updateCategorieSchema } from "../../../config/schema/index.js";
 
 const categorieRepository = new CategorieRepoImpl();
 const categorieUseCase = new CategorieUseCase(categorieRepository);
 const categorieController = new CategorieController(categorieUseCase);
 
 export const categorieRoutes = new Hono();
-categorieRoutes.post("/categories/create", async (c) => {
-  return categorieController.create(c);
+
+categorieRoutes.post("/categories/create", validateJson(categorieSchema), async (c) => {
+  const data = c.req.valid("json");
+  const result = await categorieController.create(data);
+  if (typeof result === "string") {
+    return c.json({ message: result }, 400);
+  }
+  return c.json(result);
 });
-categorieRoutes.get("/categories", async (c) => {
-  return c.json({ message: "Route Categorie" });
+
+categorieRoutes.patch("/categories/update", validateJson(updateCategorieSchema), async (c) => {
+  const data = c.req.valid("json");
+  const result = await categorieController.update(data);
+  if (typeof result === "string") {
+    return c.json({ message: result }, 400);
+  }
+  return c.json(result);
 });
-categorieRoutes.patch("/categories/update", async (c) => {
-  return categorieController.update(c);
+
+categorieRoutes.delete("/categories/:id", async (c) => {
+  const id = c.req.param("id");
+  const result = await categorieController.delete(id);
+  if (typeof result === "string") {
+    return c.json({ message: result }, 400);
+  }
+  return c.json({ message: "Catégorie supprimée", data: result });
 });
-categorieRoutes.delete("/categories/delete", async (c) => {
-  return categorieController.delete(c);
-});
-// Register specific routes BEFORE dynamic ones to avoid collisions
+
+// Routes spécifiques enregistrées avant les routes dynamiques
 categorieRoutes.get("/all", async (c) => {
-  return categorieController.getAll(c);
+  const result = await categorieController.getAll();
+  if (typeof result === "string") {
+    return c.json({ message: result }, 400);
+  }
+  return c.json(result);
 });
+
 categorieRoutes.get("/categories/:name", async (c) => {
-  return categorieController.getAll(c);
+  const name = c.req.param("name");
+  const result = await categorieController.getByName(name);
+  if (typeof result === "string") {
+    return c.json({ message: result }, 400);
+  }
+  return c.json(result);
 });
