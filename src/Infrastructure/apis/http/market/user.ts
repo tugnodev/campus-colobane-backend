@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { UserController } from "../../../controllers/userController.js";
 import { UserUseCase } from "../../../../Application/usecases/userUseCase.js";
 import { UserRepoImpl } from "../../../../Infrastructure/repositories/userRepoImpl.js";
