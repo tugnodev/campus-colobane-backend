@@ -9,7 +9,7 @@
 .idea/shelf
 backup/
 drizzle/
-
+.zed/
 # deps
 node_modules/
 dist/

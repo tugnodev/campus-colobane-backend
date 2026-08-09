@@ -29,7 +29,7 @@ export class MessageController {
 
   async delete(ctx: Context) {
     const id = ctx.req.param("id");
-    const message = await this.messageUseCase.deleteMessage(id);
+    const message = await this.messageUseCase.deleteMessage(id!);
     if (typeof message === "string") {
       return ctx.json({ message: "Error while deleting message" });
     }

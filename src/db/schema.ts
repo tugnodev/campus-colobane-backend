@@ -171,12 +171,23 @@ export const numbersRelations = relations(numbers, ({ one }) => ({
 
 // ---------- CARTS ----------
 export const carts = pgTable("Carts", {
-  userId: text("userId").primaryKey().references(() => user.id),
-  cart: json("cart").notNull(),
+  id: text("cartId").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId").notNull().unique().references(() => user.id),
 });
 
 export const cartsRelations = relations(carts, ({ one }) => ({
   user: one(user, { fields: [carts.userId], references: [user.id] }),
+}));
+
+export const cartItems = pgTable("CartItems", {
+  cartId: text("cartId").notNull().references(() => carts.id),
+  articleId: text("articleId").notNull().references(() => articles.id),
+  quantity: integer("quantity").notNull(),
+});
+
+export const cartItemsRelations = relations(cartItems, ({ one }) => ({
+  article: one(articles, { fields: [cartItems.articleId], references: [articles.id] }),
+  cart: one(carts, { fields: [cartItems.cartId], references: [carts.id] }),
 }));
 
 // ---------- ORDER ITEMS ----------

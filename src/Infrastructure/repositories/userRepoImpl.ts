@@ -18,7 +18,7 @@ export class UserRepoImpl implements OUserRepo {
   async createUser(data: createUserDto): Promise<authPack | string> {
     try {
       const newUser = await auth.api.signUpEmail({
-        //@ts-ignore
+
         body: {
           name: data.name,
           email: data.email,
@@ -42,7 +42,9 @@ export class UserRepoImpl implements OUserRepo {
 
       await db
         .insert(carts)
-        .values({ userId: updatedUser.id, cart: [] })
+        .values({
+          userId: newUser.user.id
+        })
         .catch((error) => {
           console.error(
             `Erreur lors de la création du panier: ${JSON.stringify(error)}`,

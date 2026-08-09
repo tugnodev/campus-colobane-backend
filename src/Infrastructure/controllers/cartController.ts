@@ -1,5 +1,5 @@
 import { CartUseCase } from "../../Application/usecases/cartUseCase.js";
-import type { createCartDto, updateCartDto } from "../../Application/dtos/cart.js";
+import type { addToCartDto, createCartDto, updateCartDto } from "../../Application/dtos/cart.js";
 import type { Context } from "hono";
 
 export class CartController {
@@ -40,7 +40,7 @@ export class CartController {
   async getByUserId(ctx: Context) {
     const id = ctx.req.param("id");
     console.log(id);
-    const result = await this.cartUseCase.getByUserId(id);
+    const result = await this.cartUseCase.getByUserId(id!);
     console.log(result);
     if (typeof result === "string") {
       return ctx.json({ message: result });
@@ -48,8 +48,9 @@ export class CartController {
     return ctx.json(result);
   }
 
-  async getAllCarts(ctx: Context) {
-    const result = await this.cartUseCase.getAllCarts();
+  async addToCart(ctx: Context) {
+    const cartData: addToCartDto = await ctx.req.json();
+    const result = await this.cartUseCase.addToCart(cartData);
     if (typeof result === "string") {
       return ctx.json({ message: result });
     }

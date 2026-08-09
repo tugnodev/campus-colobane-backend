@@ -1,12 +1,13 @@
-import type { JsonValue } from "@prisma/client/runtime/client";
-import type { Articles } from "./articles.js";
-
-type item = {
-  article: Articles;
+export type Item = {
+  articleId: string;
+  image: string;
+  name: string;
+  price: number;
   quantity: number;
 };
 
 export type Carts = {
-  cart: JsonValue | item[];
+  id: string;
   userId: string;
+  items: Item[];
 };

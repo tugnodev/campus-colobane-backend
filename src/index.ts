@@ -19,13 +19,13 @@ import { MessageUseCase } from "./Application/usecases/messageUseCase.js";
 
 export const app = new Hono();
 
-app.use(
-  "/*",
-  cors({
-    origin: "http://localhost:1420",
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  }),
-);
+//app.use(
+//  "/*",
+//  cors({
+//    origin: "http://localhost:1420",
+//    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//  }),
+//);
 
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   app,

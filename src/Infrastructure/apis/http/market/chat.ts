@@ -24,7 +24,7 @@ chatRoutes.get(
   "/:roomId",
   upgradeWebSocket(async (c) => {
     const roomId = c.req.param("roomId");
-    const room = await roomUseCase.getRoomById(roomId);
+    const room = await roomUseCase.getRoomById(roomId!);
     return {
       onOpen: (evt, ws) => {
         switch (typeof room) {

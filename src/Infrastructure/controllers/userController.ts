@@ -16,8 +16,10 @@ export class UserController {
     this.userUseCase = userUseCase;
   }
 
-  async createUser(userData: createUserDto) {
-    return this.userUseCase.createUser(userData);
+  async createUser(ctx: Context) {
+    const userData: createUserDto = await ctx.req.json();
+    const result = await this.userUseCase.createUser(userData);
+    return ctx.json(result);
   }
 
   async updateUser(userData: updateUserDto) {
@@ -41,7 +43,6 @@ export class UserController {
       headers: ctx.req.raw.headers,
     });
 
-    console.log(session);
     if (!session) {
       ctx.redirect("/auth/login");
       return ctx.json("Session Not Found");
@@ -57,7 +58,7 @@ export class UserController {
   }
 
   async getUserById(ctx: Context) {
-    const id   = ctx.req.param("id");
+    const id = ctx.req.param("id");
     const result = await this.userUseCase.getUserById(id);
     if (typeof result === "string") {
       return ctx.json({ message: "User Not Found" });
@@ -69,8 +70,9 @@ export class UserController {
     try {
       console.log("userLogin");
       const result = await auth.api.signInEmail({ body: userData });
-
+      console.log(result);
       const user = await this.userUseCase.getUserById(result.user.id);
+      console.log(user);
       switch (typeof user) {
         case "string":
           return "User Not Found";
