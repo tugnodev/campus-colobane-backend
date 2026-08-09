@@ -16,10 +16,10 @@ export class UserController {
     this.userUseCase = userUseCase;
   }
 
-  async createUser(ctx: Context) {
-    const userData: createUserDto = await ctx.req.json();
+  async createUser(userData : createUserDto) {
+    
     const result = await this.userUseCase.createUser(userData);
-    return ctx.json(result);
+    return result;
   }
 
   async updateUser(userData: updateUserDto) {
