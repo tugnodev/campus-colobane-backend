@@ -1,6 +1,5 @@
 import { CategorieUseCase } from "../../Application/usecases/categorieUseCase.js";
-import type { categorieDto } from "../../Application/dtos/categorie.js";
-import type { Context } from "hono";
+import type { categorieDto, updateCategorieDto } from "../../Application/dtos/categorie.js";
 
 export class CategorieController {
   private categorieUseCase: CategorieUseCase;
@@ -8,38 +7,23 @@ export class CategorieController {
     this.categorieUseCase = categorieUseCase;
   }
 
-  async create(ctx: Context) {
-    const orderData: categorieDto = await ctx.req.json();
-    const result = await this.categorieUseCase.createCategorie(orderData);
-    if (typeof result === "string") {
-      return ctx.json("Error");
-    }
-    return ctx.json(result);
+  async create(categorieData: categorieDto) {
+    return this.categorieUseCase.createCategorie(categorieData);
   }
 
-  async update(ctx: Context) {
-    const orderData: categorieDto = await ctx.req.json();
-    const result = await this.categorieUseCase.updateCategorie(orderData);
-    if (typeof result === "string") {
-      return ctx.json({ message: result });
-    }
-    return ctx.json(result);
+  async update(categorieData: updateCategorieDto) {
+    return this.categorieUseCase.updateCategorie(categorieData);
   }
 
-  async delete(ctx: Context) {
-    const name = await ctx.req.json();
-    const result = await this.categorieUseCase.deleteCategorie(name);
-    if (typeof result === "string") {
-      return ctx.json({ message: result });
-    }
-    return ctx.json({ message: result });
+  async delete(id: string) {
+    return this.categorieUseCase.deleteCategorie(id);
   }
 
-  async getAll(ctx: Context) {
-    const result = await this.categorieUseCase.getAllCategories();
-    if (typeof result === "string") {
-      return ctx.json({ message: result });
-    }
-    return ctx.json({ message: result });
+  async getAll() {
+    return this.categorieUseCase.getAllCategories();
+  }
+
+  async getByName(name: string) {
+    return this.categorieUseCase.getCategorieByName(name);
   }
 }
