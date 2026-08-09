@@ -3,3 +3,9 @@ export interface categorieDto {
   description?: string;
   image?: string;
 }
+
+export interface updateCategorieDto {
+  name: string;
+  description?: string;
+  image?: string;
+}

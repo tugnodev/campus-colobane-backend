@@ -10,7 +10,7 @@ export const itemsSchema: ZodType<Items> = z.object({
 });
 
 export const orderStatusSchema = z.enum(OrderStatus, {
-  message: "Le statut de la commande doit être valide (validee, en attente, annulee)",
+  message: "Le statut de la commande doit être valide (valide, attente, annulee)",
 });
 
 export const createOrderSchema: ZodType<createOrderDto> = z.object({

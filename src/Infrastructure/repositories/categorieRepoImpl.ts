@@ -2,7 +2,7 @@ import { db } from "../../db/index.js";
 import { categories, cateByArticle } from "../../db/schema.js";
 import { and, eq } from "drizzle-orm";
 import type { OCategorieRepo } from "../../Domaine/ports/outputs/categorieRepo.js";
-import type { categorieDto } from "../../Application/dtos/categorie.js";
+import type { categorieDto,updateCategorieDto } from "../../Application/dtos/categorie.js";
 import type { Categorie } from "../../Domaine/entities/categorie.js";
 import type { linkToArticleDto } from "../../Application/dtos/cart.js";
 
@@ -29,7 +29,7 @@ export class CategorieRepoImpl implements OCategorieRepo {
     }
   }
 
-  async updateCategorie(categorie: categorieDto): Promise<Categorie | string> {
+  async updateCategorie(categorie: updateCategorieDto): Promise<Categorie | string> {
     try {
       const [updated] = await db
         .update(categories)
