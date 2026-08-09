@@ -12,7 +12,8 @@ const userController = new UserController(userUseCase);
 const userRoutes = new Hono();
 
 userRoutes.post("/register", validateJson(createUserSchema), async (c) => {
-  const result = await userController.createUser(c);
+  const userData = c.req.valid("json");
+  const result = await userController.createUser(userData);
   return c.json(result);
 });
 
