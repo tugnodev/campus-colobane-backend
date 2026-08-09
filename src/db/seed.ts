@@ -47,6 +47,16 @@ const NB_MESSAGES_PAR_ROOM = [1, 6] as const;
 const NB_ORDERS = 12;
 const TEST_PASSWORD = "Password123!";
 
+const categories = [
+    "Mode & Cosmétique",
+    "Jeux Vidéo & Console",
+    "Education",
+    "Informatique",
+    "Maison & Électronique",
+    "Sport",
+    "Supermarché",
+];
+
 const CATEGORIES = [
   { name: "Électronique", description: "Téléphones, ordinateurs, accessoires" },
   { name: "Livres & Cours", description: "Manuels, notes de cours, fascicules" },
@@ -199,9 +209,7 @@ async function seedArticles(
         description: faker.commerce.productDescription(),
         price: Number(faker.commerce.price({ min: 500, max: 150000, dec: 0 })),
         stock: randInt(0, 50),
-        category: chosenCategories.length
-          ? chosenCategories
-          : [categoriesList[0].name],
+        category: pickSome(categoriesList, randInt(1, 3)).map((c) => c.name)
       });
 
       if (isError(result)) {
