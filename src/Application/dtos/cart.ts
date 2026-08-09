@@ -1,5 +1,4 @@
 export type Item = {
-
   articleId: string;
   quantity: number;
 };

@@ -25,8 +25,7 @@ cartRoutes.post("/add", validateJson(createCartSchema),async (c: Context) => {
 });
 
 cartRoutes.patch("/", validateJson(updateCartSchema), async (c: Context) => {
-  const data = c.req.valid("json") ;
-  const result = await cartController.updateCart(data);
+  const result = await cartController.updateCart(c);
   return c.json(result);
 });
 

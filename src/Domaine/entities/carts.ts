@@ -1,4 +1,4 @@
-export type Item = {
+export type ItemF = {
   articleId: string;
   image: string;
   name: string;
@@ -9,5 +9,5 @@ export type Item = {
 export type Carts = {
   id: string;
   userId: string;
-  items: Item[];
+  items: ItemF[];
 };
