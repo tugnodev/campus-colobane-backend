@@ -30,9 +30,11 @@ export class CartRepoImpl implements OCartRepo {
 
   async updateCart(data: updateCartDto): Promise<Carts | string> {
     try {
-      const [updated] = await db
+      const updated = await db
         .update(cartItems)
-        .set(data.item)
+        .set({
+          quantity: data.item.quantity,
+        })
         .where(eq(cartItems.cartId, data.id) && eq(cartItems.articleId, data.item.articleId))
 
       const subQuery = db.select({
