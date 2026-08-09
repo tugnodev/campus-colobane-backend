@@ -1,6 +1,6 @@
 export enum OrderStatus {
-  VALIDEE = "validee",
-  ATTENTE = "en attente",
+  VALIDEE = "valide",
+  ATTENTE = "attente",
   ANNULEE = "annulee",
 }
 

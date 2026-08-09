@@ -43,8 +43,7 @@ export class UserRepoImpl implements OUserRepo {
       await db
         .insert(carts)
         .values({
-          userId: newUser.user.id,
-          id: crypto.randomUUID(),
+          userId: newUser.user.id
         })
         .catch((error) => {
           console.error(

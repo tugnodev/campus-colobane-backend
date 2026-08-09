@@ -172,9 +172,7 @@ export const numbersRelations = relations(numbers, ({ one }) => ({
 // ---------- CARTS ----------
 export const carts = pgTable("Carts", {
   id: text("cartId").primaryKey().$defaultFn(() => crypto.randomUUID()),
-  userId: text("userId").primaryKey().references(() => user.id),
-  createdAt: timestamp("createdAt").notNull().defaultNow(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull().defaultNow(),
+  userId: text("userId").notNull().unique().references(() => user.id),
 });
 
 export const cartsRelations = relations(carts, ({ one }) => ({
@@ -182,14 +180,14 @@ export const cartsRelations = relations(carts, ({ one }) => ({
 }));
 
 export const cartItems = pgTable("CartItems", {
-  cartId: text("cartId").notNull().references(() => carts.userId),
+  cartId: text("cartId").notNull().references(() => carts.id),
   articleId: text("articleId").notNull().references(() => articles.id),
   quantity: integer("quantity").notNull(),
 });
 
 export const cartItemsRelations = relations(cartItems, ({ one }) => ({
   article: one(articles, { fields: [cartItems.articleId], references: [articles.id] }),
-  cart: one(carts, { fields: [cartItems.cartId], references: [carts.userId] }),
+  cart: one(carts, { fields: [cartItems.cartId], references: [carts.id] }),
 }));
 
 // ---------- ORDER ITEMS ----------
