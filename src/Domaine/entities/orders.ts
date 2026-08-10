@@ -1,3 +1,5 @@
+import type { Articles } from "./articles.js";
+
 export enum OrderStatus {
   VALIDEE = "valide",
   ATTENTE = "attente",

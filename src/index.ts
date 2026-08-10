@@ -4,7 +4,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { userRoutes } from "./Infrastructure/apis/http/market/user.js";
 import { chatRoutes } from "./Infrastructure/apis/http/market/chat.js";
-// import { cartRoutes } from "./Infrastructure/apis/http/market/cart.js";
+import { cartRoutes } from "./Infrastructure/apis/http/market/cart.js";
 import { categorieRoutes } from "./Infrastructure/apis/http/market/categories.js";
 import { articleRoutes } from "./Infrastructure/apis/http/market/articles.js";
 import { orderRoutes } from "./Infrastructure/apis/http/market/order.js";
@@ -79,7 +79,7 @@ app.get("/", (c) => c.json({ message: "Hello Hono!" }));
 
 app.route("/", userRoutes);
 app.route("/chat", chatRoutes);
-// app.route("/cart", cartRoutes);
+app.route("/cart", cartRoutes);
 app.route("/categories", categorieRoutes);
 app.route("/articles", articleRoutes);
 app.route("/order", orderRoutes);

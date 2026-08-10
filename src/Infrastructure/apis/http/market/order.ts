@@ -44,7 +44,7 @@ orderRoutes.get("/user/:sellerId", async (c) => {
   if (typeof result === "string") {
     return c.json({ message: result }, 400);
   }
-  return c.json({ message: "commandes", cmd: result });
+  return c.json(result);
 });
 
 orderRoutes.get("/:buyerId", async (c) => {

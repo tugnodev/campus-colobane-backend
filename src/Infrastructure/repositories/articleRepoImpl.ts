@@ -285,7 +285,7 @@ export class ArticleRepoImpl implements OArticleRepo {
   }
 }
 
-const rateCalculation = (rates: number[]): number => {
+export const rateCalculation = (rates: number[]): number => {
   if (rates.length === 0) return 0;
   const sum = rates.reduce((acc, rate) => acc + rate, 0);
   return sum / rates.length;

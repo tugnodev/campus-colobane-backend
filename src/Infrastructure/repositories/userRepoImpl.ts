@@ -158,7 +158,9 @@ export class UserRepoImpl implements OUserRepo {
       const userOrders = await db
         .select()
         .from(orders)
-        .where(eq(orders.buyerId, id));
+        .where(eq(orders.sellerId, id));
+
+      console.log(userOrders);
 
       return {
         articles: {

@@ -19,6 +19,7 @@ userRoutes.post("/register", validateJson(createUserSchema), async (c) => {
 
 userRoutes.post("/login", validateJson(userLoginSchema), async (c) => {
   const loginData = c.req.valid("json");
+   console.log(loginData);
   const result = await userController.userLogin(loginData);
   return c.json(result);
 });

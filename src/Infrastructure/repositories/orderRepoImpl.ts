@@ -1,14 +1,17 @@
 import { db } from "../../db/index.js";
-import { orders, orderItems } from "../../db/schema.js";
-import { eq, desc } from "drizzle-orm";
+import { orders, orderItems, articles } from "../../db/schema.js";
+import { eq, desc, inArray } from "drizzle-orm";
 import type { OOrderRepo } from "../../Domaine/ports/outputs/orderRepo.js";
+import { ArticleRepoImpl } from "./articleRepoImpl.js";
 import type {
   createOrderDto,
   updateOrderDto,
 } from "../../Application/dtos/order.js";
 import type { Order } from "../../Domaine/entities/orders.js";
 import { OrderStatus } from "../../Domaine/entities/orders.js";
+import type { Articles } from "../../Domaine/entities/articles.js";
 
+const articleRepo = new ArticleRepoImpl();
 export class OrderRepoImpl implements OOrderRepo {
   async saveOrder(order: createOrderDto): Promise<Order | string> {
     try {
@@ -89,10 +92,23 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersByBuyerId(buyerId: string): Promise<Order[] | string> {orderItems
     try {
-      const result = (await db.select().from(orders)).join();
-
-
-      return result;
+      const result = await db.select().from(orders).where(eq(orders.buyerId, buyerId)).leftJoin(orderItems, eq(orders.id, orderItems.orderId));
+      return result.map((result) => {
+        return {
+          id: result.Orders.id,
+          buyerId: result.Orders.buyerId,
+          sellerId: result.Orders.sellerId,
+          items: [
+            {
+              articleId: result.OrderItems!.articleId,
+              quantity: result.OrderItems!.quantity,
+            }
+          ],
+          status: result.Orders.status,
+          createdAt: result.Orders.createdAt,
+          updatedAt: result.Orders.updatedAt,
+        }
+      });
     } catch (error) {
       console.error(error);
       return "Error fetching orders by buyer";
@@ -101,7 +117,14 @@ export class OrderRepoImpl implements OOrderRepo {
 
   async getOrdersBySellerId(sellerId: string): Promise<Order[] | string> {
     try {
-      const result = await db.select().from(orders).where(eq(orders.sellerId, sellerId)).leftJoin(orderItems, eq(orders.id, orderItems.orderId))!;
+      const ordersResult = await db.select().from(orders).where(eq(orders.sellerId, sellerId));
+      const orderItemsResult = await db.select().from(orderItems).where(inArray(orderItems.orderId, ordersResult.map((order) => order.id)));
+      const result = ordersResult.map((order) => {
+        return {
+          Orders: order,
+          OrderItems: orderItemsResult.find((orderItem) => orderItem.orderId === order.id),
+        }
+      });
       return result.map((result) => {
         return {
           id: result.Orders.id,
