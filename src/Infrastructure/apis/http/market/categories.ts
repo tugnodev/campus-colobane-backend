@@ -15,7 +15,7 @@ categorieRoutes.post("/categories/create", validateJson(categorieSchema), async 
   const data = c.req.valid("json");
   const result = await categorieController.create(data);
   if (typeof result === "string") {
-    return c.json({ message: result }, 400);
+    return c.text(result);
   }
   return c.json(result);
 });
@@ -24,7 +24,7 @@ categorieRoutes.patch("/categories/update", validateJson(updateCategorieSchema),
   const data = c.req.valid("json");
   const result = await categorieController.update(data);
   if (typeof result === "string") {
-    return c.json({ message: result }, 400);
+    return c.text(result);
   }
   return c.json(result);
 });
@@ -32,17 +32,14 @@ categorieRoutes.patch("/categories/update", validateJson(updateCategorieSchema),
 categorieRoutes.delete("/categories/:id", async (c) => {
   const id = c.req.param("id");
   const result = await categorieController.delete(id);
-  if (typeof result === "string") {
-    return c.json({ message: result }, 400);
-  }
-  return c.json({ message: "Catégorie supprimée", data: result });
+  return c.text(result);
 });
 
 // Routes spécifiques enregistrées avant les routes dynamiques
 categorieRoutes.get("/all", async (c) => {
   const result = await categorieController.getAll();
   if (typeof result === "string") {
-    return c.json({ message: result }, 400);
+    return c.text(result);
   }
   return c.json(result);
 });
@@ -51,7 +48,7 @@ categorieRoutes.get("/categories/:name", async (c) => {
   const name = c.req.param("name");
   const result = await categorieController.getByName(name);
   if (typeof result === "string") {
-    return c.json({ message: result }, 400);
+    return c.text(result);
   }
   return c.json(result);
 });
