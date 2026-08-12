@@ -39,7 +39,7 @@ export class MessageController {
   async getConversation(ctx: Context) {
     const data: getConversationDto = await ctx.req.json();
     if (!data) {
-      return ctx.json({ message: "Invalid data" });
+      return ctx.json("Invalid data");
     }
     const res = await this.messageUseCase.getConversation(data);
     return ctx.json(res);

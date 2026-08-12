@@ -75,6 +75,21 @@ export class MessageRepoImpl implements OMessageRepo {
     }
   }
 
+  async getMessage(id: string): Promise<Message | string> {
+    try {
+      const [message] = await db
+        .select()
+        .from(messages)
+        .where(eq(messages.id, id));
+
+      if (!message) return "message not found";
+      return message;
+    } catch (error) {
+      if (isDataError(error)) return "invalid data";
+      return "error while getting message";
+    }
+  }
+
   async getConversation(data: getConversationDto): Promise<Message[] | string> {
     try {
       return await db

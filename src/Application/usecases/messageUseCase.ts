@@ -66,6 +66,10 @@ export class MessageUseCase implements IMessageService {
     return deletedMessage;
   }
 
+  async getMessage(id: string): Promise<Message | string> {
+    return this.messageRepo.getMessage(id);
+  }
+
   async getConversation(data: getConversationDto): Promise<Message[] | string> {
     return this.messageRepo.getConversation(data);
   }

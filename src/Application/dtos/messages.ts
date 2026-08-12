@@ -3,7 +3,7 @@ export interface createMessageDto {
   userId: string;
   sellerId?: string;
   message: string;
-  articleId: string | null;
+  articleId?: string;
 }
 
 export interface updateMessageDto {

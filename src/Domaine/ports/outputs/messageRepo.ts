@@ -12,6 +12,7 @@ export interface OMessageRepo {
   updateMessage(message: updateMessageDto): Promise<Message | string>;
   deleteMessage(id: string): Promise<string>;
   getConversation(data: getConversationDto): Promise<Message[] | string>;
+  getMessage(id: string): Promise<Message | string>;
 }
 
 export interface OMessageBroadcast {
