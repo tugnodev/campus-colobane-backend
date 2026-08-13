@@ -32,6 +32,10 @@ export class MessageService implements IMessageService {
     return this.messageRepo.deleteMessage(id);
   }
 
+  async getMessage(id: string): Promise<Message | string> {
+    return this.messageRepo.getMessage(id);
+  }
+
   async getConversation(data: getConversationDto): Promise<Message[] | string> {
     return this.messageRepo.getConversation(data);
   }

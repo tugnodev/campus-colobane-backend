@@ -6,7 +6,7 @@ import { RoomRepositoryImpl } from "../../repositories/roomRepoImpl.js";
 import { RoomUseCase } from "../../../Application/usecases/roomUseCase.js";
 import { createNodeWebSocket } from "@hono/node-ws";
 import type { Context } from "hono";
-import type { WSContext, WSEvents,  } from "hono/ws";
+import type { WSContext, WSEvents, WSMessageReceive } from "hono/ws";
 import type { Message } from "../../../Domaine/entities/message.js";
 import type { createMessageDto, updateMessageDto } from "../../../Application/dtos/messages.js";
 import { app } from "../../../index.js";
@@ -40,7 +40,7 @@ export interface MessageContext<K extends Action> {
 export const chatWebSocket = (c: Context) => {
   const id = c.req.param("id")!;
   return {
-    onOpen: async (evt: Event, ws: WSContext) => {
+    onOpen: async (evt: Event, ws: WSContext<WebSocket>) => {
       clients.set(id, ws);
       console.log("WebSocket connected", id);
       ws.send("connected")
@@ -52,7 +52,7 @@ export const chatWebSocket = (c: Context) => {
         pendingMessages.delete(id);
       }
     },
-    onMessage: async (evt: Event, ws: WSContext) => {
+    onMessage: async (evt: MessageEvent<WSMessageReceive>, ws: WSContext<WebSocket>) => {
       const payload = evt.data.toString();
       const message: MessageContext<Action> = JSON.parse(payload);
       console.log("WebSocket message", message);
@@ -113,7 +113,7 @@ export const chatWebSocket = (c: Context) => {
           break;
       }
     },
-    onClose: (evt: Event, ws: WSContext) => {
+    onClose: (evt: Event, ws: WSContext<WebSocket>) => {
       clients.delete(id);
     },
   }

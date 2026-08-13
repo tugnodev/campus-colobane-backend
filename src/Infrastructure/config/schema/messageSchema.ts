@@ -12,7 +12,7 @@ export const createMessageSchema: ZodType<createMessageDto> = z.object({
   userId: z.string().min(1, "L'identifiant de l'utilisateur est requis"),
   sellerId: z.string().min(1, "L'identifiant du vendeur est requis").optional(),
   message: z.string().min(1, "Le message ne peut pas être vide"),
-  articleId: z.string().min(1, "L'identifiant de l'article est requis").nullable(),
+  articleId: z.string().min(1, "L'identifiant de l'article est requis").optional(),
 });
 
 export const updateMessageSchema: ZodType<updateMessageDto> = z.object({

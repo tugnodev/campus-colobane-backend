@@ -44,7 +44,13 @@ export const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
 app.use("*", logger());
 
 app.get("/ws/chat/:id", upgradeWebSocket(chatWebSocket));
-app.get("/", (c) => c.json({ message: "Hello Hono!" }));
+app.get("/", upgradeWebSocket(() => {
+  return {
+    onOpen: async (evt, ws) => {
+      console.log(evt, ws);
+    },
+  };
+}));
 
 app.route("/", userRoutes);
 app.route("/chat", chatRoutes);
