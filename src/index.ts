@@ -36,7 +36,7 @@ const messageController = new MessageController(messageUseCase);
 
 export const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   app,
-  baseUrl: `http://localhost:${3000}`,
+  baseUrl: `http://0.0.0.0:${3000}`,
 });
 
 //app.use("*", corsMiddleware);
@@ -67,10 +67,10 @@ const server = serve(
   {
     fetch: app.fetch,
     port: port,
-    hostname: "localhost",
+    hostname: "0.0.0.0",
   },
   () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://0.0.0.0:${port}`);
   },
 );
 injectWebSocket(server);
